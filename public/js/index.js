@@ -104,6 +104,10 @@ $.ajax({
 })
 
 /*---------------------------------------home page 首页评论 start--------------------------------*/
+function returnDays(x,y){
+    return y-x;
+}
+
 $.ajax({
     url:'../data/getCommentsByRight.json',
     type:'GET',
@@ -116,11 +120,70 @@ $.ajax({
         console.log(res.data);
         //console.log(res.data[0].commentFrom.nickname);
         $(res.data).each(function(i,ele){
-            console.log(ele.commentFrom.avatar);
+            var _monent = ele.createdAt;
+                _monsubstr=_monent.substr(0, 10);
+            console.log(_monsubstr);
+            //获取当前时间，格式YYYY-MM-DD
+            function getNowFormatDate() {
+                    var date = new Date();
+                    var seperator1 = "-";
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var strDate = date.getDate();
+                    if (month >= 1 && month <= 9) {
+                        month = "0" + month;
+                    }
+                    if (strDate >= 0 && strDate <= 9) {
+                        strDate = "0" + strDate;
+                    }
+                    var currentdate = year + seperator1 + month + seperator1 + strDate;
+                    //return currentdate;
+                    if(_monsubstr.substr(0,4)==currentdate.substr(0,4) && _monsubstr.substr(5,2)==currentdate.substr(5,2)){
+                        if(parseInt(_monsubstr.substr(8,2))+1==parseInt(currentdate.substr(8,2))){
+                            $("#createdAt").text("昨天");
+                        }else if(parseInt(_monsubstr.substr(8,2))+2==parseInt(currentdate.substr(8,2))){
+                            $("#createdAt").text("两天前");
+                        }else{
+                            $("#createdAt").text(_monsubstr);
+                        }
+                    }else{
+                        $("#createdAt").text(_monsubstr);
+                    }
+                }
+                getNowFormatDate();
+
+
+
+
+
+
+
+
             $("#nickname").text(ele.commentFrom.nickname);
             $("#nickname").css("backgroundImage","url(.."+ele.commentFrom.avatar+")");
-            //$("#nickname").style.backgroundImage="url("+ele.commentFrom.avatar+")";
-            $("#content").text(ele.content);
+            $("#Title").text(ele.title);
+            //$("#createdAt").text(date);
+            //console.log(new Date((_monent._d-moment()._d)).getDay())
+            //console.log(_monent.add(1,'days').format('YYYY-MM-DD'),_monent.add(1,'days').format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'))
+            //console.log(moment().format('YYYYMMDD'))
+            /*var _add = moment().format('YYYY.MM.DD')-_monent.add(1,'days').format('YYYYMMDD');
+            console.log(_add)
+            if(_obj[_add]){
+                console.log(_obj[_add])
+            }*/
+            /*if(_monent.add(1,'days').format('YYYY-MM-DD')==moment().format('YYYY-MM-DD')){
+                $("#createdAt").text("昨天");
+            }else if(_monent.add(1,'days').format('YYYY-MM-DD')==moment().format('YYYY-MM-DD')){
+                $("#createdAt").text("两天前");
+            }else{
+                $("#createdAt").text(date);
+            }*/
+            //console.log(moment().format('YYYY-MM-DD'));
+            $("#home_img").attr('src',ele.movie.images.small);
+            $("#reading").text(ele.reading);
+            $("#Rank").text(ele.rank);
+            $("#star").text(ele.star);
+
         });
     }
 })

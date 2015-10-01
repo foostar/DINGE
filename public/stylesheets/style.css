@@ -119,7 +119,7 @@ section{
 .home_block .home_details .details1 span{color:#2e8dcf;height:44px;display:inline-block;background-size:44px 44px;padding-right:56px;background-image:url(carouse/head.png);background-repeat:no-repeat;background-position:right 0;}
 .home_block .home_details .details2{font-size:30px;background: url(../images/block2_bg.png) no-repeat right bottom;background-size:52px 44px;height:152px;padding-top:20px;}
 .home_block .home_num{overflow:hidden;padding-top:10px;}
-.home_block .home_num li{float:left;color:#a6aeb4;font-size:24px;}
+.home_block .home_num li{float:left;color:#a6aeb4;font-size:24px;width:98px;}
 .home_block .home_num li span{}
 
 .home_block2{width:640px;height:280px;background-color:#fdfcf8;border-bottom:1px solid #d0cfcd;overflow:hidden;}
