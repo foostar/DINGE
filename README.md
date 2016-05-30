@@ -1,6 +1,6 @@
 # DINGE
 影评app demo版
-1。PRD   产品设计 (xtrue)
+1。PRD   产品设计 (axure)
 2.  PSD     设计稿
 3。app    项目目录
 1期：
