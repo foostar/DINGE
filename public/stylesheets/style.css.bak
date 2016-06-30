@@ -13,7 +13,7 @@ a{text-decoration:none}
 #headerLogo{
 	height: 460px;
 	position: relative;
-	background: url(../images/signup_background@2x.png) no-repeat;
+	background: url(images/signup_background@2x.png) no-repeat;
 }
 
 #headerLogo>.lo{
@@ -29,13 +29,9 @@ section{
 	position: relative;
 }
 .user_login{
-	margin: 0 auto;
+	margin-left: 30%;
 	padding-top: 100px;
 
-}
-.user_name{
-	width: 432px;
-	margin: 0 auto;
 }
 .user_name span{
 	display: inline-block;
@@ -52,8 +48,6 @@ section{
 	font-size: 18px;
 }
 .userLoginBtn{
-	width:432px;
-	margin: 0 auto;
 	margin-top: 100px;
 }
 #topa{
@@ -84,7 +78,4 @@ section{
 }
 .partnerLink>a{
 	margin-left: 60px;
-}
-.partnerLink>a>img{
-	width:45px;
 }
