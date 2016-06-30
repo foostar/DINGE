@@ -10,12 +10,19 @@ a{text-decoration:none}
 
 
 /*index背景图*/
-.headerLogo{
-	background-color: #2B2C2C;
+#headerLogo{
+	height: 460px;
+	position: relative;
+	background: url(../images/signup_background@2x.png) no-repeat;
 }
-.headerLogo>.loGo>img{
-	width: 640px;
+
+#headerLogo>.lo{
+	position: absolute;
+	left:222px;
+	top:214px ;
+
 }
+
 /*section*/
 section{
 	background-color: #2B2C2C;
