@@ -19,9 +19,11 @@
         "curly": 2,
         "comma-dangle": ["error", "never"],
         "brace-style": [2, "1tbs"],
-        "quotes": [2, "single"],
+        "quotes": [2, "double"],
         "semi": [2, "always"],
         "no-extra-parens": ["error", "functions"],
+        "computed-property-spacing": [2, "always"],
+        "array-bracket-spacing": [2, "always"],
         "valid-jsdoc": 0,
         "indent": [2, 4, {
             "VariableDeclarator": 2,

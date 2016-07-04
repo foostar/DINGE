@@ -32,5 +32,4 @@ exports.getMovieCommentsList = function(req, res){
             }
             return res.json({ status:1, data:result })
         })
-        
 }
