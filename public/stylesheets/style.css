@@ -137,8 +137,8 @@ section{
 /* 底部导航部分 */
 footer{position:fixed;left:0;bottom:0;}
 .footer{width:320px;height:56px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;}
-.footer li{width:64px;height:56px;float:left;text-align:center;}
-.footer li a{font-size:12px;width:64px;height:56px;display:inline-block;padding-top:34px;}
+.footer li{width:80px;height:56px;float:left;text-align:center;}
+.footer li a{font-size:12px;width:80px;height:56px;display:inline-block;padding-top:34px;}
 .footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;display:none;}
 .footer li a.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;}
 
@@ -146,8 +146,8 @@ footer{position:fixed;left:0;bottom:0;}
 .footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.fx_bg{background:url(../images/iconFind.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;}
 
-.footer li a.sx_bg1{background:url(../images/iconFind.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
-.footer li a.sx_bg{background:url(../images/iconFind.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;}
+/* .footer li a.tl_bg1{background:url(../images/iconTalkH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
+.footer li a.tl_bg{background:url(../images/iconTalke.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;} */
 
 .footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.xx_bg{background:url(../images/iconMessege.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;}
