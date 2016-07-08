@@ -30,3 +30,9 @@ $(function(){
         })
     })
 })
+
+
+$("footer .xx_bg").click(function(){
+    window.location.href="http://localhost:3008/views/message.html";
+    
+});

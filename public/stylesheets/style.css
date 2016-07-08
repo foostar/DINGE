@@ -136,7 +136,7 @@ section{
 .home_block2 .home_num li span{}
 /* 底部导航部分 */
 footer{position:fixed;left:0;bottom:0;}
-.footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;}
+.footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
 .footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;display:none;}
@@ -154,6 +154,38 @@ footer{position:fixed;left:0;bottom:0;}
 
 .footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
 .footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+
+/* --------------------------------message page start------------------------------------- */
+.mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;}
+.mes_pl{width:640px;height:118px;border-bottom:1px solid #a4a4a4;background:url(../images/ahead.png) no-repeat 560px center;}
+.mes_pl .pl_span,.mes_pl .sx_span,.mes_pl .xh_span,.mes_pl .fs_span{font-size:32px;color:#55637c;height:118px;line-height:118px;display:inline-block;padding-left:110px;background:url(../images/comment.png) no-repeat 36px center;}
+.mes_pl .sx_span{background:url(../images/message.png) no-repeat 36px center;}
+.mes_pl .xh_span{background:url(../images/like.png) no-repeat 36px center;}
+.mes_pl .fs_span{background:url(../images/fans.png) no-repeat 36px center;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
