@@ -33,6 +33,17 @@ $(function(){
 
 
 $("footer .xx_bg").click(function(){
-    window.location.href="http://localhost:3008/views/message.html";
-    
+    window.location.href="http://localhost:3008/views/message.html"; 
+});
+
+$("footer .sy_bg").click(function(){
+    window.location.href="http://localhost:3008/views/home.html"; 
+});
+
+$("footer .wd_bg").click(function(){
+    window.location.href="http://localhost:3008/views/user.html"; 
+});
+
+$("footer .fx_bg").click(function(){
+    window.location.href="http://localhost:3008/views/search.html"; 
 });

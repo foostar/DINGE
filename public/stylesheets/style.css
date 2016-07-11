@@ -139,20 +139,20 @@ footer{position:fixed;left:0;bottom:0;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
-.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;display:none;}
+.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 .footer li a.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 
 
-.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* .footer li a.tl_bg1{background:url(../images/iconTalkH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.tl_bg{background:url(../images/iconTalke.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;} */
 
-.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
-.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* --------------------------------message page start------------------------------------- */
@@ -164,30 +164,48 @@ footer{position:fixed;left:0;bottom:0;}
 .mes_pl .fs_span{background:url(../images/fans.png) no-repeat 36px center;}
 
 
+/* -------------------------------------user page start------------------------ */
+.user_n{height:160px;margin-bottom:40px;}
+.user_n .user_name{height:160px;line-height:160px;background:url(../images/portrait_Normal_L.png) no-repeat 36px center;padding-left:200px;}
+.user_line{width:600px;height:521px;border-top:1px solid #eae9e6;border-bottom:1px solid #eae9e6;padding:0 20px;}
+.user_l{height:86px;line-height:86px;border-bottom:1px solid #eae9e6;}
+.user_l span{font-size:32px;color:#55637c;background:url(../images/user_write.png) no-repeat 12px center;padding-left:100px;display:inline-block;height:86px;line-height:86px;}
+.user_like span{background:url(../images/write_like.png) no-repeat 12px center;}
+.user_sc span{background:url(../images/user_collection.png) no-repeat 12px center;}
+.user_history span{background:url(../images/user_history.png) no-repeat 12px center;}
+.user_draft span{background:url(../images/user_draft.png) no-repeat 12px center;}
+.user_night span{background:url(../images/user_night.png) no-repeat 12px center;}
+.user_night{border-bottom:0;}
 
+/* ---------------------------------------search page start ---------------------------*/
+.search{width:592px;height:88px;padding-left:48px;overflow:hidden;}
+.search li{height:88px;line-height:102px;float:left;}
+.search input{width:470px;height:48px;color:#fff;font-size:26px;border:0;background:#6b7d9c url(../images/find_find.png) no-repeat 405px center;padding-left:36px;}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:rgba(255,255,255,0.6);  
+}
 
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:rgba(255,255,255,0.6);
+}
 
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
 
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
+.search_erweima img{height:52px;padding:20px 0 0 32px;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;}
+.search_body li{float:left;width:261px;height:476px;}
+.search_body li img{width:261px;height:373px;}
+.search_body li:nth-of-type(odd){ margin-right:30px;}/* 奇数行 */   
+.search_body li:nth-of-type(even){margin:0}/* 偶数行 */
+.search_body li span{font-size:28px;color:#393939;width:261px;display:inline-block;text-align:center;padding-top:10px;}
 
 
 
