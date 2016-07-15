@@ -116,7 +116,7 @@ section{
 .home_block .home_details{width:300px;padding-right:20px;}
 .home_block .home_details .details1{font-size:24px;color:#a6aeb4;padding-top:12px;height:44px;text-align:right;}
 .home_block .home_details .details1 em{padding-right:6px;}
-.home_block .home_details .details1 span{color:#2e8dcf;background:url(../images/portrai1.png) no-repeat right 0;height:44px;display:inline-block;background-size:44px 44px;padding-right:56px;}
+.home_block .home_details .details1 span{color:#2e8dcf;height:44px;display:inline-block;background-size:44px 44px;padding-right:56px;background-image:url(carouse/head.png);background-repeat:no-repeat;background-position:right 0;}
 .home_block .home_details .details2{font-size:30px;background: url(../images/block2_bg.png) no-repeat right bottom;background-size:52px 44px;height:152px;padding-top:20px;}
 .home_block .home_num{overflow:hidden;padding-top:10px;}
 .home_block .home_num li{float:left;color:#a6aeb4;font-size:24px;}

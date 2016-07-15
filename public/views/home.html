@@ -15,22 +15,8 @@
 	<div id="slideBox" class="slideBox">
 
 		<div class="bd">
-			<ul>
-					<li>
-						<a class="pic" href="#"><img src="../images/banner_1.png" /></a>
-					</li>
-					<li>
-						<a class="pic" href="#"><img src="../images/banner_2.png"/></a>
-					</li>
-					<li>
-						<a class="pic" href="#"><img src="../images/banner_3.png"/></a>
-					</li>
-					<li>
-						<a class="pic" href="#"><img src="../images/banner_4.png"/></a>
-					</li>
-                    <li>
-						<a class="pic" href="#"><img src="../images/banner_5.png"/></a>
-					</li>
+			<ul id="slide_ul">
+				<!-- <li><a class="pic" href="javascript://"><img src="%s" url="%t" class="pic" /></a></li> -->					  
 			</ul>
 		</div>
 
@@ -42,8 +28,8 @@
 	<ul class="home_block1 home_block">
 		<li class="home_img"><img src="../images/poster_criminal.png" alt=""></li>
 		<li class="home_details">
-			<div class="details1"><em>昨天</em><span>Cecly</span></div>
-			<div class="details2">我听说过爱这种东西，但是从来没有感受过它。</div>
+			<div class="details1"><em id="createdAt">昨天</em><span id="nickname">Cecly</span></div>
+			<div class="details2" id="content">我听说过爱这种东西，但是从来没有感受过它。</div>
 			<ul class="home_num">
 				<li>阅读<span>3023</span></li>
 				<li>评论<span>128</span></li>
@@ -54,7 +40,7 @@
 
 	<ul class="home_block2">
 		<li class="home_details">
-			<div class="details1"><span>子叶</span><em>两天前</em></div>
+			<div class="details1"><span id="nickname">子叶</span><em>两天前</em></div>
 			<div class="details2">在上帝给的定点光下，轮番上演的真实。</div>
 			<ul class="home_num">
 				<li>阅读<span>3023</span></li>
@@ -73,16 +59,7 @@
 			<li><a href="javascript:;" class="wd_bg">我的</a></li>
 		</ul>
 	</footer>
-	<script type="text/javascript">
-		TouchSlide({ 
-			slideCell:"#slideBox",
-			titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-			mainCell:".bd ul", 
-			effect:"leftLoop", 
-			autoPage:true,//自动分页
-			autoPlay:true //自动播放
-		});
-	</script>
+	
 	<script src="../js/index.js" type="text/javascript"></script>
 </body>
 </html>
