@@ -208,6 +208,39 @@ textarea::-webkit-input-placeholder {
 .search_body li span{font-size:28px;color:#393939;width:261px;display:inline-block;text-align:center;padding-top:10px;}
 
 
+/* -----------------------------------------------书写页start----------------------------- */
+.write_back{overflow:hidden;padding:12px 10px 0;}
+.write_back li.w_back{float:left;}
+.write_back li.w_back a{display:inline-block;}
+.write_back li.w_done{float:right;}
+.w_movie,.w_title{border-bottom:1px solid #bfbfbd;background:url(../images/write_retractKeyboard.png) no-repeat right center;height:70px;width:584px;margin-top:26px;}
+.w_movie .w_text{background:url(../images/write_movie.png) no-repeat 10px center;font-size:28px;color:#3c3c3c;display:inline-block;height:70px;line-height:70px;padding-left:100px;}
+.w_star{width:584px;height:96px;line-height:150px;overflow:hidden;border-bottom:1px solid #bfbfbd;padding-left:10px;}
+.w_star span{float:left;display:inline-block;width:40px;height:96px;line-height:150px;margin-right:10px;}
+.w_star span img{width:40px;height:40px;}
+.w_title{background:none;overflow:hidden;}
+.w_title span{float:left;padding-left:10px;}
+.w_title form{float:left;width:440px;height:60px;border:0;font-size:28px;margin-left:24px;}
+.w_title form input{width:440px;height:60px;outline:none;border:0;color:#ababae;}
+.w_txtarea{width:584px;height:294px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
