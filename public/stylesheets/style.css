@@ -220,15 +220,18 @@ textarea::-webkit-input-placeholder {
 .w_star span img{width:40px;height:40px;}
 .w_title{background:none;overflow:hidden;}
 .w_title span{float:left;padding-left:10px;}
-.w_title form{float:left;width:440px;height:60px;border:0;font-size:28px;margin-left:24px;}
-.w_title form input{width:440px;height:60px;outline:none;border:0;color:#ababae;}
-.w_txtarea{width:584px;height:294px;}
-
-
-
-
-
-
+.w_title form{float:left;width:440px;height:60px;border:0;margin-left:24px;}
+.w_title form input{width:440px;height:60px;outline:none;border:0;color:#ababae;font-size:28px;}
+.w_txtarea{width:496px;/* height:294px; */margin-top:30px;background:url(../images/write-write.png) no-repeat 10px top;padding-left:100px;font-size:28px;color:#ababae;border:0;outline:none;}
+/* ------------------------------searchMovie page start---------------------------------------- */
+.search li.search_cancel{font-size:30px;color:#fff;padding-left:26px;line-height:100px;}
+.search input.search_mov{border-radius:50px;height:50px;}
+.wrap{margin:0 42px;}
+.wrap .tag{overflow:hidden;margin-bottom:20px;}
+.wrap .tag li{width:154px;height:94px;text-align:center;line-height:112px;font-size:36px;float:left;margin-right:46px;color:rgba(255,255,255,0.6);}
+.wrap .tag li.tag_nomar{margin-right:0;}
+.wrap .tag li.tag_block{border-bottom:2px solid #fff;color:#fff;}
+.search_tag1{height:300px;background-color:red;}
 
 
 
