@@ -5,31 +5,31 @@ $(function(){
     $("#submitComment").click(function(){
         $.ajax({
             type:"post",
-            url:'/Api/commentMovie',
+            url:"/Api/commentMovie",
             data:{
                 title:$("#title").val(),
                 content:$("#content").val(),
                 movie:"575ce9607d5db6a81924e106"
             },
-            datatype:'json'
+            datatype:"json'"
         }).success(function(data){
-            console.log(data)
-        })
+            console.log(data);
+        });
     });
     $("#submit").click(function(){
         $.ajax({
             type:"post",
-            url:'/Api/signin',
+            url:"/Api/signin",
             data:{
                 email:$("#email").val(),
                 password:$("#password").val()
             },
-            datatype:'json'
+            datatype:"json"
         }).success(function(data){
-            console.log(data)
-        })
-    })
-})
+            console.log(data);
+        });
+    });
+
 
 
 $("footer .xx_bg").click(function(){
@@ -52,10 +52,10 @@ $("footer .fx_bg").click(function(){
 
 /*---------------------home page 轮播图接口------------------------------*/
 $.ajax({
-    url:'../data/getCarousels.json',
-    type:'GET',
-    data:'',
-    datatype:'json',
+    url:"../data/getCarousels.json",
+    type:"GET",
+    data:"",
+    datatype:"json",
     error:function(){
         console.log("ERROR");
     },
@@ -84,7 +84,7 @@ $.ajax({
        // arr.push(temp.replace(/\%s/,_url).replace(/\%t/,ele.data[i].name));
        arr.push(temp.replace(/\%s/,_url).replace(/\%t/,_url));
     });
-    oul.html(arr.join(''));
+    oul.html(arr.join(""));
 
     /*$(res.data).each(function(i,ele){
         console.log(res.data[i]);
@@ -109,10 +109,10 @@ function returnDays(x,y){
 }
 
 $.ajax({
-    url:'../data/getCommentsByRight.json',
-    type:'GET',
-    data:'',
-    datatype:'json',
+    url:"../data/getCommentsByRight.json",
+    type:"GET",
+    data:"",
+    datatype:"json",
     error:function(){
         console.log('ERROR');
     },
@@ -120,9 +120,9 @@ $.ajax({
         console.log(res.data);
         //console.log(res.data[0].commentFrom.nickname);
         $(res.data).each(function(i,ele){
-            var _monent = ele.createdAt;
-                _monsubstr=_monent.substr(0, 10);
-            console.log(_monsubstr);
+            var monent = ele.createdAt;
+            var monsubstr=monent.substr(0, 10);
+            console.log(monsubstr);
             //获取当前时间，格式YYYY-MM-DD
             function getNowFormatDate() {
                     var date = new Date();
@@ -138,55 +138,51 @@ $.ajax({
                     }
                     var currentdate = year + seperator1 + month + seperator1 + strDate;
                     //return currentdate;
-                    if(_monsubstr.substr(0,4)==currentdate.substr(0,4) && _monsubstr.substr(5,2)==currentdate.substr(5,2)){
-                        if(parseInt(_monsubstr.substr(8,2))+1==parseInt(currentdate.substr(8,2))){
+                    if(monsubstr.substr(0,4)==currentdate.substr(0,4) && monsubstr.substr(5,2)==currentdate.substr(5,2)){
+                        if(parseInt(monsubstr.substr(8,2))+1==parseInt(currentdate.substr(8,2))){
                             $("#createdAt").text("昨天");
-                        }else if(parseInt(_monsubstr.substr(8,2))+2==parseInt(currentdate.substr(8,2))){
+                        }else if(parseInt(monsubstr.substr(8,2))+2==parseInt(currentdate.substr(8,2))){
                             $("#createdAt").text("两天前");
                         }else{
-                            $("#createdAt").text(_monsubstr);
+                            $("#createdAt").text(monsubstr);
                         }
                     }else{
-                        $("#createdAt").text(_monsubstr);
+                        $("#createdAt").text(monsubstr);
                     }
                 }
                 getNowFormatDate();
 
-
-
-
-
-
-
-
             $("#nickname").text(ele.commentFrom.nickname);
             $("#nickname").css("backgroundImage","url(.."+ele.commentFrom.avatar+")");
             $("#Title").text(ele.title);
-            //$("#createdAt").text(date);
-            //console.log(new Date((_monent._d-moment()._d)).getDay())
-            //console.log(_monent.add(1,'days').format('YYYY-MM-DD'),_monent.add(1,'days').format('YYYY-MM-DD'),moment().format('YYYY-MM-DD'))
-            //console.log(moment().format('YYYYMMDD'))
-            /*var _add = moment().format('YYYY.MM.DD')-_monent.add(1,'days').format('YYYYMMDD');
-            console.log(_add)
-            if(_obj[_add]){
-                console.log(_obj[_add])
-            }*/
-            /*if(_monent.add(1,'days').format('YYYY-MM-DD')==moment().format('YYYY-MM-DD')){
-                $("#createdAt").text("昨天");
-            }else if(_monent.add(1,'days').format('YYYY-MM-DD')==moment().format('YYYY-MM-DD')){
-                $("#createdAt").text("两天前");
-            }else{
-                $("#createdAt").text(date);
-            }*/
-            //console.log(moment().format('YYYY-MM-DD'));
-            $("#home_img").attr('src',ele.movie.images.small);
+            $("#home_img").attr("src",ele.movie.images.small);
             $("#reading").text(ele.reading);
             $("#Rank").text(ele.rank);
             $("#star").text(ele.star);
 
         });
     }
-})
+});
+
+/*---------------------------------------searchMovie page tab 切换------------------------------*/
+$("#tag_movie").addClass("current");
+$("#tagContent").load("searchMovie_movie.html");
+$("#tag li#tag_movie").click(function(){
+    $(this).addClass("current").siblings().removeClass("current");
+    $("#tagContent").load("searchMovie_movie.html");
+});
+$("#tag li#tag_review").click(function(){
+    $(this).addClass("current").siblings().removeClass("current");
+    $("#tagContent").load("searchMovie_review.html");
+});
+$("#tag li#tag_user").click(function(){
+    $(this).addClass("current").siblings().removeClass("current");
+    $("#tagContent").load("searchMovie_user.html");
+});
+
+
+});
+
 
 
 

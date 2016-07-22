@@ -227,20 +227,27 @@ textarea::-webkit-input-placeholder {
 .search li.search_cancel{font-size:30px;color:#fff;padding-left:26px;line-height:100px;}
 .search input.search_mov{border-radius:50px;height:50px;}
 .wrap{margin:0 42px;}
-.wrap .tag{overflow:hidden;margin-bottom:20px;}
+.wrap .tag{overflow:hidden;}
 .wrap .tag li{width:154px;height:94px;text-align:center;line-height:112px;font-size:36px;float:left;margin-right:46px;color:rgba(255,255,255,0.6);}
 .wrap .tag li.tag_nomar{margin-right:0;}
-.wrap .tag li.tag_block{border-bottom:2px solid #fff;color:#fff;}
-.search_tag1{height:300px;background-color:red;}
-
-
-
-
-
-
-
-
-
+.wrap .tag li.current{border-bottom:2px solid #fff;color:#fff;}
+.search_tag1{}
+.search_tag1 ul{overflow:hidden;width:556px;height:176px;margin-top:42px;}
+.search_tag1 ul li.search_tag1img{float:left;width:124px;height:176px;margin-right:20px;}
+.search_tag1 ul li.search_tag1img img{width:124px;height:176px;}
+.search_tag1 ul li.search_tag1txt{float:left;color:#fff;width:412px;height:162px;padding-top:14px;}
+li.search_tag1txt .tag1_title{font-size:32px;}
+li.search_tag1txt .tag1_midtxt span{font-size:24px;margin-right:10px;}
+li.search_tag1txt .tag1_midtxt em{font-size:30px;}
+li.search_tag1txt .tag1_bnttxt{font-size:28px;}
+li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
+/* ----------------------searchMovie_review page start------------ */
+.review_div{color:#fff;padding:30px 0;border-bottom:1px solid rgba(255,255,255,0.6);}
+.review_div .review_title{font-size:32px;}
+.review_div span{display:inline-block;text-align:right;font-size:28px;width:556px;margin:10px 0;color:rgba(255,255,255,0.8);}
+.review_div p{font-size:16px;color:rgba(255,255,255,0.8);}
+/* ------------------------------serchMovie_user page start------------------------------- */
+.movie_user{height:120px;line-height:120px;padding-left:100px;color:#fff;font-size:28px;background:url(../images/portrait_Normal_M.png) no-repeat left center;background-size:72px 72px;border-bottom:1px solid rgba(255,255,255,0.6);}
 
 
 
