@@ -2,7 +2,7 @@
  * Created by Administrator on 2016-06-07.
  */
 var Regexp = require("../tools/regex");
-var Tools = require("../tools/tool")
+var Tools = require("../tools/tool");
 var User = require("../model/user");
 var passport=require("passport");
 var jwt = require("jwt-simple");
@@ -10,51 +10,219 @@ var jwt = require("jwt-simple");
  * 注册接口方法
  */
 exports.signUp = function(req, res){
-    var _user = req.body
+    var _user = req.body;
     //检测空账户
     if(!_user.email) {
-        return res.json({ "status":-1, msg:"邮箱不能为空" })
+        return res.json({ "status":-1, msg:"邮箱不能为空" });
     }
     //检测空密码
     if(!_user.password) {
-        return res.json({ "status":-1, msg:"密码不能为空" })
+        return res.json({ "status":-1, msg:"密码不能为空" });
+    }
+    //检测空昵称
+    if(!_user.username) {
+        return res.json({ "status":-1, msg:"昵称不能为空" });
+    }
+    //检测昵称不正确
+    if(!Regexp.username.test(_user.username)) {
+        return res.json({ "status":-1, msg:"昵称格式错误，不能包括特殊字符切长度在9位之内。" });
     }
     //账号格式不正确
     if(!Regexp.email.test(_user.email)) {
-        return res.json({ "status":-1, msg:"邮箱格式不正确" })
+        return res.json({ "status":-1, msg:"邮箱格式不正确" });
     }
     //检测密码规范
     if(!Regexp.password.test(_user.password)) {
-        return res.json({ "status":-1, msg:"密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" })
+        return res.json({ "status":-1, msg:"密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" });
     }
     //检测重复用户
-    User.find({username:_user.username}).exec()
+    User.find({username:_user.email}).exec()
         .then(function(user) {
             if(user.length > 0){
-                return res.json({"status":-1,msg:"邮箱已经被注册"})
+                return res.json({"status":-1,msg:"邮箱已经被注册"});
             }
+            var _User = new User(_user);
+            _User.save(function (err) {
+                if(err){
+                    return res.json({"status":-1,msg:"注册失败，请重试！"});
+                }
+                return res.json({"status":1,msg:""});
+            });
         })
-        .then(function() {
-            var user = new User(_user)
-            user.save(function () {
-                return res.json({"status":1,msg:""})
-            })
-        })
-
 };
 /*
  * 登陆接口方法
  */
 exports.signin = function(req, res, next) {
-    passport.authenticate('local', function(err, user, info){
-        console.log(err,user,info)
+    passport.authenticate("local", function(err, user, info){
+        var app = app;
         if(!user){
-            var response = Tools.merge({},{status:-1},info)
-            return res.json(response)
+            var response = Tools.merge({}, {status:-1}, info);
+            return res.json(response);
         }
-        var token = jwt.encode({ username:user._id }, app.get("jwtTokenSecret"));
+        console.log("user._id",user._id)
+        var token = jwt.encode(user._id, Tools.secret);
         //模拟token
-        req.session.token = token
-        res.json({ status:-1 , data:{ "token":token } })
-    })(req, res, next)
-}
+        req.session.token = token;
+        res.json({ status:1 , data:{ "token":token } });
+    })(req, res, next);
+};
+/*
+ * @desc 加载用户列表
+ */
+exports.showList = function(req, res) {
+    User.find({}).exec()
+    .then(function(result){
+        if(result){
+            res.json({status:1,data:result});
+        }
+    });
+};
+/*
+ * @desc 加载我关注的人
+ * @tip  需要使用token
+ */
+exports.focusList = function(req, res) {
+    let userId = jwt.decode(req.query.token, Tools.secret);
+    if(!userId){
+        return res.json({status:-1,msg:"没有token"});
+    }
+    User.findById(userId).populate("lovedTo","avatar nickname -_id").exec()
+    .then(result => {
+        if(result){
+            res.json({status:1,data:result.lovedTo});
+        }else{
+            res.json({status:-1,msg:"token不正确"});
+        }
+    });
+};
+/*
+ * @desc 加载关注我的人
+ * @tip  需要使用token
+ */
+exports.focusFromList = function(req, res){
+    let userId = jwt.decode(req.query.token, Tools.secret);
+    if(!userId){
+        return res.json({status:-1,msg:"没有token"});
+    }
+    User.findById(userId).populate("lovedFrom","avatar nickname -_id").exec()
+    .then(result => {
+        if(result){
+            res.json({status:1,data:result.lovedFrom});
+        }else{
+            res.json({status:-1,msg:"token不正确"});
+        }
+    });
+};
+/*
+ * @desc 关注用户
+ * @tip  需要使用token
+ */
+exports.focusUser = function(req, res) {
+    let userId = jwt.decode(req.body.token, Tools.secret);
+    let foucsTo = req.body.userId;
+    if(!userId){
+        return res.json({status:-1,msg:"没有token"});
+    }
+    User.findById(userId).exec()
+        .then(result => {
+            if(result){
+                return User.find({"lovedTo":foucsTo}).exec();
+            }else{
+                return res.json({status:-1,msg:"token不正确"});
+            }
+        })
+        .then(result => {
+            if(result.length < 1 || !result){
+                //添加我关注的人、添加人的粉丝
+                var focus = User.update({_id:userId}, {"$push":{"lovedTo":foucsTo}}).exec(); 
+                var from = User.update({_id:foucsTo}, {"$push":{"lovedFrom":userId}}).exec();
+                return Promise.all([ focus, from ]); 
+            }else{
+                return res.json({status:-1,msg:"您已经关注过了这个用户"});
+            } 
+        })
+        .then(result => {
+            if(result[ 0 ].n == 1 && result[ 1 ].n == 1){
+                res.json({status:1,msg:"修改成功"});
+            }else{
+                res.json({status:-1,msg:"修改失败"});
+            }
+        });
+};
+/*
+ * @desc 取消关注用户
+ * @tip  需要使用token
+ */
+exports.unFocusUser = function(req, res) {
+    let userId = jwt.decode(req.body.token, Tools.secret);
+    let foucsTo = req.body.userId;
+    if(!userId){
+        return res.json({status:-1,msg:"没有token"});
+    }
+    User.findById(userId).exec()
+        .then(result => {
+            if(result){
+                var focus = User.update({_id:userId}, {"$pull":{"lovedTo":foucsTo}}).exec();
+                var from = User.update({_id:foucsTo}, {"$pull":{"lovedTo":userId}}).exec();
+                return Promise.all([ focus, from ]); 
+            }else{
+                return res.json({status:-1,msg:"token不正确"});
+            }
+        })
+        .then(result => {
+            if(result[ 0 ].n == 1 && result[ 1 ].n == 1){
+                res.json({status:1,msg:"修改成功"});
+            }else{
+                res.json({status:-1,msg:"修改失败"});
+            }
+        });
+};
+/*
+ * @desc 获取用户信息
+ * @tip  需要使用token
+ */
+exports.getUserInfo = function(req, res){
+    var token = req.query.token;
+    if(!token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var userId = jwt.decode(token, Tools.secret);
+    User.findById(userId).exec()
+        .then(function(result){
+            if(result){
+                return res.json({status:1,data:result}); 
+            }else{
+                return res.json({status:-1,msg:"查找用户失败"}); 
+            }
+        },function(err){
+            if(err){
+                return res.json({status:-1,msg:"查找用户失败"});
+            }
+        });
+};
+/*
+ * @desc 编辑用户资料
+ * @tip  需要使用token
+ */
+exports.editUserInfo = function(req, res){
+    var token = req.body.token;
+    if(!token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var userId = jwt.decode(token, Tools.secret);
+    User.findById(userId).exec()
+        .then(function(result){
+            result.sex = req.body.sex;
+            result.sign = req.body.sign;
+            result.birthday = req.body.birthday;
+            result.city = req.body.city;
+            result.avatar = req.body.avatar;
+            result.save(function(err){
+                if(err){
+                    return res.json({status:-1,msg:"修改失败"});
+                }
+                return  res.json({status:1,msg:"修改成功"});
+            });          
+        });
+};

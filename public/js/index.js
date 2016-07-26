@@ -1,5 +1,5 @@
 /**
- * Created by Administrator on 2016-06-01.
+ * Created by Administrator on 2016-06-01. 
  */
 $(function(){
     $("#submitComment").click(function(){
@@ -30,3 +30,9 @@ $(function(){
         })
     })
 })
+
+
+$("footer .xx_bg").click(function(){
+    window.location.href="http://localhost:3008/views/message.html";
+    
+});

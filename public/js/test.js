@@ -1,0 +1,205 @@
+/**
+ * Created by Administrator on 2016-06-01.
+ */
+$(function(){
+    console.log($.cookie("dinge"))
+    //加载首页评论
+    $.ajax({
+        url:"/Api/getComments",
+        method:"GET",
+        datatype:"json",
+        data:{
+            rights:90
+        }
+    }).success(function(data){
+        console.log(data)
+    });
+    //加载轮播图
+    $.ajax({
+        url:"/Api/getCarousels",
+        method:"GET",
+        datatype:"json"
+    }).success(function(data){
+        console.log(data)
+    })
+    //拉取用户列表
+    $.ajax({
+        url:"/Api/getUserlist",
+        method:"GET",
+        datatype:"json"
+    }).success(function(data){
+        var _data = data.data;
+        var html = "";
+        for(var i = 0; i<_data.length;i++){
+            html+="<li>用户名："+_data[ i ].email+"<a href='javascript:;' class='focus' data-value='"+_data[ i ]._id+"'>关注</a><a href='javascript:;' class='unfocus' data-value='"+_data[ i ]._id+"'>取消关注</a></li>";
+        }
+        $(html).appendTo($(".userlist"));
+    });
+    //关注用户
+    $(".userlist").on("click",".focus",function(){
+        $.ajax({
+            url:"/Api/FocusUser",
+            method:"POST",
+            datatype:"json",
+            data:{
+                token:$.cookie("dinge"),
+                userId:$(this).attr("data-value")
+            }
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //加载电影评论
+    $.ajax({
+        url:"/Api/getComments",
+        method:"GET",
+        datatype:"json",
+        data:{
+            movieId:"575ce9607d5db6a81924e106"
+        }
+    }).success(function(data){
+        var _data = data.data;
+        var html = "";
+        for(var i = 0; i<_data.length;i++){
+            html+="<p>用户名："+_data[ i ].commentFrom.nickname+"<a href='javascript:;' class='comment' data-userId='"+_data[ i ].commentFrom._id+"' data-value='"+_data[ i ]._id+"'>评论</a></p>";
+        }
+        $(html).appendTo($(".comments"));
+    })
+    //评论用户的评论
+    $(".comments").on("click",".comment",function(){
+        $.ajax({
+            url:"/Api/addComments",
+            method:"POST",
+            datatype:"json",
+            data:{
+                commentsId:$(this).attr("data-value"),
+                commentTo:$(this).attr("data-userId"),
+                content:"你大爷的！",
+                token:$.cookie("dinge")
+            }
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //查看评论详情
+    $(".checkCommentDetail").click(function(){
+        $.ajax({
+            url:"/Api/commentsDetail",
+            method:"GET",
+            datatype:"json",
+            data:{
+                commentId:"577f5baed1e87df41602b045",
+                token:$.cookie("dinge")
+            }
+        }).success(function(data){
+            console.log(data);
+        });
+    })
+    //取消关注用户
+    $(".userlist").on("click",".unfocus",function(){
+        $.ajax({
+            url:"/Api/unFocusUser",
+            method:"POST",
+            datatype:"json",
+            data:{
+                token:$.cookie("dinge"),
+                userId:$(this).attr("data-value")
+            }
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //关注列表
+    $.ajax({
+        url:"/Api/getUserFocuslist",
+        method:"GET",
+        datatype:"json",
+        data:{
+            token:$.cookie("dinge")
+        }
+    }).success(function(data){
+        var _data = data.data;
+        var html = "";
+        for(var i = 0; i<_data.length;i++){
+            html+="<li>用户名："+_data[ i ].nickname+"</li>";
+        }
+        $(html).appendTo($(".focusList"));
+    });
+
+    $("#submitComment").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/commentMovie",
+            data:{
+                title:$("#title").val(),
+                content:$("#content").val(),
+                movie:"575ce9607d5db6a81924e106",
+                rank:8,
+                token:$.cookie("dinge")
+            },
+            datatype:"json"
+        }).success(function(data){
+            console.log(data);
+        });
+    });
+    $("#submit").click(function(){
+        $.ajax({
+            type:"post",
+            url:'/Api/signin',
+            data:{
+                email:$("#email").val(),
+                password:$("#password").val()
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+            if(data.status == 1){
+                $.cookie('dinge', data.data.token);
+            }
+        })
+    })
+    //所有评论我的人
+    $(".commentToMe").click(function(){
+       $.ajax({
+            type:"get",
+            url:'/Api/commentsToMe',
+            data:{
+                token:$.cookie('dinge')
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        }) 
+    })
+    //获取用户信息
+    $.ajax({
+        type:"get",
+        url:'/Api/getUserInfo',
+        data:{
+            token:$.cookie('dinge')
+        },
+        datatype:'json'
+    }).success(function(data){
+        console.log(data)
+    })
+    //编辑用户资料
+    $(".editUser").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/editUserInfo",
+            data:{
+                token:$.cookie("dinge"),
+                sex:"female",
+                sign:"缺的不行",
+                birthday:new Date("1992-06-18"),
+                avatar:"/titlePic/111.jpg",
+                city:"石家庄"
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    
+    
+})

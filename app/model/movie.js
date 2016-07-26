@@ -1,9 +1,9 @@
 /**
  * Created by Administrator on 2016-06-08.
  */
-var mongoose=require("mongoose")
-var Schema=mongoose.Schema
-var ObjectId=Schema.Types.ObjectId
+var mongoose=require("mongoose");
+var Schema=mongoose.Schema;
+var ObjectId=Schema.Types.ObjectId;
 var MovieSchema = new mongoose.Schema({
     title:String,
     etitle:String,
@@ -11,25 +11,25 @@ var MovieSchema = new mongoose.Schema({
         average:String,
         star:Number
     },
-    directors:[{
+    directors:[ {
         name:String
-    }],
-    casts:[{
+    } ],
+    casts:[ {
         name:String
-    }],
+    } ],
     releasetime:Date,
-    country:[{
+    country:[ {
         name:String
-    }],
-    genres:[{
+    } ],
+    genres:[ {
         name:String
-    }],
-    aka:[{
+    } ],
+    aka:[ {
         name:String
-    }],
-    language:[{
+    } ],
+    language:[ {
         name:String
-    }],
+    } ],
     actime:Number,
     images:{
         large:String,
@@ -38,28 +38,25 @@ var MovieSchema = new mongoose.Schema({
     }
 },{
     timestamps:true
-})
-MovieSchema.pre('save',function(next){
+});
+MovieSchema.pre("save",function(next){
     if(this.isNew) {
-        this.createdAt = this.updatedAt = Date.now()
+        this.createdAt = this.updatedAt = Date.now();
     }else{
-        this.updatedAt = Date.now()
+        this.updatedAt = Date.now();
     }
-    next()
-})
+    next();
+});
 MovieSchema.statics={
     fetch:function(){
         return this
             .find({})
-            .sort({'updatedAt':-1})
-            .exec()
+            .sort({"updatedAt":-1});
     },
     findById:function(id){
         return this
-            .findOne({_id:id})
-            .exec()
-
+            .findOne({_id:id});
     }
-}
-var Movie = mongoose.model('movie', MovieSchema)
-module.exports = Movie
+};
+var Movie = mongoose.model("movie", MovieSchema);
+module.exports = Movie;
