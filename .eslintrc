@@ -17,6 +17,7 @@
     "rules": {
         "camelcase": 2,
         "curly": 2,
+        "no-console":1,
         "no-var":0,
         "comma-dangle": ["error", "never"],
         "brace-style": [2, "1tbs"],
