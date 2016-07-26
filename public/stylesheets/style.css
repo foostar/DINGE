@@ -116,10 +116,10 @@ section{
 .home_block .home_details{width:300px;padding-right:20px;}
 .home_block .home_details .details1{font-size:24px;color:#a6aeb4;padding-top:12px;height:44px;text-align:right;}
 .home_block .home_details .details1 em{padding-right:6px;}
-.home_block .home_details .details1 span{color:#2e8dcf;background:url(../images/portrai1.png) no-repeat right 0;height:44px;display:inline-block;background-size:44px 44px;padding-right:56px;}
+.home_block .home_details .details1 span{color:#2e8dcf;height:44px;display:inline-block;background-size:44px 44px;padding-right:56px;background-image:url(carouse/head.png);background-repeat:no-repeat;background-position:right 0;}
 .home_block .home_details .details2{font-size:30px;background: url(../images/block2_bg.png) no-repeat right bottom;background-size:52px 44px;height:152px;padding-top:20px;}
 .home_block .home_num{overflow:hidden;padding-top:10px;}
-.home_block .home_num li{float:left;color:#a6aeb4;font-size:24px;}
+.home_block .home_num li{float:left;color:#a6aeb4;font-size:24px;width:98px;}
 .home_block .home_num li span{}
 
 .home_block2{width:640px;height:280px;background-color:#fdfcf8;border-bottom:1px solid #d0cfcd;overflow:hidden;}
@@ -139,20 +139,20 @@ footer{position:fixed;left:0;bottom:0;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
-.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;display:none;}
+.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 .footer li a.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 
 
-.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* .footer li a.tl_bg1{background:url(../images/iconTalkH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.tl_bg{background:url(../images/iconTalke.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;} */
 
-.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
-.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;display:none;}
+.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 .footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* --------------------------------message page start------------------------------------- */
@@ -164,29 +164,90 @@ footer{position:fixed;left:0;bottom:0;}
 .mes_pl .fs_span{background:url(../images/fans.png) no-repeat 36px center;}
 
 
+/* -------------------------------------user page start------------------------ */
+.user_n{height:160px;margin-bottom:40px;}
+.user_n .user_name{height:160px;line-height:160px;background:url(../images/portrait_Normal_L.png) no-repeat 36px center;padding-left:200px;}
+.user_line{width:600px;height:521px;border-top:1px solid #eae9e6;border-bottom:1px solid #eae9e6;padding:0 20px;}
+.user_l{height:86px;line-height:86px;border-bottom:1px solid #eae9e6;}
+.user_l span{font-size:32px;color:#55637c;background:url(../images/user_write.png) no-repeat 12px center;padding-left:100px;display:inline-block;height:86px;line-height:86px;}
+.user_like span{background:url(../images/write_like.png) no-repeat 12px center;}
+.user_sc span{background:url(../images/user_collection.png) no-repeat 12px center;}
+.user_history span{background:url(../images/user_history.png) no-repeat 12px center;}
+.user_draft span{background:url(../images/user_draft.png) no-repeat 12px center;}
+.user_night span{background:url(../images/user_night.png) no-repeat 12px center;}
+.user_night{border-bottom:0;}
+
+/* ---------------------------------------search page start ---------------------------*/
+.search{width:592px;height:88px;padding-left:48px;overflow:hidden;}
+.search li{height:88px;line-height:102px;float:left;}
+.search input{width:470px;height:48px;color:#fff;font-size:26px;border:0;background:#6b7d9c url(../images/find_find.png) no-repeat 405px center;padding-left:36px;}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:rgba(255,255,255,0.6);  
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:rgba(255,255,255,0.6);
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
+.search_erweima img{height:52px;padding:20px 0 0 32px;}
+
+.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;}
+.search_body li{float:left;width:261px;height:476px;}
+.search_body li img{width:261px;height:373px;}
+.search_body li:nth-of-type(odd){ margin-right:30px;}/* 奇数行 */   
+.search_body li:nth-of-type(even){margin:0}/* 偶数行 */
+.search_body li span{font-size:28px;color:#393939;width:261px;display:inline-block;text-align:center;padding-top:10px;}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* -----------------------------------------------书写页start----------------------------- */
+.write_back{overflow:hidden;padding:12px 10px 0;}
+.write_back li.w_back{float:left;}
+.write_back li.w_back a{display:inline-block;}
+.write_back li.w_done{float:right;}
+.w_movie,.w_title{border-bottom:1px solid #bfbfbd;background:url(../images/write_retractKeyboard.png) no-repeat right center;height:70px;width:584px;margin-top:26px;}
+.w_movie .w_text{background:url(../images/write_movie.png) no-repeat 10px center;font-size:28px;color:#3c3c3c;display:inline-block;height:70px;line-height:70px;padding-left:100px;}
+.w_star{width:584px;height:96px;line-height:150px;overflow:hidden;border-bottom:1px solid #bfbfbd;padding-left:10px;}
+.w_star span{float:left;display:inline-block;width:40px;height:96px;line-height:150px;margin-right:10px;}
+.w_star span img{width:40px;height:40px;}
+.w_title{background:none;overflow:hidden;}
+.w_title span{float:left;padding-left:10px;}
+.w_title form{float:left;width:440px;height:60px;border:0;margin-left:24px;}
+.w_title form input{width:440px;height:60px;outline:none;border:0;color:#ababae;font-size:28px;}
+.w_txtarea{width:496px;/* height:294px; */margin-top:30px;background:url(../images/write-write.png) no-repeat 10px top;padding-left:100px;font-size:28px;color:#ababae;border:0;outline:none;}
+/* ------------------------------searchMovie page start---------------------------------------- */
+.search li.search_cancel{font-size:30px;color:#fff;padding-left:26px;line-height:100px;}
+.search input.search_mov{border-radius:50px;height:50px;}
+.wrap{margin:0 42px;}
+.wrap .tag{overflow:hidden;}
+.wrap .tag li{width:154px;height:94px;text-align:center;line-height:112px;font-size:36px;float:left;margin-right:46px;color:rgba(255,255,255,0.6);}
+.wrap .tag li.tag_nomar{margin-right:0;}
+.wrap .tag li.current{border-bottom:2px solid #fff;color:#fff;}
+.search_tag1{}
+.search_tag1 ul{overflow:hidden;width:556px;height:176px;margin-top:42px;}
+.search_tag1 ul li.search_tag1img{float:left;width:124px;height:176px;margin-right:20px;}
+.search_tag1 ul li.search_tag1img img{width:124px;height:176px;}
+.search_tag1 ul li.search_tag1txt{float:left;color:#fff;width:412px;height:162px;padding-top:14px;}
+li.search_tag1txt .tag1_title{font-size:32px;}
+li.search_tag1txt .tag1_midtxt span{font-size:24px;margin-right:10px;}
+li.search_tag1txt .tag1_midtxt em{font-size:30px;}
+li.search_tag1txt .tag1_bnttxt{font-size:28px;}
+li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
+/* ----------------------searchMovie_review page start------------ */
+.review_div{color:#fff;padding:30px 0;border-bottom:1px solid rgba(255,255,255,0.6);}
+.review_div .review_title{font-size:32px;}
+.review_div span{display:inline-block;text-align:right;font-size:28px;width:556px;margin:10px 0;color:rgba(255,255,255,0.8);}
+.review_div p{font-size:16px;color:rgba(255,255,255,0.8);}
+/* ------------------------------serchMovie_user page start------------------------------- */
+.movie_user{height:120px;line-height:120px;padding-left:100px;color:#fff;font-size:28px;background:url(../images/portrait_Normal_M.png) no-repeat left center;background-size:72px 72px;border-bottom:1px solid rgba(255,255,255,0.6);}
 
 
 
