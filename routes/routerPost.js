@@ -9,6 +9,7 @@ var Regexp = require("../app/tools/regex");
 var Movie = require("../app/controller/movie");
 var Comment = require("../app/controller/comment");
 var Common = require("../app/controller/common");
+var Message = require("../app/controller/message");
 passport.serializeUser(function(user, cb) {
     cb(null, user._id);
 });
@@ -41,13 +42,14 @@ passport.use(new Strategy({usernameField:"email"},
                 if (!user) { 
                     return cb(null, false, {message:"用户不存在"}); 
                 }
-                user.comparePassword(password,function(err,isMatch){
+                return cb(null,user);
+                /*user.comparePassword(password,function(err,isMatch){
                     if(isMatch){
                         return cb(null,user);
                     }else{
                         return cb(null, false, {message:"密码不匹配"});
                     }
-                });
+                });*/
             });
     })
 );
@@ -57,40 +59,71 @@ module.exports = function(app) {
      *  @desc  未来可能要挪到后台的功能
      */
     app.get("/Api/getUserlist", User.showList);
+    /*
+     *  @desc  common
+     */
     //加载首页轮播图
-    app.get("/Api/getCarousels", Common.getCarousels);
+    app.get("/Api/common/getCarousels", Common.getCarousels);
+    /*
+     *  @desc  user相关
+     */
     //加载我关注的人
-    app.get("/Api/getUserFocuslist", User.focusList);
+    app.get("/Api/user/getUserFocuslist", User.focusList);
     //加载关注我的人
-    app.get("/Api/getUserFocusFromlist", User.focusFromList);
+    app.get("/Api/user/getUserFocusFromlist", User.focusFromList);
     //关注用户
-    app.post("/Api/FocusUser", User.focusUser);
+    app.post("/Api/user/FocusUser", User.focusUser);
     //取消关注用户
-    app.post("/Api/unFocusUser", User.unFocusUser);
+    app.post("/Api/user/unFocusUser", User.unFocusUser);
     //用户注册api
-    app.post("/Api/signup", User.signUp);
+    app.post("/Api/user/signup", User.signUp);
     //用户登录api
-    app.post("/Api/signin", User.signin);
-    //电影详情
-    app.get("/Api/movieFindOne", Movie.find);
-    //电影列表
-    app.get("/Api/showMovieList", Movie.find);
-    //搜索电影
-    app.get("/Api/serchMovie", Movie.search);
-    //评论电影
-    app.post("/Api/commentMovie", Comment.save);
-    //加载评论
-    app.get("/Api/getComments", Comment.getCommentsList);
-    //加载我的影评
-    app.get("/Api/myComments", Comment.getMyComments);
-    //评论别人的评论
-    app.post("/Api/addComments", Comment.addComments);
-    //查看评论详情
-    app.get("/Api/commentsDetail", Comment.commentDetail);
-    //查看评论我的
-    app.get("/Api/commentsToMe", Comment.commentsToMe);
+    app.post("/Api/user/signin", User.signin);
     //加载用户信息
-    app.get("/Api/getUserInfo", User.getUserInfo);
+    app.get("/Api/user/getUserInfo", User.getUserInfo);
     //编辑用户信息
-    app.post("/Api/editUserInfo", User.editUserInfo);
+    app.post("/Api/user/editUserInfo", User.editUserInfo);
+    //上传头像
+    app.post("/Api/user/getAvatar", User.getAvatar);
+    /*
+     *  @desc  movie相关
+     */
+    //电影详情
+    app.get("/Api/movie/movieFindOne", Movie.find);
+    //电影列表
+    app.get("/Api/movie/showMovieList", Movie.find);
+    //搜索电影
+    app.get("/Api/movie/serchMovie", Movie.search);
+    /*
+     *  @desc  comment相关
+     */
+    //评论电影
+    app.post("/Api/comment/commentMovie", Comment.save);
+    //加载评论
+    app.get("/Api/comment/getComments", Comment.getCommentsList);
+    //加载我的影评
+    app.get("/Api/comment/myComments", Comment.getMyComments);
+    //评论别人的评论
+    app.post("/Api/comment/addComments", Comment.addComments);
+    //查看评论详情
+    app.get("/Api/comment/commentsDetail", Comment.commentDetail);
+    //查看评论我的
+    app.get("/Api/comment/commentsToMe", Comment.commentsToMe);
+    //喜欢用户的评论
+    app.post("/Api/comment/addLike", Comment.addLike);
+    //收藏评论
+    app.post("/Api/comment/addCollet", Comment.addCollet);
+    //取消收藏评论
+    app.post("/Api/comment/unCollet", Comment.unCollet);
+    //查看我收藏的评论
+    app.get("/Api/comment/getMyCollet", Comment.getMyCollet);
+    /*
+     *  @desc  message相关
+     */
+    //发送私信
+    app.post("/Api/message/sendMessage", Message.sendMessage);
+    //私信列表
+    app.get("/Api/message/getMessageList", Message.getMessageList);
+    //查看私信详情
+    app.get("/Api/message/getMessageDetail", Message.getMessageDetail);
 };

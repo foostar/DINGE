@@ -6,6 +6,8 @@ var Tools = require("../tools/tool");
 var User = require("../model/user");
 var passport=require("passport");
 var jwt = require("jwt-simple");
+var fs = require("fs");
+var path = require("path");
 /*
  * 注册接口方法
  */
@@ -225,4 +227,38 @@ exports.editUserInfo = function(req, res){
                 return  res.json({status:1,msg:"修改成功"});
             });          
         });
+};
+/*
+ * @desc 上传用户头像
+ * @tip  需要使用token
+ */
+exports.getAvatar = function(req, res){
+    var token = req.body.token;
+    if(!token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var userId = jwt.decode(token, Tools.secret);
+    var posterData = req.files.poster;
+    var filePath = posterData.path;
+    var originalFilename = posterData.originalFilename;
+    if(originalFilename){
+        fs.readFile(filePath, function(err, data){
+            var timestamp = Date.now();
+            var type = posterData.type.split("/")[ 1 ];
+            var poster = timestamp + "." + type;
+            var newPath = path.join(__dirname, "../../", "public/carouse/"+poster);
+            fs.writeFile(newPath, data, function(err){
+                if(!err){
+                    User.findById(userId).exec()
+                        .then(function(result){
+                            result.avatar = newPath;
+                            return result.save();
+                        })
+                        .then(function(result){
+                            return res.json({status:1,url:result.avatar});
+                        });
+                }
+            });
+        });
+    }
 };

@@ -32,6 +32,16 @@
 	<div class="commentDetail"></div>
 	<h3 class="commentToMe">评论我的人</h3>
 	<h3 class="editUser">编辑用户资料</h3>
+	<a href="javescript:;" class="addLike">点赞</a>
+	<a href="javascript:;" class="addCollet">收藏</a><a href="javascript:;" class="unCollet">取消收藏</a>
+	<h3 class="getMyCollet">获取我收藏的评论</h3>
+	<h3 class="sendMessage">发送私信</h3>
+	<h3 class="checkMessage">查看详情</h3>
+	<form id="form" method="post" enctype="multipart/form-data" action="/Api/user/getAvatar">
+		<input type="file" name="poster">
+		<input type="hidden" id="token" name="token">
+		<input type="button" value="提交" id="submitform">
+	</form>
  	<script src="../js/test.js" type="text/javascript"></script>
 </body>
 </html>

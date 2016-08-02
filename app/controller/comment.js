@@ -130,33 +130,23 @@ exports.commentDetail = function(req, res){
     }
     Comment.findById(commentId).populate("reply.commentFrom reply.commentTo commentFrom","nickname avatar -_id").exec()
         .then(function(result){
-            var starful = false;
-            var colletful = false;
-            var starNumber = result.star.length
-            var colletNumber = result.collet.length
+            var colletful = true;
+            var starNumber = result.star;
+            var colletNumber = result.collet.length;
             if(!result){
                 return res.json({status:-1,msg:"缺少评论id"}); 
             }
             if(token == ""){
-                result.startful = false;
-                result.colletful = false;
-                return res.json({status:1,data:result,starful:starful,colletful:colletful,starNumber:starNumber,colletNumber:colletNumber}); 
+                result.colletful = true;
+                return res.json({status:1,data:result,colletful:colletful,starNumber:starNumber,colletNumber:colletNumber}); 
             }
             var userId = jwt.decode(token, Tools.secret);
-            console.log("userId",userId)
-            for(var i=0; i<result.star.length; i++){
-                console.log(result.star[ i ])
-                if(userId == result.star[ i ]){
-                    starful = true; 
-                }
-            }
             for(var j=0; j<result.collet.length; j++){
                 if(userId == result.collet[ j ]){
-                    colletful = true; 
+                    colletful = false; 
                 }
             }
-            return res.json({status:1,data:result,starful:starful,colletful:colletful,starNumber:starNumber,colletNumber:colletNumber}); 
-
+            return res.json({status:1,data:result,colletful:colletful,starNumber:starNumber,colletNumber:colletNumber}); 
         });
 };
 /*
@@ -196,3 +186,89 @@ exports.commentsToMe = function(req, res){
             }
         });
 };
+/*
+ * @desc 喜欢用户的评论
+ */
+exports.addLike = function(req, res){
+    if(!req.body.token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var commentId = req.body.commentId;
+    Comment.findById(commentId).exec()
+        .then(result => {
+            result.star = parseInt(result.star)+1;
+            return result.save();
+        })
+        .then(result => {
+            if(result) {
+                res.json({ status:1, star:result.star });
+            }
+        },err => {
+            if(err){
+                res.json({ status:-1, msg:"修改失败！" });
+            }
+        });
+};
+/*
+ * @desc 收藏用户的评论
+ */
+exports.addCollet = function(req, res){
+    if(!req.body.token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var token = req.body.token;
+    var commentId = req.body.commentId;
+    var userId = jwt.decode(token, Tools.secret);
+    var updateCommentP = Comment.update({_id:commentId},{ "$addToSet": { "collet": userId } }).exec();
+    var updateUserP = User.update({_id:userId},{ "$addToSet": { "collet": commentId } }).exec();
+    Promise.all([ updateCommentP, updateUserP ])
+        .then(([ updateComment, updateUser ]) => {
+            if(updateComment.n == 1 && updateUser.n == 1){
+                return res.json({status:1, msg:"修改成功"});
+            }
+            return res.json({status:-1, msg:"修改失败，请重试！"});
+        });
+};
+/*
+ * @desc 删除收藏的评论
+ */
+exports.unCollet = function(req, res){
+    if(!req.body.token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var token = req.body.token;
+    var commentId = req.body.commentId;
+    var userId = jwt.decode(token, Tools.secret);
+    var updateCommentP = Comment.update({_id:commentId},{ "$pull": { "collet": userId } }).exec();
+    var updateUserP = User.update({_id:userId},{ "$pull": { "collet": commentId } }).exec();
+    Promise.all([ updateCommentP, updateUserP ])
+        .then(([ updateComment, updateUser ]) => {
+            if(updateComment.n == 1 && updateUser.n == 1){
+                return res.json({status:1, msg:"修改成功"});
+            }
+            return res.json({status:-1, msg:"修改失败，请重试！"});
+        });
+};
+/*
+ * @desc 我收藏的评论
+ */
+exports.getMyCollet = function(req, res){
+    if(!req.query.token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var token = req.query.token;
+    var userId = jwt.decode(token, Tools.secret);
+    User.findById(userId).populate("collet","title content commentFrom createdAt").exec()
+        .then(result => {
+            if(result){
+                var opts = [ {
+                    path:"collet.commentFrom",
+                    select:"nickname avatar",
+                    model:"User"
+                } ];
+                User.populate(result, opts, function(err, populateDoc){
+                    return res.json({status:1,data:populateDoc.collet});
+                });
+            }
+        });
+}; 

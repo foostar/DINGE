@@ -5,7 +5,7 @@ $(function(){
     console.log($.cookie("dinge"))
     //加载首页评论
     $.ajax({
-        url:"/Api/getComments",
+        url:"/Api/comment/getComments",
         method:"GET",
         datatype:"json",
         data:{
@@ -16,7 +16,7 @@ $(function(){
     });
     //加载轮播图
     $.ajax({
-        url:"/Api/getCarousels",
+        url:"/Api/common/getCarousels",
         method:"GET",
         datatype:"json"
     }).success(function(data){
@@ -38,7 +38,7 @@ $(function(){
     //关注用户
     $(".userlist").on("click",".focus",function(){
         $.ajax({
-            url:"/Api/FocusUser",
+            url:"/Api/user/FocusUser",
             method:"POST",
             datatype:"json",
             data:{
@@ -51,7 +51,7 @@ $(function(){
     })
     //加载电影评论
     $.ajax({
-        url:"/Api/getComments",
+        url:"/Api/comment/getComments",
         method:"GET",
         datatype:"json",
         data:{
@@ -68,7 +68,7 @@ $(function(){
     //评论用户的评论
     $(".comments").on("click",".comment",function(){
         $.ajax({
-            url:"/Api/addComments",
+            url:"/Api/comment/addComments",
             method:"POST",
             datatype:"json",
             data:{
@@ -84,7 +84,7 @@ $(function(){
     //查看评论详情
     $(".checkCommentDetail").click(function(){
         $.ajax({
-            url:"/Api/commentsDetail",
+            url:"/Api/comment/commentsDetail",
             method:"GET",
             datatype:"json",
             data:{
@@ -98,7 +98,7 @@ $(function(){
     //取消关注用户
     $(".userlist").on("click",".unfocus",function(){
         $.ajax({
-            url:"/Api/unFocusUser",
+            url:"/Api/user/unFocusUser",
             method:"POST",
             datatype:"json",
             data:{
@@ -111,7 +111,7 @@ $(function(){
     })
     //关注列表
     $.ajax({
-        url:"/Api/getUserFocuslist",
+        url:"/Api/user/getUserFocuslist",
         method:"GET",
         datatype:"json",
         data:{
@@ -129,7 +129,7 @@ $(function(){
     $("#submitComment").click(function(){
         $.ajax({
             type:"post",
-            url:"/Api/commentMovie",
+            url:"/Api/comment/commentMovie",
             data:{
                 title:$("#title").val(),
                 content:$("#content").val(),
@@ -145,7 +145,7 @@ $(function(){
     $("#submit").click(function(){
         $.ajax({
             type:"post",
-            url:'/Api/signin',
+            url:'/Api/user/signin',
             data:{
                 email:$("#email").val(),
                 password:$("#password").val()
@@ -162,7 +162,7 @@ $(function(){
     $(".commentToMe").click(function(){
        $.ajax({
             type:"get",
-            url:'/Api/commentsToMe',
+            url:'/Api/comment/commentsToMe',
             data:{
                 token:$.cookie('dinge')
             },
@@ -174,7 +174,7 @@ $(function(){
     //获取用户信息
     $.ajax({
         type:"get",
-        url:'/Api/getUserInfo',
+        url:'/Api/user/getUserInfo',
         data:{
             token:$.cookie('dinge')
         },
@@ -186,7 +186,7 @@ $(function(){
     $(".editUser").click(function(){
         $.ajax({
             type:"post",
-            url:"/Api/editUserInfo",
+            url:"/Api/user/editUserInfo",
             data:{
                 token:$.cookie("dinge"),
                 sex:"female",
@@ -200,6 +200,105 @@ $(function(){
             console.log(data)
         })
     })
-    
+    //点赞
+    $(".addLike").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/comment/addLike",
+            data:{
+                token:$.cookie("dinge"),
+                commentId:"577f5baed1e87df41602b045"
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //收藏
+    $(".addCollet").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/comment/addCollet",
+            data:{
+                token:$.cookie("dinge"),
+                commentId:"577f5baed1e87df41602b045"
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //取消收藏
+    $(".unCollet").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/comment/unCollet",
+            data:{
+                token:$.cookie("dinge"),
+                commentId:"577f5baed1e87df41602b045"
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log("关注列表",data)
+        })
+    })
+    //我收藏的评论
+    $(".getMyCollet").click(function(){
+        $.ajax({
+            type:"get",
+            url:"/Api/comment/getMyCollet",
+            data:{ 
+                token:$.cookie("dinge")
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //发送私信
+    $(".sendMessage").click(function(){
+        $.ajax({
+            type:"post",
+            url:"/Api/message/sendMessage",
+            data:{ 
+                token:$.cookie("dinge"),
+                to:"577cc19cffd27d3c2f325c70",
+                content:"这是一条新的！ "
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //获取私信列表
+    $.ajax({
+        type:"get",
+        url:"/Api/message/getMessageList",
+        data:{ 
+            token:$.cookie("dinge"),
+        },
+        datatype:'json'
+    }).success(function(data){
+        console.log(data)
+    })
+    $(".checkMessage").click(function(){
+        $.ajax({
+            type:"get",
+            url:"/Api/message/getMessageDetail",
+            data:{ 
+                token:$.cookie("dinge"),
+                typeId:"5c705c6f"
+            },
+            datatype:'json'
+        }).success(function(data){
+            console.log(data)
+        })
+    })
+    //上传图片
+    $("#submitform").click(function(){
+        console.log("aaa")
+        $("#token").val($.cookie("dinge"))
+        $("#form").submit()
+    })
     
 })

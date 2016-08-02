@@ -31,7 +31,8 @@ var userSchema = new mongoose.Schema({
     },
     nickname:{
         unique:true,
-        type:String
+        type:String,
+        default:'小米加步枪'
     },
     avatar:{
         type:String,

@@ -23,9 +23,10 @@ var CommentSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-    star:[ {
-        type:ObjectId, ref:"User"
-    } ],
+    star:{
+        type:Number,
+        default:0
+    },
     collet:[ {
         type:ObjectId, ref:"User"
     } ],
