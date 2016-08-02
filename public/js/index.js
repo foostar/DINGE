@@ -100,7 +100,7 @@ $(function(){
     $.ajax({
         url:"../data/getCommentsByRight.json",
         type:"GET",
-        data:"",
+        data:{},
         datatype:"json",
         success:function(res){
             console.log(res.data);

@@ -1,0 +1,19 @@
+{
+	status: 1,
+	data: [
+		{
+			typeId: "5c705c6f",
+			username: "缺缺",
+			avatar: "/carouse/head.png",
+			content: "这是一条新的！ ",
+			readAble: false
+		},
+		{
+			typeId: "5c6f0ec6",
+			username: "小米加步枪",
+			avatar: "/carouse/head.png",
+			content: "hi！美女，约么？ ",
+			readAble: false
+		}
+	]
+}

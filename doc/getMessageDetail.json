@@ -1,0 +1,21 @@
+{
+	_id: "5799b99b685933b003fb61d6",
+	updatedAt: "2016-08-02T09:20:46.401Z",
+	createdAt: "2016-07-28T07:51:55.106Z",
+	from: {
+		_id: "577cc175ffd27d3c2f325c6f",
+		avatar: "F:\Dinge\public\carouse\1469707712208.jpeg",
+		nickname: "lovesong"
+	},
+	fromStr: "577cc175ffd27d3c2f325c6f",
+	to: {
+		_id: "577cc19cffd27d3c2f325c70",
+		avatar: "/carouse/head.png",
+		nickname: "缺缺"
+	},
+	toStr: "577cc19cffd27d3c2f325c70",
+	typeId: "5c705c6f",
+	content: "呵呵呵！ ",
+	__v: 0,
+	readAble: true
+},
