@@ -53,7 +53,8 @@ $(function(){
         window.location.href=host+"/views/search.html"; 
     });
 
-
+    // 加载footer资源
+    $("#footer").load("../views/footer.html");
 
 /*---------------------home page 轮播图接口------------------------------*/
     $.ajax({
