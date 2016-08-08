@@ -7,6 +7,31 @@
 var $ = window.jQuery;
 var TouchSlide = window.TouchSlide;
 $(function(){
+    if (!Array.prototype.forEach) {  
+        Array.prototype.forEach = function(callback, thisArg) {  
+            var T, k;  
+            if (this == null) {  
+                throw new TypeError(" this is null or not defined");  
+            }  
+            var O = Object(this);  
+            var len = O.length >>> 0; // Hack to convert O.length to a UInt32  
+            if ({}.toString.call(callback) != "[object Function]") {  
+                throw new TypeError(callback + " is not a function");  
+            }  
+            if (thisArg) {  
+                T = thisArg;  
+            }  
+            k = 0;  
+            while (k < len) {  
+                var kValue;  
+                if (k in O) {  
+                    kValue = O[ k ];  
+                    callback.call(T, kValue, k, O);  
+                }  
+                k++;  
+            }  
+        };  
+    } 
     $("#submitComment").click(function(){
         $.ajax({
             type:"post",
@@ -104,12 +129,10 @@ $(function(){
         data:{},
         datatype:"json",
         success:function(res){
-            console.log(res.data);
             //console.log(res.data[0].commentFrom.nickname);
             $(res.data).each(function(i,ele){
                 var monent = ele.createdAt;
                 var monsubstr=monent.substr(0, 10);
-                console.log(monsubstr);
                 //获取当前时间，格式YYYY-MM-DD
                 function getNowFormatDate() {
                     var date = new Date();

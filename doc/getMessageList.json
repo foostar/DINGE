@@ -6,6 +6,7 @@
 			username: "缺缺",
 			avatar: "/carouse/head.png",
 			content: "这是一条新的！ ",
+			createdAt:"2016-08-02T09:20:46.401Z"
 			readAble: false
 		},
 		{
@@ -13,6 +14,7 @@
 			username: "小米加步枪",
 			avatar: "/carouse/head.png",
 			content: "hi！美女，约么？ ",
+			createdAt:"2016-07-28T07:51:55.106Z"
 			readAble: false
 		}
 	]
