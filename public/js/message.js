@@ -6,6 +6,9 @@ $(function(){
     var mySwiper;
     $(".swiper-container").height($(window).height()-202);
     var cookie = "577cc175ffd27d3c2f325c6f";
+    $(".swiper-slide").tap(function(){
+        console.log("aaa")
+    })
     // 加载数据
     loadMessage(page)
     // 拼凑数据
@@ -20,10 +23,12 @@ $(function(){
                     frome = "swiper-from";
                     direction = "right";
                 }
-                html += "<div class='swiper-slide "+frome+"'>"
-                            +"<div class='dialog_carouse'><img src='"+item.from.avatar+"'/></div>"
-                            +"<div class='triangle-"+direction+"'></div>"
-                            +"<div class='dialog_content'>"+item.content+"</div>"
+                html += "<div class='swiper-slide'>"
+                            +"<div class='swiper-slide-warpper "+frome+"'>"
+                                +"<div class='dialog_carouse'><img src='"+item.from.avatar+"'/></div>"
+                                +"<div class='triangle-"+direction+"'></div>"
+                                +"<div class='dialog_content'>"+item.content+"</div>"
+                            +"</div>"
                         +"</div>";
             });
             $(".swiper-wrapper").prepend($(html));
@@ -74,7 +79,7 @@ $(function(){
                                         direction = "right";
                                     }
                                     mySwiper.prependSlide(
-                                        "<div class='swiper-slide "+frome+"'>"
+                                        "<div class='swiper-slide-warpper "+frome+"'>"
                                             +"<div class='dialog_carouse'><img src='"+item.from.avatar+"'/></div>"
                                             +"<div class='triangle-"+direction+"'></div>"
                                             +"<div class='dialog_content'>"+item.content+"</div>"

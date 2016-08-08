@@ -300,10 +300,10 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
   width: 100%;
   overflow:hidden;
 }
-.swiper-slide>div{
+.swiper-slide-warpper>div{
 	float:left;
 }
-.swiper-slide .title {
+.swiper-slide-warpper .title {
   font-style: italic;
   font-size: 42px;
 }
@@ -326,10 +326,10 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .swiper-from>div{
 	float:right
 }
-.swiper-slide .dialog_carouse{margin-left:25px;margin-right: 10px}
+.swiper-slide-warpper .dialog_carouse{margin-left:25px;margin-right: 10px}
 .swiper-from .dialog_carouse{margin-right:25px;margin-left:10px}
 .dialog_carouse,.dialog_carouse img{width:98px;height:98px;border-radius: 50%}
-.swiper-slide .dialog_content{background:#f3f3f3}
+.swiper-slide-warpper .dialog_content{background:#f3f3f3}
 .swiper-from .dialog_content{background:#b2f074}
 .user-input{width:390px;height:50px;margin-top:30px;font-size:24px;border:1px solid #55637C;border-radius: 8px;}
 .send{width:100px;height:50px;margin-top:30px;font-size:24px;}
