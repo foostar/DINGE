@@ -36,12 +36,15 @@ $(function(){
     });
 
 
-    var host = "http://localhost:3008";
+   /* var host = "http://localhost:3008";
     $("footer .xx_bg").click(function(){
-        window.location.href = host+"/views/message.html"; 
+       
+        window.location.href = host+"/views/message.html";
+
     });
 
     $("footer .sy_bg").click(function(){
+        // console.log($(this).attr("class"));
         window.location.href = host+"/views/home.html"; 
     });
 
@@ -51,51 +54,26 @@ $(function(){
 
     $("footer .fx_bg").click(function(){
         window.location.href=host+"/views/search.html"; 
-    });
+    });*/
 
     // 加载footer资源
     $("#footer").load("../views/footer.html");
+    $("#footer").click(function(e){
+        var target = e.target;
+        if(target.nodeName === "LI"){            
+               /* var oul = $(this);
+                var current_ele = oul.find("li.on");   
+                //console.log(current_ele.attr("status_off"));     
+                current_ele.attr("class",current_ele.attr("status_off"));*/
+                
+            /*for(var i=0;i<target.length;i++){
 
-/*---------------------home page 轮播图接口------------------------------*/
-    $.ajax({
-        url:"../data/getCarousels.json",
-        type:"GET",
-        data:"",
-        datatype:"json",
-        success: function(res){
-            //console.log(res.data[0].url);
-            //console.log(res);
-            //console.log(res.data);
-            var oul = $("#slide_ul"),
-                    childNodes = oul[ 0 ].childNodes,
-                    temp = "",
-                    arr = [];
-            for(var i=0,len=childNodes.length;i<len;i++){
-                var element = childNodes[ i ];
-                if(element.nodeType == 8){
-                    temp = element.nodeValue;
-                    break;
-                }
-            }
-
-            $(res.data).each(function(i,ele){
-                var _url = ele.url;
-                arr.push(temp.replace(/\%s/,_url).replace(/\%t/,_url));
-            });
-            oul.html(arr.join(""));
-            setTimeout(function(){
-                TouchSlide({ 
-                    slideCell:"#slideBox",
-                    titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-                    mainCell:".bd ul", 
-                    effect:"leftLoop", 
-                    autoPage:true,//自动分页
-                    autoPlay:true //自动播放
-                });
-            },100);
-
+            }*/
+            $(this).attr("class","status_on");
         }
     });
+
+
 
 /*---------------------------------------home page 首页评论 start--------------------------------*/
     $.ajax({

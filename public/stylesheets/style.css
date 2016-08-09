@@ -137,23 +137,23 @@ section{
 /* 底部导航部分 */
 footer{position:fixed;left:0;bottom:0;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
-.footer li{width:160px;height:112px;float:left;text-align:center;}
-.footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
-.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
-.footer li a.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li{width:160px;height:112px;float:left;text-align:center;font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
+.footer li a{}
+.footer li.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 
 
-.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li a.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* .footer li a.tl_bg1{background:url(../images/iconTalkH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.tl_bg{background:url(../images/iconTalke.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;} */
 
-.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li a.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
-.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* --------------------------------message page start------------------------------------- */
 .mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;}
@@ -178,7 +178,7 @@ footer{position:fixed;left:0;bottom:0;}
 .user_night{border-bottom:0;}
 
 /* ---------------------------------------search page start ---------------------------*/
-.search{width:592px;height:88px;padding-left:48px;overflow:hidden;}
+.search{width:592px;height:88px;padding-left:48px;overflow:hidden;background-color:#55637c;position:fixed;top:0;left:0;z-index:9999;}
 .search li{height:88px;line-height:102px;float:left;}
 .search input{width:470px;height:48px;color:#fff;font-size:26px;border:0;background:#6b7d9c url(../images/find_find.png) no-repeat 405px center;padding-left:36px;}
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
@@ -200,7 +200,7 @@ textarea::-webkit-input-placeholder {
 }
 .search_erweima img{height:52px;padding:20px 0 0 32px;}
 
-.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;}
+.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;position:absolute;left:0;top:88px;}
 .search_body li{float:left;width:261px;height:476px;}
 .search_body li img{width:261px;height:373px;}
 .search_body li:nth-of-type(odd){ margin-right:30px;}/* 奇数行 */   
