@@ -35,8 +35,13 @@ $(function(){
         });
     });
 
+<<<<<<< HEAD
 
    /* var host = "http://localhost:3008";
+=======
+    $("#footer").load("../views/footer.html");
+    var host = "http://localhost:3008";
+>>>>>>> a38f32a6df8d38e685b7279fcb23bdd4811a666b
     $("footer .xx_bg").click(function(){
        
         window.location.href = host+"/views/message.html";
@@ -56,6 +61,7 @@ $(function(){
         window.location.href=host+"/views/search.html"; 
     });*/
 
+<<<<<<< HEAD
     // 加载footer资源
     $("#footer").load("../views/footer.html");
     $("#footer").click(function(e){
@@ -70,6 +76,48 @@ $(function(){
 
             }*/
             $(this).attr("class","status_on");
+=======
+    
+
+/*---------------------home page 轮播图接口------------------------------*/
+    $.ajax({
+        url:"../data/getCarousels.json",
+        type:"GET",
+        data:"",
+        datatype:"json",
+        success: function(res){
+            //console.log(res.data[0].url);
+            //console.log(res);
+            //console.log(res.data);
+            var oul = $("#slide_ul"),
+                    childNodes = oul[ 0 ].childNodes,
+                    temp = "",
+                    arr = [];
+            for(var i=0,len=childNodes.length;i<len;i++){
+                var element = childNodes[ i ];
+                if(element.nodeType == 8){
+                    temp = element.nodeValue;
+                    break;
+                }
+            }
+
+            $(res.data).each(function(i,ele){
+                var _url = ele.url;
+                arr.push(temp.replace(/\%s/,_url).replace(/\%t/,_url));
+            });
+            oul.html(arr.join(""));
+            setTimeout(function(){
+                TouchSlide({ 
+                    slideCell:"#slideBox",
+                    titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
+                    mainCell:".bd ul", 
+                    effect:"leftLoop", 
+                    autoPage:true,//自动分页
+                    autoPlay:true //自动播放
+                });
+            },100);
+
+>>>>>>> a38f32a6df8d38e685b7279fcb23bdd4811a666b
         }
     });
 
@@ -82,12 +130,10 @@ $(function(){
         data:{},
         datatype:"json",
         success:function(res){
-            console.log(res.data);
             //console.log(res.data[0].commentFrom.nickname);
             $(res.data).each(function(i,ele){
                 var monent = ele.createdAt;
                 var monsubstr=monent.substr(0, 10);
-                console.log(monsubstr);
                 //获取当前时间，格式YYYY-MM-DD
                 function getNowFormatDate() {
                     var date = new Date();
