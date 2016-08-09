@@ -1,14 +1,12 @@
 var $ = window.jQuery;
 var Swiper = window.Swiper;
+var dingeTools = window.dingeTools;
 $(function(){
     var holdPosition = 0;
     var page = 0;
     var mySwiper;
     $(".swiper-container").height($(window).height()-202);
     var cookie = "577cc175ffd27d3c2f325c6f";
-    $(".swiper-slide").tap(function(){
-        console.log("aaa")
-    })
     // 加载数据
     loadMessage(page)
     // 拼凑数据
@@ -26,7 +24,7 @@ $(function(){
                 html += "<div class='swiper-slide'>"
                             +"<div class='swiper-slide-warpper "+frome+"'>"
                                 +"<div class='dialog_carouse'><img src='"+item.from.avatar+"'/></div>"
-                                +"<div class='triangle-"+direction+"'></div>"
+                                +"<div data-to='"+item.to._id+"' class='triangle-"+direction+"'></div>"
                                 +"<div class='dialog_content'>"+item.content+"</div>"
                             +"</div>"
                         +"</div>";
@@ -36,8 +34,6 @@ $(function(){
     })
     .done(function(result){
         if(result.status == 1 && page == 0){
-            console.log("只运行一次");
-
             mySwiper = new Swiper(".swiper-container",{
                 slidesPerView:"auto",
                 mode:"vertical",
@@ -94,6 +90,7 @@ $(function(){
 
                                 //Hide loader
                                 $(".preloader").removeClass("visible");
+                                page++;
                             }
                         });
                     }
@@ -107,34 +104,37 @@ $(function(){
         var messageInput = $.trim($("#message_input").val());
         var src = $(".triangle-right").parent().find("img").attr("src");
         event.preventDefault();
-        $.ajax({
-            url:"../data/sendMessage.json",
-            method:"GET",
-            data:{
-                token:$.cookie("dinge"),
-                to:"aaa",
-                content:messageInput
-            },
-            dataType:"json"
-        }).done(function(result){
-            if(result.status == 1){
-                mySwiper.appendSlide(
-                    "<div class='swiper-slide swiper-from'>"
-                        +"<div class='dialog_carouse'><img src='"+src+"'/></div>"
-                        +"<div class='triangle-right'></div>"
-                        +"<div class='dialog_content'>"+messageInput+"</div>"
-                    +"</div>"
-                );
-                var swiperHeight = $(".swiper-wrapper").height();
-                var containerHeight = mySwiper.height;
-                if(swiperHeight > containerHeight){
-                    var transition = "-"+(swiperHeight-containerHeight);
-                    mySwiper.setWrapperTranslate(0,transition,0);
+        if(messageInput){
+            var toId = $(".triangle-left").attr("data-to");
+            $.ajax({
+                url:"../data/sendMessage.json",
+                method:"GET",
+                data:{
+                    token:$.cookie("dinge"),
+                    to:toId,
+                    content:messageInput
+                },
+                dataType:"json"
+            }).done(function(result){
+                if(result.status == 1){
+                    mySwiper.appendSlide(
+                        "<div class='swiper-slide swiper-from'>"
+                            +"<div class='dialog_carouse'><img src='"+src+"'/></div>"
+                            +"<div class='triangle-right'></div>"
+                            +"<div class='dialog_content'>"+messageInput+"</div>"
+                        +"</div>"
+                    );
+                    var swiperHeight = $(".swiper-wrapper").height();
+                    var containerHeight = mySwiper.height;
+                    if(swiperHeight > containerHeight){
+                        var transition = "-"+(swiperHeight-containerHeight);
+                        mySwiper.setWrapperTranslate(0,transition,0);
+                    }
+                    mySwiper.params.onlyExternal=false;
+                    $("#message_input").val("");
                 }
-                mySwiper.params.onlyExternal=false;
-                $("#message_input").val("");
-            }
-        });
+            });
+        }  
     });
     function loadMessage(page){
         return  $.ajax({
@@ -142,7 +142,8 @@ $(function(){
             method:"GET",
             data:{
                 token:$.cookie("dinge"),
-                page:page
+                page:page,
+                typeId:dingeTools.getQueryString("mId")
             },
             dataType:"json"
         });

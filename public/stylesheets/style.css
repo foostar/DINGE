@@ -134,7 +134,7 @@ section{
 .home_block2 .home_num li{float:left;color:#a6aeb4;font-size:24px;}
 .home_block2 .home_num li span{}
 /* 底部导航部分 */
-footer{position:fixed;left:0;bottom:0;z-index:100;}
+footer{position:absolute;left:0;bottom:0;z-index:100;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
@@ -155,7 +155,8 @@ footer{position:fixed;left:0;bottom:0;z-index:100;}
 .footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* --------------------------------message page start------------------------------------- */
-.mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;position:absolute;top:0;left:0;background:#fff;z-index:100}
+.mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;}
+.fix_title{position:absolute;top:0;left:0;background:#fff;z-index:100}
 .mes_pl{width:640px;height:118px;border-bottom:1px solid #a4a4a4;background:url(../images/ahead.png) no-repeat 560px center;}
 .mes_pl a{display: block}
 .mes_pl .pl_span,.mes_pl .sx_span,.mes_pl .xh_span,.mes_pl .fs_span{font-size:32px;color:#55637c;height:118px;line-height:118px;display:inline-block;padding-left:110px;background:url(../images/comment.png) no-repeat 36px center;}
@@ -252,7 +253,6 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .preloader {
   position: absolute;
   left: 0;
-  top: 0;
   z-index: 0;
   color: #fff;
   text-align: center;
@@ -268,10 +268,15 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
   transition: 300ms;
   background: rgba(0,0,0,0.1);
 }
-.preloader.visible {
+.visible {
   top: 90px;
   z-index:20;
   opacity: 1;
+}
+.prebottom.visible_bottom {
+    bottom:112px;
+    z-index:20;
+    opacity: 1;
 }
 .swiper-container {
   width: 100%;
@@ -310,11 +315,10 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 
 
 /* ----------------------message page start------------ */
-.message_list_wrap{height:100%;padding:88px 45px 112px;position:relative;overflow:auto;}
-.message_list_wrap>ul{overflow: auto}
-.message_list_wrap li{width:100%;height:80px;border-bottom:2px solid #efefef;padding:14px 0;overflow:hidden;}
-.message_list_wrap li>a{display:block;color:#333}
-.message_list_wrap li>a>div{float:left}
+.message_list_slide{width:100%;height:80px;border-bottom:2px solid #efefef;padding:14px 0;overflow:hidden;}
+.message_list_slide>a{display:block;color:#333}
+.message_list_slide>a>div{float:left}
+.message_carouse{padding-left:45px;}
 .message_carouse,.message_carouse img{width:80px;height:80px;border-radius: 50%;margin-right:20px;}
 .message_list{position:relative;width:440px}
 .message_date{position: absolute;right:5px;top:5px;font-family: "PingFang SC Light",arial;font-size:20px;}
@@ -323,9 +327,7 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .message_detail .swiper-slide{padding-top:25px}
 .goback{position:absolute;left:40px;top:13.5px;}
 .goback a{display:block}
-.swiper-from>div{
-	float:right
-}
+.swiper-from>div{float:right}
 .swiper-slide-warpper .dialog_carouse{margin-left:25px;margin-right: 10px}
 .swiper-from .dialog_carouse{margin-right:25px;margin-left:10px}
 .dialog_carouse,.dialog_carouse img{width:98px;height:98px;border-radius: 50%}

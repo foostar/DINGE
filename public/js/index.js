@@ -7,31 +7,6 @@
 var $ = window.jQuery;
 var TouchSlide = window.TouchSlide;
 $(function(){
-    if (!Array.prototype.forEach) {  
-        Array.prototype.forEach = function(callback, thisArg) {  
-            var T, k;  
-            if (this == null) {  
-                throw new TypeError(" this is null or not defined");  
-            }  
-            var O = Object(this);  
-            var len = O.length >>> 0; // Hack to convert O.length to a UInt32  
-            if ({}.toString.call(callback) != "[object Function]") {  
-                throw new TypeError(callback + " is not a function");  
-            }  
-            if (thisArg) {  
-                T = thisArg;  
-            }  
-            k = 0;  
-            while (k < len) {  
-                var kValue;  
-                if (k in O) {  
-                    kValue = O[ k ];  
-                    callback.call(T, kValue, k, O);  
-                }  
-                k++;  
-            }  
-        };  
-    } 
     $("#submitComment").click(function(){
         $.ajax({
             type:"post",
@@ -78,8 +53,7 @@ $(function(){
         window.location.href=host+"/views/search.html"; 
     });
 
-    // 加载footer资源
-    $("#footer").load("../views/footer.html");
+    
 
 /*---------------------home page 轮播图接口------------------------------*/
     $.ajax({
