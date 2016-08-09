@@ -35,7 +35,7 @@ $(function(){
         });
     });
 
-
+    $("#footer").load("../views/footer.html");
     var host = "http://localhost:3008";
     $("footer .xx_bg").click(function(){
         window.location.href = host+"/views/message.html"; 
