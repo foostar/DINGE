@@ -35,10 +35,13 @@ $(function(){
         });
     });
 
+
+    // 加载footer资源
     $("#footer").load("../views/footer.html");
-    var host = "http://localhost:3008";
-    $("footer .xx_bg").click(function(){
-        window.location.href = host+"/views/message.html"; 
+
+    /*var host = "http://localhost:3008";
+    $("footer .xx_bg").click(function(){       
+        window.location.href = host+"/views/message.html";
     });
 
     $("footer .sy_bg").click(function(){
@@ -51,9 +54,11 @@ $(function(){
 
     $("footer .fx_bg").click(function(){
         window.location.href=host+"/views/search.html"; 
-    });
+    });*/
 
-    
+
+
+
 
 /*---------------------home page 轮播图接口------------------------------*/
     $.ajax({
@@ -95,6 +100,8 @@ $(function(){
 
         }
     });
+
+
 
 /*---------------------------------------home page 首页评论 start--------------------------------*/
     $.ajax({

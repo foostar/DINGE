@@ -134,7 +134,9 @@ section{
 .home_block2 .home_num li{float:left;color:#a6aeb4;font-size:24px;}
 .home_block2 .home_num li span{}
 /* 底部导航部分 */
+
 #footer{position:absolute;left:0;bottom:0;z-index:100;}
+footer{position:fixed;left:0;bottom:0;z-index:9999;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
@@ -181,7 +183,7 @@ section{
 .user_night{border-bottom:0;}
 
 /* ---------------------------------------search page start ---------------------------*/
-.search{width:592px;height:88px;padding-left:48px;overflow:hidden;}
+.search{width:592px;height:88px;padding-left:48px;overflow:hidden;background-color:#55637c;position:fixed;top:0;left:0;z-index:9999;}
 .search li{height:88px;line-height:102px;float:left;}
 .search input{width:470px;height:48px;color:#fff;font-size:26px;border:0;background:#6b7d9c url(../images/find_find.png) no-repeat 405px center;padding-left:36px;}
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
@@ -203,7 +205,7 @@ textarea::-webkit-input-placeholder {
 }
 .search_erweima img{height:52px;padding:20px 0 0 32px;}
 
-.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;}
+.search_body{width:552px;background-color:#fff;padding:48px 44px;overflow:hidden;position:absolute;left:0;top:88px;}
 .search_body li{float:left;width:261px;height:476px;}
 .search_body li img{width:261px;height:373px;}
 .search_body li:nth-of-type(odd){ margin-right:30px;}/* 奇数行 */   

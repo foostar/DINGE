@@ -79,7 +79,7 @@ $(function(){
                             if(result.status == 1){
                                 var data = result.data;
                                 data.forEach(function(item){
-                                    mySwiper.prependSlide(
+                                    mySwiper.appendSlide(
                                         "<div class='myfocus'>"
                                             +"<div class='myfocus-slide'>"
                                                 +"<div class='focus_carouse'>"
@@ -111,10 +111,7 @@ $(function(){
             page++;
         }    
     });
-
-
     $(".swiper-wrapper").on("swipeLeft",".swiper-slide", function(event){
-        event.preventDefault();
         $(this).find(".myfocus-slide").addClass("myfocus-slide-left");
         $(this).find(".del_focus").addClass("del_focus_visible");
     });
@@ -178,4 +175,7 @@ $(function(){
             dataType:"json"
         });
     }
+    document.addEventListener("touchmove", function (event) {
+        event.preventDefault();
+    }, false);
 });
