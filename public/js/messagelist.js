@@ -101,6 +101,6 @@ $(function(){
                 page:page
             },
             dataType:"json"
-        })
+        });
     }
 });

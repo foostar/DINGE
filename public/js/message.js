@@ -131,7 +131,9 @@ $(function(){
                         mySwiper.setWrapperTranslate(0,transition,0);
                     }
                     mySwiper.params.onlyExternal=false;
-                    $("#message_input").val("");
+                    dingeTools.resetForm({
+                        formId:"sendMessage"
+                    });
                 }
             });
         }  
