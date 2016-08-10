@@ -35,21 +35,16 @@ $(function(){
         });
     });
 
-<<<<<<< HEAD
 
-   /* var host = "http://localhost:3008";
-=======
+    // 加载footer资源
     $("#footer").load("../views/footer.html");
-    var host = "http://localhost:3008";
->>>>>>> a38f32a6df8d38e685b7279fcb23bdd4811a666b
-    $("footer .xx_bg").click(function(){
-       
-        window.location.href = host+"/views/message.html";
 
+    /*var host = "http://localhost:3008";
+    $("footer .xx_bg").click(function(){       
+        window.location.href = host+"/views/message.html";
     });
 
     $("footer .sy_bg").click(function(){
-        // console.log($(this).attr("class"));
         window.location.href = host+"/views/home.html"; 
     });
 
@@ -61,23 +56,9 @@ $(function(){
         window.location.href=host+"/views/search.html"; 
     });*/
 
-<<<<<<< HEAD
-    // 加载footer资源
-    $("#footer").load("../views/footer.html");
-    $("#footer").click(function(e){
-        var target = e.target;
-        if(target.nodeName === "LI"){            
-               /* var oul = $(this);
-                var current_ele = oul.find("li.on");   
-                //console.log(current_ele.attr("status_off"));     
-                current_ele.attr("class",current_ele.attr("status_off"));*/
-                
-            /*for(var i=0;i<target.length;i++){
 
-            }*/
-            $(this).attr("class","status_on");
-=======
-    
+
+
 
 /*---------------------home page 轮播图接口------------------------------*/
     $.ajax({
@@ -117,7 +98,6 @@ $(function(){
                 });
             },100);
 
->>>>>>> a38f32a6df8d38e685b7279fcb23bdd4811a666b
         }
     });
 

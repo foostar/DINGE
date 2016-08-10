@@ -134,25 +134,25 @@ section{
 .home_block2 .home_num li{float:left;color:#a6aeb4;font-size:24px;}
 .home_block2 .home_num li span{}
 /* 底部导航部分 */
-footer{position:absolute;left:0;bottom:0;z-index:100;}
+footer{position:fixed;left:0;bottom:0;z-index:9999;}
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
-.footer li{width:160px;height:112px;float:left;text-align:center;font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
-.footer li a{}
-.footer li.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
-.footer li.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li{width:160px;height:112px;float:left;text-align:center;}
+.footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
+.footer li a.sy_bg{background:url(../images/iconHome.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li a.sy_bg1{background:url(../images/iconHomeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
 
 
-.footer li.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li a.fx_bg1{background:url(../images/iconFindH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li a.fx_bg{background:url(../images/iconFind.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* .footer li a.tl_bg1{background:url(../images/iconTalkH.png) no-repeat center 12px;background-size:24px 24px;color:#55637c;display:none;}
 .footer li a.tl_bg{background:url(../images/iconTalke.png) no-repeat center 12px;background-size:24px 24px;color:#adb3bf;} */
 
-.footer li.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li a.xx_bg1{background:url(../images/iconMessegeH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li a.xx_bg{background:url(../images/iconMessege.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
-.footer li.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
-.footer li.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
+.footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center 24px;background-size:48px 48px;color:#55637c;}
+.footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center 24px;background-size:48px 48px;color:#adb3bf;}
 
 /* --------------------------------message page start------------------------------------- */
 .mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;}
