@@ -7,7 +7,8 @@ input,button,textarea,select,optgroup,option{font-family:inherit;font-size:inher
 fieldset,img,a img,:link img,:visited img{border:0}
 a{text-decoration:none;-webkit-tap-highlight-color: rgba(255,255,255,0);}
 
-
+.border_bnt{border-bottom:1px solid #efeeea;}
+.mar_28{margin:0 28px;}
 /*index背景图*/
 #headerLogo{
 	height: 460px;
@@ -339,11 +340,30 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .triangle-left {width:0;height:0;border-top:20px solid transparent;border-bottom:20px solid transparent;border-right:20px solid #f3f3f3;margin-top:30px;}
 .triangle-right {width:0;height:0;border-top:20px solid transparent;border-bottom:20px solid transparent;border-left:20px solid #b2f074;margin-top:30px;}
 
-
-
-
-
-
-
-
-
+/* 他人资料页面 */
+.other_fixed{position:fixed;top:0;left:0;z-index:999;background-color:#fff;width:640px;}
+.other_36{padding-bottom:36px;}
+.other_ul{overflow:hidden;padding:12px 10px 0;}
+.other_le{float:left;}
+.other_le a{display:inline-block;}
+.other_ri{float:right;width:52px;height:52px;background:url(../images/comment_more.png) no-repeat;}
+.other_ul2{overflow: hidden;margin:30px 0 24px;}
+.other_ul2 li{float:left;font-size:24px;color:#55637c;}
+.other_le2{}
+.other_le2 img{width:122px;height:122px;border-radius:50%;display:block;}
+.other_cen2{padding: 28px 0 0 300px;}
+.other_ri2{padding:28px 0 0 46px;}
+.other_cen2 span,.other_ri2 span{display:block;}
+.other_ul3{overflow:hidden;font-size:24px;color:#55637c;margin-bottom:20px;}
+.other_ul3 li{}
+.other_le3{float:left;width:360px;height:52px;}
+.other_le3 em{float:left;line-height:52px;padding-right:30px;}
+.other_le3 img{float:left;}
+.other_ri3{float:right;width:150px;height:40px;border-radius:6px;border:1px solid #55637c;line-height:40px;text-align:center;}
+.other_p{font-size:24px;color:#55637c;}
+.other_img{width:52px;height:52px;line-height:52px;background:url(../images/write-write.png) no-repeat left center;font-size:24px;color:#ccc;padding-left:68px;}
+.other_mar_386{margin-top:386px;}
+.other_pinglun{border-bottom:1px solid #efeeea;}
+.other_pad_30{padding-top:30px;}
+.other_pinglun h4{font-size:30px;color:#55637c;margin-top:30px;}
+.other_pinglun p{font-size:24px;color:#828893;height:78px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:24px 0;}
