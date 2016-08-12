@@ -73,7 +73,7 @@ var jQuery = window.jQuery
                         }
                     });
                 }
-                if(select){
+                if(select.length>0){
                     select.val(select.find("option")[ 0 ].val());
                 }
                 if(counter){
