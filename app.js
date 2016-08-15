@@ -38,7 +38,6 @@ if (app.get("env") === "development") {
         send(req, path.join(__dirname, "public/404.html")).pipe(res);
     });
 }
-
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res) {

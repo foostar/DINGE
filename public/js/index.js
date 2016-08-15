@@ -36,9 +36,12 @@ $(function(){
     });
 
 
-    var host = "http://localhost:3008";
-    $("footer .xx_bg").click(function(){
-        window.location.href = host+"/views/message.html"; 
+    // 加载footer资源
+    $("#footer").load("../views/footer.html");
+
+    /*var host = "http://localhost:3008";
+    $("footer .xx_bg").click(function(){       
+        window.location.href = host+"/views/message.html";
     });
 
     $("footer .sy_bg").click(function(){
@@ -51,10 +54,11 @@ $(function(){
 
     $("footer .fx_bg").click(function(){
         window.location.href=host+"/views/search.html"; 
-    });
+    });*/
 
-    // 加载footer资源
-    $("#footer").load("../views/footer.html");
+
+
+
 
 /*---------------------home page 轮播图接口------------------------------*/
     $.ajax({
@@ -97,6 +101,8 @@ $(function(){
         }
     });
 
+
+
 /*---------------------------------------home page 首页评论 start--------------------------------*/
     $.ajax({
         url:"../data/getCommentsByRight.json",
@@ -104,12 +110,10 @@ $(function(){
         data:{},
         datatype:"json",
         success:function(res){
-            console.log(res.data);
             //console.log(res.data[0].commentFrom.nickname);
             $(res.data).each(function(i,ele){
                 var monent = ele.createdAt;
                 var monsubstr=monent.substr(0, 10);
-                console.log(monsubstr);
                 //获取当前时间，格式YYYY-MM-DD
                 function getNowFormatDate() {
                     var date = new Date();
