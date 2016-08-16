@@ -1,10 +1,14 @@
-var $ = window.jQuery;
-var moment = window.moment;
-var Swiper = window.Swiper;
+/**
+ * Created by xiusiteng on 2016-08-12.
+ * @desc 私信详细列表
+ */
+var $ = window.jQuery,
+        Swiper = window.Swiper,
+        dingeTools = window.dingeTools;
 $(function(){
-    var holdPosition = 0;
-    var page = 0;
-    var mySwiper;
+    var holdPosition = 0,
+            page = 0,
+            mySwiper;
     // 加载footer资源
     $("#footer").load("../views/footer.html");
     $(".swiper-container").height($(window).height()-202);
@@ -12,7 +16,7 @@ $(function(){
     loadMessageList(page)
     .done(function(result){
         var html = "";
-        if(result.status == 1) {
+        if(result.status == 1 &&  result.data.length>0) {
             var data = result.data;
             data.forEach(function(item){
                 html += "<div class='swiper-slide'>"
@@ -21,7 +25,7 @@ $(function(){
                                 +"<div class='message_carouse'><img src='"+item.avatar+"'/></div>"
                                 +"<div class='message_list'>"
                                     +"<div class='message_nickname'>"+item.username+"</div>"
-                                    +"<div class='message_date'>"+moment(item.createdAt).format("MM-DD")+"</div>"
+                                    +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
                                     +"<div class='message_talk'>"+item.content+"</div>"
                                 +"</div>"
                             +"</a>"
@@ -33,6 +37,7 @@ $(function(){
     })
     .done(function(result){
         if(result.status == 1 && page == 0){
+            // 初始化swiper
             mySwiper = new Swiper(".swiper-container",{
                 slidesPerView:"auto",
                 mode:"vertical",
@@ -60,10 +65,10 @@ $(function(){
                         //Show loader
                         $(".preloader").addClass("visible_bottom");
 
-                        //Load slides
+                        ////加载新的slide
                         loadMessageList(page)
                         .done(function(result){
-                            if(result.status == 1){
+                            if(result.status == 1 &&  result.data.length>0){
                                 var data = result.data;
                                 data.forEach(function(item){
                                     mySwiper.prependSlide(
@@ -72,7 +77,7 @@ $(function(){
                                                 +"<div class='message_carouse'><img src='"+item.avatar+"'/></div>"
                                                 +"<div class='message_list'>"
                                                     +"<div class='message_nickname'>"+item.username+"</div>"
-                                                    +"<div class='message_date'>"+moment(item.createdAt).format("MM-DD")+"</div>"
+                                                    +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
                                                     +"<div class='message_talk'>"+item.content+"</div>"
                                                 +"</div>"
                                             +"</a>"
@@ -92,6 +97,7 @@ $(function(){
             page++;
         }    
     });
+    // 加载私信列表
     function loadMessageList(page){
         return  $.ajax({
             url:"../data/getMessageList.json",

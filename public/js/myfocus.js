@@ -1,16 +1,19 @@
-var $ = window.jQuery;
-var Swiper = window.Swiper;
+var $ = window.jQuery,
+        Swiper = window.Swiper;
 $(function(){
-    var holdPosition = 0;
-    var page = 0;
-    var mySwiper;
+    var holdPosition = 0,
+            page = 0,
+            mySwiper;
+    // 加载底部文件
     $("#footer").load("../views/footer.html");
+    // 规定swiper容器
     $(".swiper-container").height($(window).height()-202);
-
+    // 加载数据
     loadFocusList(page)
+    // 拼凑数据
     .done(function(result){
         var html = "";
-        if(result.status == 1) {
+        if(result.status == 1 &&  result.data.length>0) {
             var data = result.data;
             data.forEach(function(item){
                 html += "<div class='swiper-slide'>"
@@ -37,6 +40,7 @@ $(function(){
     })
     .done(function(result){
         if(result.status == 1 && page == 0){
+            // 初始化swiper
             mySwiper = new Swiper(".swiper-container",{
                 slidesPerView:"auto",
                 mode:"vertical",
@@ -72,10 +76,10 @@ $(function(){
                         //Show loader
                         $(".preloader").addClass("visible_bottom");
 
-                        //Load slides
+                        //加载新的slide
                         loadFocusList(page)
                         .done(function(result){
-                            if(result.status == 1){
+                            if(result.status == 1 && result.data.length>0){
                                 var data = result.data;
                                 data.forEach(function(item){
                                     mySwiper.appendSlide(
@@ -110,10 +114,12 @@ $(function(){
             page++;
         }    
     });
-    $(".swiper-wrapper").on("swipeLeft",".swiper-slide", function(event){
+    // 左滑出现删除按钮
+    $(".swiper-wrapper").on("swipeLeft",".swiper-slide", function(){
         $(this).find(".myfocus-slide").addClass("slide-left");
         $(this).find(".del_focus").addClass("del_visible");
     });
+    // 关闭删除按钮
     $(".swiper-container").on("tap", function(){
         if($(".slide-left")){
             $(".slide-left").removeClass("slide-left"); 
@@ -122,6 +128,7 @@ $(function(){
             $(".del_visible").removeClass("del_visible"); 
         }
     });
+    // 删除slider
     $(".swiper-container").on("tap",".del_focus",function(event){
         var userId = $(this).attr("data-id");
         $(this).parent().parent().remove();
@@ -163,6 +170,7 @@ $(function(){
         });
         event.stopPropagation();
     });
+    // 加载我关注的
     function loadFocusList(page){
         return  $.ajax({
             url:"../data/getUserFocuslist.json",
