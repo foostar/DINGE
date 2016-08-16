@@ -98,6 +98,15 @@ section{
 .partnerLink>a>img{
 	width:60px;
 }
+.alertS{
+	display: none;
+	width: 100%;
+	height:5%;
+	background-color: red;
+	text-align: center;
+	color: #fff;
+	font-size: 10px; 
+}
 /* ------------------------home page start------------------------ */
 /* 焦点图 */
 .slideBox{ position:relative; overflow:hidden;max-width:640px;/* 设置焦点图最大宽度 */ }
@@ -138,6 +147,7 @@ section{
 
 #footer{position:absolute;left:0;bottom:0;z-index:100;width:640px;height:112px;}
 footer{position:fixed;left:0;bottom:0;z-index:9999;}
+
 .footer{width:640px;height:112px;background:url(../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
 .footer li{width:160px;height:112px;float:left;text-align:center;}
 .footer li a{font-size:24px;width:160px;height:112px;display:inline-block;padding-top:68px;}
@@ -431,4 +441,3 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .edit_modal a:last-child{border-right: none;}
 .edit_mask_in{opacity:1;transition:opacity .5s;}
 .edit_mask_out{opacity:0;transition:opacity .5s;}
-
