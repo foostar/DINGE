@@ -1,5 +1,10 @@
+/**
+ * Created by xiusiteng on 2016-08-12.
+ * @desc 我收藏的列表
+ */
 var $ = window.jQuery,
-        Swiper = window.Swiper;
+        Swiper = window.Swiper,
+        dingeTools = window.dingeTools;
 $(function(){
     var holdPosition = 0,
             page = 0,
@@ -9,7 +14,7 @@ $(function(){
     // 规定swiper容器
     $(".swiper-container").height($(window).height()-202);
     // 加载数据
-    loadFocusList(page)
+    loadColletList(page)
     // 拼凑数据
     .done(function(result){
         var html = "";
@@ -17,21 +22,15 @@ $(function(){
             var data = result.data;
             data.forEach(function(item){
                 html += "<div class='swiper-slide'>"
-                            +"<div class='myfocus'>"
-                                +"<div class='myfocus-slide'>"
-                                    +"<div class='focus_carouse'>"
-                                        +"<a href='javascript:;'>"
-                                            +"<img src='"+item.avatar+"'>"
-                                        +"</a>"
-                                    +"</div>"
-                                    +"<div class='focus_content'>"
-                                        +"<a href='javascript:;'>"
-                                            +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                            +"<div class='focus_notice'>"+item.sign+"</div>"
-                                        +"</a>"
-                                    +"</div>"
+                            +"<div class='mycollet'>"
+                                +"<div class='mycollet-slide'>"
+                                    +"<a href='javascript:;'>"
+                                        +"<div class='mycollet_author'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
+                                        +"<div class='mycollet_title'>「"+item.title+"」</div>"
+                                        +"<div class='mycollet_content'>"+item.content+"</div>"
+                                    +"</a>"
                                 +"</div>"
-                                +"<div class='del_focus' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
+                                +"<div class='del_collet' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
                             +"</div>"
                         +"</div>";
             });
@@ -77,27 +76,21 @@ $(function(){
                         $(".preloader").addClass("visible_bottom");
 
                         //加载新的slide
-                        loadFocusList(page)
+                        loadColletList(page)
                         .done(function(result){
-                            if(result.status == 1 && result.data.length>0){
+                            if(result.status == 1 &&  result.data.length>0){
                                 var data = result.data;
                                 data.forEach(function(item){
                                     mySwiper.appendSlide(
-                                        "<div class='myfocus'>"
-                                            +"<div class='myfocus-slide'>"
-                                                +"<div class='focus_carouse'>"
-                                                    +"<a href='javascript:;'>"
-                                                        +"<img src='"+item.avatar+"'>"
-                                                    +"</a>"
-                                                +"</div>"
-                                                +"<div class='focus_content'>"
-                                                    +"<a href='javascript:;'>"
-                                                        +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                                        +"<div class='focus_notice'>"+item.sign+"</div>"
-                                                    +"</a>"
-                                                +"</div>"
+                                        "<div class='mycollet'>"
+                                            +"<div class='mycollet-slide'>"
+                                                +"<a href='javascript:;'>"
+                                                    +"<div class='mycollet_author'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
+                                                    +"<div class='mycollet_title'>「"+item.title+"」</div>"
+                                                    +"<div class='mycollet_content'>"+item.content+"</div>"
+                                                +"</a>"
                                             +"</div>"
-                                            +"<div class='del_focus' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
+                                            +"<div class='del_collet' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
                                         +"</div>");
                                 });
                                 mySwiper.params.onlyExternal=false;
@@ -116,8 +109,8 @@ $(function(){
     });
     // 左滑出现删除按钮
     $(".swiper-wrapper").on("swipeLeft",".swiper-slide", function(){
-        $(this).find(".myfocus-slide").addClass("slide-left");
-        $(this).find(".del_focus").addClass("del_visible");
+        $(this).find(".mycollet-slide").addClass("slide-left");
+        $(this).find(".del_collet").addClass("del_visible");
     });
     // 关闭删除按钮
     $(".swiper-container").on("tap", function(){
@@ -129,11 +122,11 @@ $(function(){
         }
     });
     // 删除slider
-    $(".swiper-container").on("tap",".del_focus",function(event){
+    $(".swiper-container").on("tap",".del_collet",function(event){
         var userId = $(this).attr("data-id");
         $(this).parent().parent().remove();
         $.ajax({
-            url:"../data/unfocus.json",
+            url:"../data/unCollet.json",
             method:"GET",
             data:{
                 token:$.cookie("dinge"),
@@ -147,21 +140,15 @@ $(function(){
                 var item = result.data;
                 mySwiper.params.onlyExternal=true;
                 mySwiper.appendSlide(
-                    "<div class='myfocus'>"
-                        +"<div class='myfocus-slide'>"
-                            +"<div class='focus_carouse'>"
-                                +"<a href='javascript:;'>"
-                                    +"<img src='"+item.avatar+"'>"
-                                +"</a>"
-                            +"</div>"
-                            +"<div class='focus_content'>"
-                                +"<a href='javascript:;'>"
-                                    +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                    +"<div class='focus_notice'>"+item.sign+"</div>"
-                                +"</a>"
-                            +"</div>"
+                    "<div class='mycollet'>"
+                        +"<div class='mycollet-slide'>"
+                            +"<a href='javascript:;'>"
+                                +"<div class='mycollet_author'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
+                                +"<div class='mycollet_title'>「"+item.title+"」</div>"
+                                +"<div class='mycollet_content'>"+item.content+"</div>"
+                            +"</a>"
                         +"</div>"
-                        +"<div class='del_focus' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
+                        +"<div class='del_collet' data-id='"+item._id+"'><img class='delete_img' src='../images/delete.png'/></div>"
                     +"</div>");
                 mySwiper.params.onlyExternal=false;
                 //Update active slide
@@ -170,10 +157,10 @@ $(function(){
         });
         event.stopPropagation();
     });
-    // 加载我关注的
-    function loadFocusList(page){
+    // 加载我收藏的
+    function loadColletList(page){
         return  $.ajax({
-            url:"../data/getUserFocuslist.json",
+            url:"../data/getMyCollet.json",
             method:"GET",
             data:{
                 token:$.cookie("dinge"),

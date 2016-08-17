@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>缺的电影指南</title>
+    <meta name="viewport" content="width=640,target-densitydpi=device-dpi,user-scalable=no" />
+</head>
+<body>
+    <header>
+        <!-- 头部背景图+logo -->
+        <div id="headerLogo" >
+        	<span id="alertS" class="alertS"></span>
+            <!-- <img class="bg" src="images/signup_background@2x.png"> -->
+            <img class="lo" src="../images/logo_background@2x.png"> 
+        </div>
+    </header>
+    <section>
+    <!-- 用户登录框 -->
+    <div class="user_login">
+        <!-- 账号密码输入 -->
+        <div class="user_name">
+        	<input type="text" value="" placeholder="昵称" id="userName"></input><br>
+             <span></span><br>
+             <input type="text" value="" placeholder="手机号/邮箱" id="email"></input><br>
+             <span></span><br>      
+        	<input type="password" value="" placeholder="密码" id="password"></input>
+        </div>
+        <!-- 登录按钮 -->
+        <div class="userLoginBtn">
+            <button class="btn" id="#submit">注&nbsp;&nbsp;&nbsp;册</button><br>
+        </div>
+	</div>
+	<!-- 友情链接 -->
+		<div class="partnerLink">
+			
+		</div>
+    </section>
+    <footer>
+    	
+    </footer>
+    <!-- <img src="./images/loginpicture.png"> -->
+    <link type="text/css" href="../stylesheets/style.css" rel="stylesheet">
+    <script src="../js/jquery-3.1.0.min.js"></script>
+    
+    <script type="text/javascript">
+    	//登录验证
+    	var s = $('#alertS');
+    	$('#userName').blur(function(){
+    		console.log($('#userName').val());
+    		if ($('#userName').val()=='') {
+    			s.css('display','block');
+    			s.html('昵称不能为空!');
+    		}else{
+    			s.css('display','none');
+    			s.html('');
+    		}
+    	})
+    	$('#email').blur(function(){
+    		isEmail($('#email').val());
+    	});
+
+    	 function isEmail(obj){   
+		    var reg=/^\w{3,}@\w+(\.\w+)+$/;   
+		    if(!reg.test(obj)){   
+		    	s.css('display','block');     
+		        s.html("<b>请输入正确的邮箱地址</b>");   
+		    }else{  
+		    	s.css('display','none'); 
+		        s.html("");   
+		    }   
+    	}
+    	$('#password').blur(function(){
+    		isPassWord($('#password').val());
+    	})
+    	function isPassWord(obj){
+    		
+    		var reg1=/^[a-zA-Z]{6,8}$/;
+    		var reg2=/^[a-z0-9]{6,8}$/;
+    		var reg3=/^[A-Z0-9]{6,8}$/;
+    		if(reg1.test(obj)){
+    			s.css('display','block');     
+		        s.html("<b>密码至少包含一位数字</b>");
+    		}else if(reg2.test(obj)){
+    			s.css('display','block');     
+		        s.html("<b>密码至少包含一位大写字符</b>");
+    		}else if(reg3.test(obj)){
+    			s.css('display','block');     
+		        s.html("<b>密码至少包含一位小写字符</b>");
+    		}else if(obj.length<6){
+    			s.css('display','block');     
+		        s.html("<b>密码必须大于6位字符</b>");
+    		}else if(obj.length>8){
+    			s.css('display','block');     
+		        s.html("<b>密码必须小于8位字符</b>");
+		    }else{
+    			s.css('display','none'); 
+		        s.html(""); 
+    		}
+    		
+    	}  
+    	$("#submit").click(function(){
+	        $.ajax({
+	            type:"post",
+	            url:"/Api/signin",
+	            data:{
+	            	userName:$('#userName').val(),
+	                email   :$("#email").val(),
+	                password:$("#password").val()
+	            },
+	            datatype:"json",
+	            success:function(data){
+	            	console.log(data);
+	            }
+	        })
+	    })
+   
+    </script>
+</body>
+</html>

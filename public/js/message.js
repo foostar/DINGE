@@ -1,23 +1,27 @@
-var $ = window.jQuery;
-var Swiper = window.Swiper;
-var dingeTools = window.dingeTools;
+/**
+ * Created by xiusiteng on 2016-08-12.
+ * @desc 私信详细列表
+ */
+var $ = window.jQuery,
+        Swiper = window.Swiper,
+        dingeTools = window.dingeTools;
 $(function(){
-    var holdPosition = 0;
-    var page = 0;
-    var mySwiper;
+    var holdPosition = 0,
+            page = 0,
+            mySwiper;
+    // 规定swiper容器
     $(".swiper-container").height($(window).height()-202);
-    var cookie = "577cc175ffd27d3c2f325c6f";
     // 加载数据
     loadMessage(page)
     // 拼凑数据
     .done(function(result){
-        if(result.status == 1){
+        if(result.status == 1 && result.data.length>0){
             var html = "";
             var data = result.data;
             data.forEach(function(item){
                 var frome = "";
                 var direction = "left";
-                if(item.from._id == cookie){
+                if(item.from._id == $.cookie("dinge")){
                     frome = "swiper-from";
                     direction = "right";
                 }
@@ -34,6 +38,7 @@ $(function(){
     })
     .done(function(result){
         if(result.status == 1 && page == 0){
+            // 初始化swiper
             mySwiper = new Swiper(".swiper-container",{
                 slidesPerView:"auto",
                 mode:"vertical",
@@ -63,14 +68,14 @@ $(function(){
                         //Show loader
                         $(".preloader").addClass("visible");
 
-                        //Load slides
+                        //加载新的slide
                         loadMessage(page)
                         .done(function(result){
-                            if(result.status == 1){
+                            if(result.status == 1 && result.data.length>0){
                                 var data = result.data;
                                 data.forEach(function(item){
                                     var frome = "",direction = "left";
-                                    if(item.from._id == cookie){
+                                    if(item.from._id == $.cookie("dinge")){
                                         frome = "swiper-from";
                                         direction = "right";
                                     }
@@ -138,6 +143,7 @@ $(function(){
             });
         }  
     });
+    // 加载详细信息
     function loadMessage(page){
         return  $.ajax({
             url:"../data/getMessageDetail.json",

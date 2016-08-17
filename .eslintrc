@@ -19,6 +19,7 @@
         "curly": 2,
         "no-console":1,
         "no-var":0,
+        "no-constant-condition":0,
         "comma-dangle": ["error", "never"],
         "brace-style": [2, "1tbs"],
         "quotes": [2, "double"],
