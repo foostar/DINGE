@@ -172,6 +172,12 @@ footer{position:fixed;left:0;bottom:0;z-index:9999;}
 .fix_title{position:absolute;top:0;left:0;background:#FDFCF8;z-index:100;font-family: "PingFang SC Medium"}
 .mes_pl{width:640px;height:118px;border-bottom:1px solid #a4a4a4;background:url(../images/ahead.png) no-repeat 560px center;box-shadow: 0px 2px #efeeea;}
 .mes_pl a{display: block}
+.user_info{overflow:hidden}
+.user_info a{display:block;color:#55637c;font-size:28px;overflow:hidden;}
+.user_info a>div{float:left}
+.user_carouse,.user_carouse img{width:104px;height:104px;border-radius: 50%;}
+.user_carouse{margin-left:43px;margin-top:35px;}
+.user_nickname{margin-left:52px;margin-top:48px;}
 .mes_pl .pl_span,.mes_pl .sx_span,.mes_pl .xh_span,.mes_pl .fs_span{font-size:32px;color:#55637c;height:118px;line-height:118px;display:inline-block;padding-left:110px;background:url(../images/comment.png) no-repeat 36px center;}
 .mes_pl .sx_span{background:url(../images/message.png) no-repeat 36px center;}
 .mes_pl .xh_span{background:url(../images/like.png) no-repeat 36px center;}
@@ -418,7 +424,7 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .history_title{float:left;margin-left:-15px;}
 .history_date{float:right;}
 /* ----------------------edit_user page start------------ */
-.edit_carouse{width:100%;height:204px;text-align:center;border-bottom:2px solid #eae9e6;box-shadow: 0px 3px 5px #eae9e6}
+.edit_carouse{width:100%;height:204px;text-align:center;border-bottom:2px solid #eae9e6;box-shadow: 0px 3px 5px #eae9e6;position:relative;}
 .edit_carouse img{margin-top:42px;width:120px;height:120px;border-radius: 50%;}
 .edit_mes{margin:0px 45px 0;width:550px;}
 .edit_box{width:100%;height:86px;line-height:86px;border-bottom:2px solid #eae9e6;}
@@ -441,3 +447,4 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .edit_modal a:last-child{border-right: none;}
 .edit_mask_in{opacity:1;transition:opacity .5s;}
 .edit_mask_out{opacity:0;transition:opacity .5s;}
+.carouse{width:200px;height:200px;background:red;}

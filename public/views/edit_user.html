@@ -15,7 +15,19 @@
         <div class="goback"><a href="javascript:;"><img src="../images/back.png" alt=""></a></div>
         编辑资料
     </div>
-    <div class="edit_carouse" data-src="/carouse/head.png"><img src="/carouse/head.png"/></div>
+    <div class="edit_carouse" data-src="/carouse/head.png">
+        <div class="LUploader" id="upload_carouse">
+            <div class="LUploader-container">
+                <input id="carouse" data-LUploader='upload_carouse' data-user-id="base123" data-form-file='basestr' data-upload-type='front' type="file" />
+                <ul class="LUploader-list"></ul>
+            </div>
+            <div>
+                <div class="icon icon-camera font20"></div>
+                <p></p>
+            </div>
+        </div> 
+        <img id="user_carouse" src="/carouse/head.png"/>
+    </div>
     <div class="edit_mes">
         <div class="edit_box edit_username">
             <div class="edit_label">昵称</div>
@@ -32,9 +44,7 @@
         </div>
         <div class="edit_box edit_arrow edit_sex">
             <div class="edit_label">性别</div>
-            <div class="edit_content_sex">
-                男
-            </div>
+            <div class="edit_content_sex"></div>
         </div>
         <div class="edit_box edit_arrow edit_zone">
             <div class="edit_label">城市</div>
@@ -48,7 +58,7 @@
             <div class="edit_content_birthday">
                 <input id="birthday" type="text" readonly="" placeholder="日期选择特效" data-lcalendar="2016-05-11,2016-05-11" />
             </div>
-        </div> 
+        </div>
     </div>
     <div class="edit_mask">
         <div class="edit_modal_wrap">
