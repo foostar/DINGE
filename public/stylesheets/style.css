@@ -413,7 +413,7 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .del_collet{width:0px;height:100%;top:0;background:#e13030;transition:all .5s;position: absolute;right:-45px;opacity:0;}
 .swiper-wrapper .mycollet .del_visible{width:125px;}
 .del_focus{width:0px;height:145px;top:0;background:#e13030;transition:all .5s;position: absolute;right:0px;opacity:0;}
-.del_focus img{margin:40px 23px;}
+.del_focus img{margin:40px 23px;left:0%;top:0%;}
 .del_focus_visible{width:100px;right:45px;opacity:1;transition:all .5s;}
 /* 他人资料-更多 */
 .means_more_top{width:640px;padding-top:46px;}
