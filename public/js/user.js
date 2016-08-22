@@ -29,7 +29,7 @@ $(function(){
         getData:function(){
             var dtd = $.Deferred();
             if(localStorage.getItem("userinfo")){
-                dtd.resolve();
+                dtd.resolve(JSON.parse(localStorage.getItem("userinfo")));
                 return dtd;
             }
             return $.ajax({
@@ -57,9 +57,6 @@ $(function(){
             this.loadingFooter();
             this.getData()
             .done(function(result){
-                if(!result){
-                    result = JSON.parse(localStorage.getItem("userinfo"));
-                }
                 self.renderData(result);
             });
         }
