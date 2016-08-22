@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>缺的电影指南</title>
     <meta name="viewport" content="width=640,target-densitydpi=device-dpi,user-scalable=no" />
+    
 </head>
 <body>
+    <div class="container">
     <header>
         <!-- 头部背景图+logo -->
         <div id="headerLogo" >
@@ -27,7 +29,7 @@
         </div>
         <!-- 登录按钮 -->
         <div class="userLoginBtn">
-            <button class="btn" id="#submit">注&nbsp;&nbsp;&nbsp;册</button><br>
+            <button class="btn" id="submit">注&nbsp;&nbsp;&nbsp;册</button><br>
         </div>
 	</div>
 	<!-- 友情链接 -->
@@ -38,6 +40,7 @@
     <footer>
     	
     </footer>
+    </div>
     <!-- <img src="./images/loginpicture.png"> -->
     <link type="text/css" href="../stylesheets/style.css" rel="stylesheet">
     <script src="../js/jquery-3.1.0.min.js"></script>
@@ -99,9 +102,10 @@
     		
     	}  
     	$("#submit").click(function(){
+            console.log("aaa")
 	        $.ajax({
-	            type:"post",
-	            url:"/Api/signin",
+	            type:"get",
+	            url:"../data/signup.json",
 	            data:{
 	            	userName:$('#userName').val(),
 	                email   :$("#email").val(),
