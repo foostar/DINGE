@@ -12,6 +12,7 @@ $(function(){
     // 规定swiper容器
     $(".swiper-container").height($(window).height()-202);
     // 加载数据
+    
     loadMessage(page)
     // 拼凑数据
     .done(function(result){

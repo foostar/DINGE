@@ -7,7 +7,7 @@
 var $ = window.jQuery;
 
 $(function(){
-    $("#submitComment").click(function(){
+    /*$("#submitComment").click(function(){
         $.ajax({
             type:"post",
             url:"/Api/commentMovie",
@@ -33,7 +33,7 @@ $(function(){
         }).success(function(data){
             console.log(data);
         });
-    });
+    });*/
 
 
 
