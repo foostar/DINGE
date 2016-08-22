@@ -11,20 +11,15 @@
 </head>
 
 <body>
-	
-	<!-- 焦点图 -->
-	<div id="slideBox" class="slideBox">
-
-		<div class="bd">
-			<ul id="slide_ul">
-				<!-- <li><a class="pic" href="javascript://"><img src="%s" url="%t" class="pic" /></a></li> -->					  
-			</ul>
-		</div>
-
-		<div class="hd">
-			<ul></ul>
+	<div class="swiper_box">
+		<div class="swiper-container"><!--swiper容器[可以随意更改该容器的样式-->  
+		    <div class="swiper-wrapper" id="slide_ul">
+		        <!-- <div class="swiper-slide"><a class="pic" href="javascript://"><img src="%s" url="%t" class="pic" /></a></div> -->
+		    </div>  
+		    <div class="swiper-pagination pagination"></div><!--分页器-->
 		</div>
 	</div>
+	
 	
 	<ul class="home_block1 home_block">
 		<li class="home_img"><img id="home_img" src="../images/poster_criminal.png" alt=""></li>
@@ -53,9 +48,11 @@
 	</ul>
 	
 	<div id="footer"></div>
+	<link type="text/css" href="../stylesheets/swiper.min.css" rel="stylesheet">
 	<link type="text/css" href="../stylesheets/style.css" rel="stylesheet">
-	<script src="../js/jquery-3.1.0.min.js"></script>
-	<script src="../js/TouchSlide.1.1.js"></script>
-	<script src="../js/index.js" type="text/javascript"></script>
+	<script src="../js/jquery-3.1.0.min.js" type="text/javascript"></script>
+	<script src="/js/dingeTools.js" type="text/javascript"></script>
+	<script src="../js/swiper.jquery.min.js" type="text/javascript"></script>
+	<script src="../js/home.js" type="text/javascript"></script>
 </body>
 </html>

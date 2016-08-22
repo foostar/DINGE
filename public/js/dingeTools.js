@@ -6,7 +6,7 @@
 var jQuery = window.jQuery
 ;(function($){
     // 增加foreach方法
-    if (!Array.prototype.forEach) {  
+    if (!Array.prototype.forEach) {
         Array.prototype.forEach = function(callback, thisArg) {  
             var T, k;  
             if (this == null) {  
