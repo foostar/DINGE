@@ -48,9 +48,9 @@ $(function(){
     $.ajax({
         url:"../data/getCarousels.json",
         method:"GET",
-        data:{
+        /*data:{
             token:$.cookie("dinge")
-        },
+        },*/
         dataType:"json"
     }).done(function(result){
         var html = "";

@@ -16,4 +16,7 @@ $(function(){
         $(this).addClass("current").siblings().removeClass("current");
         $("#tagContent").load("searchMovie_user.html");
     });
+    $("#search_cancel").click(function(){
+        window.location.href="search.html";
+    });
 });
