@@ -389,7 +389,7 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .other_ul{overflow:hidden;padding:12px 10px 0;}
 .other_le{float:left;}
 .other_le a{display:inline-block;}
-.other_ri{float:right;width:52px;height:52px;background:url(../images/comment_more.png) no-repeat;}
+.other_ri{float:right;width:52px;height:52px;}
 .other_ul2{overflow: hidden;margin:30px 0 24px;}
 .other_ul2 li{float:left;font-size:24px;color:#55637c;}
 .other_le2{}
@@ -501,6 +501,7 @@ li.search_tag1txt .tag1_bnttxt span{font-size:32px;margin-right:10px;}
 .mycomment_body{overflow:hidden;padding:30px 0 15px 300px;}
 .mycomment_body li{float:left;font-size:24px;color:#babfc8;height:40px;line-height:40px;padding-left:10px;overflow:hidden;}
 .mycomment_body li img,.mycomment_body li span{float:left;}
+.mycomment_body li img{width:40px;height:40px;}
 .mycomment_body li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:72px;}
 
 /* 影评页 */
