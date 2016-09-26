@@ -51,8 +51,12 @@ $(function(){
         /*data:{
             token:$.cookie("dinge")
         },*/
-        dataType:"json"
+        dataType:"json",
+        beforeSend:function(){
+            $(".loading").show();
+        }
     }).done(function(result){
+        $(".loading").hide();
         var html = "";
         if(result.status == 1 && result.data.length>0){ 
             var data = result.data;
@@ -76,6 +80,7 @@ $(function(){
             });
         }
     });
+
 
 
 /*---------------------------------------home page 首页评论 start--------------------------------*/

@@ -2,6 +2,9 @@ var $ = window.jQuery;
 $(function(){
     // 加载底部
     $("#footer").load("../views/footer.html");
+    $("#goback_user").click(function(){
+        history.back();
+    });
     $.ajax({
         url:"../data/getUserInfo.json",
         method:"GET",
@@ -11,7 +14,7 @@ $(function(){
         dataType:"json",
         success:function(res){
             var data = res.data;
-            console.log(data);
+            //console.log(data);
             $("#other_src img").attr("src",data.avatar);
             $("#other_name").text(data.nickname);
             $("#other_cont").text(data.sign);
@@ -46,4 +49,34 @@ $(function(){
             $(html).appendTo($("#other_conts"));
         }
     });
+
+    /*加关注*/
+    /*$("#guanzhu").click(function(){
+        if($("#guanzhu").text("+关注")){
+            $.ajax({
+                url:"../data/focusUser.json",
+                method:"GET",
+                dataType:"json"           
+            }).done(function(res){
+                console.log(res.msg);
+                $("#guanzhu").text(res.msg);
+            });  
+        }else if($("#guanzhu").text("已关注")){
+            $("#guanzhu").text("取消关注");
+        }else if($("#guanzhu").text("取消关注")){
+            $("#guanzhu").text("+关注");
+        }
+    });*/
+    $("#guanzhu").click(function(){
+        $.ajax({
+            url:"../data/focusUser.json",
+            method:"GET",
+            dataType:"json"           
+        }).done(function(res){
+            //console.log(res.msg);
+            $("#guanzhu").text(res.msg);
+        });  
+    });
 });
+
+
