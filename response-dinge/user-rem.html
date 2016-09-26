@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>电影指南-我的</title>
+    <meta name="viewport" content="width=device-width,target-densitydpi=device-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name=”format-detection” content=”telephone=no” />
+    <link type="text/css" href="stylesheet.css" rel="stylesheet">
+</head>
+<body>
+    <div class="mes_title font-title">我的</div>
+    <div class="content-body">
+        <div id="userinfo" class="mes_pl user_info user_n">
+            <div class="flex_container user_carouse">
+                <img src="" alt="Kitten">
+                <div class="user_notice font-bold flex-normal">
+                    <h3 class="user_nickname">Love song</h3>
+                    <p class="notice font-normal">一直想写一首lovesong...</p>
+                </div>
+            </div>
+        </div>
+        <div class="user_line">
+            <div class="user_l user_comment"><a href="mycomment.html"><span class="font-bold">我的影评</span></a></div>
+            <div class="user_l user_like"><a href="myfocus.html"><span class="font-bold">我关注的</span></a></div>
+            <div class="user_l user_sc"><a href="mycollet.html"><span class="font-bold">我收藏的</span></a></div>
+            <div class="user_l user_history"><a href="history.html"><span class="font-bold">浏览历史</span></a></div>
+            <!-- <div class="user_l user_draft"><a href="javascript:;"><span>草稿箱</span></a></div> -->
+            <div class="user_l user_night"><a href="javascript:;"><span class="font-bold">夜间模式</span></a></div>
+        </div>
+    </div>
+    <footer>
+        <ul class="footer flex_container">
+            <li class="flex-normal"><a href="home.html" class="sy_bg1 font-normal">首页</a></li>
+            <li class="flex-normal"><a href="search.html" class="fx_bg font-normal">发现</a></li>
+            <li class="flex-normal"><a href="messages.html" class="xx_bg font-normal">消息</a></li>
+            <li class="flex-normal"><a href="user.html" class="wd_bg font-normal">我的</a></li>
+        </ul>
+    </footer> 
+    <script type="text/javascript" src="jQuery-3.1.0.min.js"></script> 
+    <script type="text/javascript">
+        $(function(){
+            document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
+        })
+    </script> 
+</body>
+</html>
