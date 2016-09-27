@@ -1,4 +1,6 @@
 var $ = window.jQuery;
+var dingeTools = window.dingeTools;
+
 $(function(){
     //localStorage.removeItem("userinfo");
     function UserInfo(opt){
@@ -7,6 +9,7 @@ $(function(){
     }
     UserInfo.prototype = {
         init:function(){
+            dingeTools.init();
             this.render();
         },
         // 加载底部

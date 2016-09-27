@@ -3,33 +3,37 @@
 <head>
 	<meta charset="UTF-8">
 	<title>电影指南-我的</title>
-    <meta name="viewport" content="width=640,target-densitydpi=device-dpi,user-scalable=no" />
+	<link type="text/css" href="../css/stylesheet.less" rel="stylesheet/less">
+    <meta name="viewport" content="width=device-width,target-densitydpi=device-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
-	<div class="mes_title">我的</div>
-	<div id="userinfo" class="mes_pl user_info user_n">
-		<a href="edit_user.html">
-			<div class="user_carouse"><img src=""/></div>
-			<div class="user_notice">
-				<div class="user_nickname"></div>
-				<p class="notice"></p>
-			</div>	
-		</a>
-	</div>
-	<div class="user_line">
-		<div class="user_l user_comment"><a href="mycomment.html"><span>我的影评</span></a></div>
-		<div class="user_l user_like"><a href="myfocus.html"><span>我关注的</span></a></div>
-		<div class="user_l user_sc"><a href="mycollet.html"><span>我收藏的</span></a></div>
-		<div class="user_l user_history"><a href="history.html"><span>浏览历史</span></a></div>
-		<!-- <div class="user_l user_draft"><a href="javascript:;"><span>草稿箱</span></a></div> -->
-		<div class="user_l user_night"><a href="javascript:;"><span>夜间模式</span></a></div>
-	</div>
+	<div class="mes_title flex-container">我的</div>
+	<div class="content-body">
+        <div id="userinfo" class="mes_pl user_box">
+            <div class="flex_container user_carouse">
+                <img src="" alt="Kitten">
+                <div class="user_notice font-bold flex-normal">
+                    <h3 class="user_nickname">Love song</h3>
+                    <p class="notice font-normal">一直想写一首lovesong...</p>
+                </div>
+            </div>
+        </div>
+        <div class="user_line">
+            <div class="infolist_normal user_write"><a href="mycomment.html"><span class="font-bold">我的影评</span></a></div>
+            <div class="infolist_normal user_like"><a href="myfocus.html"><span class="font-bold">我关注的</span></a></div>
+            <div class="infolist_normal user_sc"><a href="mycollet.html"><span class="font-bold">我收藏的</span></a></div>
+            <div class="infolist_normal user_history"><a href="history.html"><span class="font-bold">浏览历史</span></a></div>
+            <!-- <div class="user_l user_draft"><a href="javascript:;"><span>草稿箱</span></a></div> -->
+            <div class="infolist_normal user_night"><a href="javascript:;"><span class="font-bold">夜间模式</span></a></div>
+        </div>
+    </div>
 	<div id="footer"></div>
-	<link type="text/css" href="../stylesheets/style.css" rel="stylesheet">
 	<script src="../js/jquery-3.1.0.min.js"></script>
+	<script src="../js/dingeTools.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>
 	<script src="/js/user.js" type="text/javascript"></script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+@media screen and (max-width:321px){
+    .font-title{font-size:16px}
+    .font-bold{font-size:14px;}
+    .font-normal{font-size:12px;}
+}
+
+@media screen and (min-width:321px) and (max-width:400px){
+    .font-title{font-size:17px}
+    .font-bold{font-size:15px;}
+    .font-normal{font-size:13px;}
+}
+
+@media screen and (min-width:400px){
+    .font-title{font-size:19px}
+    .font-bold{font-size:17px;}
+    .font-normal{font-size:15px;}
+}

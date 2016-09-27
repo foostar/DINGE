@@ -89,6 +89,10 @@ var jQuery = window.jQuery
                 }
             });
         },
+        init:function(){
+            console.log("aaa")
+            document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
+        },
         // 获取url的参数
         getQueryString:function(name){
             var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");

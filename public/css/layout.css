@@ -1,0 +1,17 @@
+@import './list.css';
+html,body{
+    height:100%;
+}
+body{
+    width:6.4rem;
+    margin:0 auto;
+}
+*, :after, :before{
+    box-sizing: border-box;
+}
+.clear:after{
+    content:"";display:table;clear:both;
+}
+.content-body{
+    margin-bottom:56px;
+}
