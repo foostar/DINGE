@@ -1,0 +1,11 @@
+.user_line{border-top:1px solid #eae9e6;border-bottom:1px solid #eae9e6;padding:0 .2rem;overflow:scroll;}
+.infolist_normal{border-bottom:1px solid #eae9e6;}
+.infolist_normal a{display:block;color:#55637c;font-family: "PingFang SC Light"}
+.infolist_normal span{padding:.22rem 0 .22rem 1rem;display:inline-block;}
+.user_write span{background:url(../../images/user_write.png) no-repeat .24rem center;background-size:.52rem;}
+.user_like span{background:url(../../images/write_like.png) no-repeat .24rem center;background-size:.52rem;}
+.user_sc span{background:url(../../images/user_collection.png) no-repeat .24rem center;background-size:.52rem;}
+.user_history span{background:url(../../images/user_history.png) no-repeat .24rem center;background-size:.52rem;}
+.user_draft span{background:url(../../images/user_draft.png) no-repeat .24rem center;background-size:.52rem;}
+.user_night span{background:url(../../images/user_night.png) no-repeat .24rem center;background-size:.52rem;}
+.user_night{border-bottom:0;}

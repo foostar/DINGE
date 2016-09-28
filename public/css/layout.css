@@ -1,14 +1,6 @@
-@import './list.css';
-html,body{
-    height:100%;
-}
-body{
-    width:6.4rem;
-    margin:0 auto;
-}
-*, :after, :before{
-    box-sizing: border-box;
-}
+@import './layout/header.css';
+@import './layout/footer.css';
+@import './layout/list.css';
 .clear:after{
     content:"";display:table;clear:both;
 }
