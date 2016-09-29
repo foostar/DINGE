@@ -8,4 +8,4 @@
 .user_history span{background:url(../../images/user_history.png) no-repeat .24rem center;background-size:.52rem;}
 .user_draft span{background:url(../../images/user_draft.png) no-repeat .24rem center;background-size:.52rem;}
 .user_night span{background:url(../../images/user_night.png) no-repeat .24rem center;background-size:.52rem;}
-.user_night{border-bottom:0;}
+.user_night{border-bottom:0;} 
