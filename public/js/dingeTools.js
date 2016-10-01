@@ -91,7 +91,12 @@ var jQuery = window.jQuery
         },
         init:function(){
             console.log("aaa")
-            document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
+            var evt = "onorientationchange" in window ? "orientationchange" : "resize"
+            var remPage = function(){
+                document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
+            }
+            window.addEventListener(evt, remPage, false);
+            remPage()
         },
         // 获取url的参数
         getQueryString:function(name){

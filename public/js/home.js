@@ -1,5 +1,6 @@
 var $ = window.jQuery,
-        Swiper = window.Swiper;
+        Swiper = window.Swiper,
+        dingeTools = window.dingeTools;
 $(function(){
     // 加载底部
     $("#footer").load("../views/footer.html");
@@ -44,20 +45,37 @@ $(function(){
 
         });
     });*/
+
     function Home(){
         
     }
     Home.prototype = {
         init:function(){
+            dingeTools.init();
+            // loading
             this.bindEvent();
             this.render();
+
         },
         bindEvent:function(){
             this.startStep1();
         },
+        loadingBanner:function(){
+        },
+        loadingComent:function(){
+
+        },
+        render:function(){
+            
+            
+            $.when(this.loadingBanner(),this.loadingComent())
+            .then(function(result){
+
+            })
+        },
         startStep1:function(){
             lunboTu();
-            comment();
+            //comment();
         }
     };
     var home = new Home();
