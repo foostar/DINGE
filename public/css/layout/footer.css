@@ -1,8 +1,8 @@
 footer{position:fixed;left:0;bottom:0;z-index:100;width:100%;}
 
-.footer{background:url(../../images/footer_bg.png) repeat-x left top;overflow:hidden;background-color:#fdfcf8;}
+.footer{background:url(../../images/footer_bg.png) repeat-x left -0.05rem;overflow:hidden;background-color:#fdfcf8;}
 .footer li{text-align:center;}
-.footer li a{display:inline-block;padding-top:.76rem;}
+.footer li a{display:inline-block;padding-top:.78rem;}
 .footer li a.sy_bg{background:url(../../images/iconHome.png) no-repeat center center;background-size:.48rem .48rem;color:#adb3bf;}
 .footer li a.sy_bg1{background:url(../../images/iconHomeH.png) no-repeat center center;background-size:.48rem .48rem;color:#55637c;}
 
