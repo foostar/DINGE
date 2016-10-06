@@ -1,0 +1,29 @@
+/*搜索框*/
+.search{width:320px;height:44px;padding-left:24px;overflow:hidden;background-color:#55637c;position:fixed;top:0;left:0;z-index:9999;}
+.search li{height:44px;line-height:44px;float:left;}
+.search input{width:253px;height:24px;color:#fff;font-size:13px;border:0;background:#6b7d9c url(../images/find_find.png) no-repeat 202px center;padding-left:18px;}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:rgba(255,255,255,0.6);  
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:rgba(255,255,255,0.6);
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color:rgba(255,255,255,0.6);
+}
+.search_erweima img{width:26px;height:26px;margin:10px 0 0 8px;}
+/*内容部分*/
+.search_body{/*width:320px;*/background-color:#fff;padding:24px 22px;overflow:hidden;position:absolute;left:0;top:44px;}
+.search_body li{float:left;width:130px;/* height:476px; */}
+.search_body li img{width:130px;height:187px;}
+.search_body li:nth-of-type(odd){ margin-right:15px;}/* 奇数行 */   
+.search_body li:nth-of-type(even){margin:0}/* 偶数行 */
+.search_body li span{font-size:14px;color:#393939;width:130px;display:inline-block;text-align:center;padding:5px 0;}

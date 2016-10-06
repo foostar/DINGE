@@ -9,3 +9,5 @@ a{text-decoration:none;-webkit-tap-highlight-color: rgba(255,255,255,0);}
 html,body{height:100%;}
 body{width:6.4rem;margin:0 auto;}
 *, :after, :before{box-sizing: border-box;}
+.loading{width:6.4rem;height:100%;position:fixed;top:0px;left:0px;background:rgba(0,0,0,0.5);z-index:2000;display:none;}
+.loading img{width:0.32rem;height:0.32rem;position:absolute;top:4rem;left:50%;margin-left:-0.16rem;z-index:2001;}
