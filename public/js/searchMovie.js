@@ -2,6 +2,8 @@ var $ = window.jQuery;
 
 $(function(){
     /*---------------------------------------searchMovie page tab 切换------------------------------*/
+    dingeTools.init();
+    
     $("#tag_movie").addClass("current");
     $("#tagContent").load("searchMovie_movie.html");
     $("#tag li#tag_movie").click(function(){
