@@ -1,7 +1,7 @@
 var $ = window.jQuery;
 var dingeTools = window.dingeTools;
 
-$(function(){
+$(function(){ 
     //localStorage.removeItem("userinfo");
     function UserInfo(opt){
         this.init();

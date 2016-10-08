@@ -55,12 +55,22 @@ $(function(){
             this.render();
 
         },
+        //渲染页面
+        render:function(){
+            var self = this;
+            self.loadingFooter();
+            self.loadingImg();
+            $.when(self.loadingBanner(),self.loadingComent())
+            .then(function(){
+                $("#loading").hide();   
+            });
+        },
         loadingFooter:function(){
             // 加载底部  
             $("#footer").load("../views/footer.html");
         },
         loadingImg:function(){
-            $(".loading").show();
+            $("#loading").show();
         },
         loadingBanner:function(){
             //轮播图部分
@@ -68,7 +78,7 @@ $(function(){
             $.ajax({
                 url:"../data/getCarousels.json",
                 method:"GET",
-                dataType:"json",
+                dataType:"json"
             }).done(function(result){
                 var html = "";
                 if(result.status == 1 && result.data.length>0){ 
@@ -103,13 +113,13 @@ $(function(){
                 data:{},
                 datatype:"json"
             }).done(function(res){
-                var data = res.data,
-                    html = "";
-                console.log(data);
+                var data = res.data;
+                var html = "";
+                //console.log(data);
                 data.forEach(function(item,index){                   
                     html += "<div class='home_comment_block flex-container";
                     if(index%2){
-                    html+=" home_comment_right";
+                        html+=" home_comment_right";
                     }
                     html +=  "'>"
                                 +"<img class='home_comment_img flex-normal' src='"+item.movie.images.small+"' alt=''>"
@@ -130,18 +140,8 @@ $(function(){
                 $(html).appendTo($("#loadingComent"));       
             });
             dtd.resolve();
-        },
-        // 渲染页面
-        render:function(){
-            var self = this;
-            this.loadingFooter();
-            this.loadingImg();
-            $.when(this.loadingBanner(),this.loadingComent())
-            .then(function(result){
-                $(".loading").hide();   
-            })
-        },
+        }
     };
-    var home = new Home();
+    new Home();
    // home.init();
 });
