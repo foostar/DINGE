@@ -270,7 +270,7 @@ footer{position:fixed;left:0;bottom:0;z-index:100;width:100%;}
 
 .footer li a.wd_bg1{background:url(../images/iconUserH.png) no-repeat center center;background-size:100%;color:#55637c;}
 .footer li a.wd_bg{background:url(../images/iconUser.png) no-repeat center center;background-size:100%;color:#adb3bf;}
-/* --------------------------------message page start------------------------------------- */
+/* --------------------------------messages page start------------------------------------- */
 .mes_title{width:640px;height:88px;border-bottom:1px solid #a4a4a4;text-align:center;font-size:32px;color:#55637c;line-height:88px;}
 .fix_title{position:absolute;top:0;left:0;background:#FDFCF8;z-index:100;font-family: "PingFang SC Medium"}
 .mes_pl{width:640px;height:118px;border-bottom:1px solid #a4a4a4;background:url(../images/ahead.png) no-repeat 560px center;box-shadow: 0px 2px #efeeea;}

@@ -1,7 +1,7 @@
 var $ = window.jQuery;
-
+var dingeTools = window.dingeTools;
 $(function(){
-    function Search(){
+    function Search(){ 
         this.init();
     }
     Search.prototype={
@@ -47,17 +47,17 @@ $(function(){
                 window.location.href = "searchMovie.html";
             });
         },
-        // 渲染页面
+        //渲染页面
         render:function(){
             var self = this;
             this.loadingFooter();
             this.loadingImg();
             self.changeHref();
             $.when(this.movieList())
-            .then(function(result){
+            .then(function(){
                 $(".loading").hide();   
-            })
-        },
+            });
+        }
     };
-    var search = new Search();
+    new Search();
 });

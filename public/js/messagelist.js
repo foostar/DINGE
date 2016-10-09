@@ -6,6 +6,7 @@ var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
 $(function(){
+    dingeTools.init();
     var holdPosition = 0,
             page = 0,
             mySwiper;
