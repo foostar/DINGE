@@ -10,5 +10,5 @@ html,body{height:100%;}
 body{width:6.4rem;margin:0 auto;}
 *, :after, :before{box-sizing: border-box;}
 
-.loading{width:6.4rem;height:100%;position:fixed;top:0px;left:0px;background:rgba(0,0,0,0.5) url(../images/loading.gif) no-repeat center center;z-index:2000;display:none;}
+.loading{width:6.4rem;height:100%;position:fixed;top:0px;left:0px;background:rgba(0,0,0,0.5) url(../images/loading.gif) no-repeat center center;z-index:2000;}
 

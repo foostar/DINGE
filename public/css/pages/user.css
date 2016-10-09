@@ -1,8 +1,10 @@
 .mes_pl{width:100%;border-bottom:1px solid #a4a4a4;background:url(../../images/ahead.png) no-repeat right center;background-size:.52rem .52rem;box-shadow: 0px 2px #efeeea;}
 .mes_pl a{display: block}
 .user_carouse img{width:1.04rem;height:1.04rem;border-radius: 50%;margin-right:26px;}
-.user_box{height:1.8rem;margin-bottom:.5rem;width:6.4rem;padding:.34rem .43rem}
+.user_box{height:1.8rem;margin-bottom:.5rem;width:6.4rem;padding:0.1rem .43rem 0;}
 .user_box .user_name{height:89px;line-height:70px;background:url(../../images/portrait_Normal_L.png) no-repeat 18px center;padding-left:100px;background-size: 50%;}
 .user_name a{display:block;color:#55637c}
 .user_notice{margin-top:0.08rem;}
 .notice{font-family: "PingFang SC Light";margin-top:0.08rem;}
+
+

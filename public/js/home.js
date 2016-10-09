@@ -50,7 +50,7 @@ $(function(){
         init:function(){
             dingeTools.init();
             // loading
-            //$(".loading").hide();
+            $(".loading").hide();
             //this.bindEvent();
             this.render();
 
