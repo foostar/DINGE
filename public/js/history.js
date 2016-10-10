@@ -6,6 +6,7 @@ var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
 $(function(){
+    dingeTools.init();
     // 加载底部
     $("#footer").load("../views/footer.html");
     // 规定swiper容器

@@ -1,8 +1,10 @@
 var $ = window.jQuery,
         Swiper = window.Swiper;
+        dingeTools = window.dingeTools;
 $(function(){
+    dingeTools.init();
     var holdPosition = 0,
-            page = 0,
+            page = 0, 
             mySwiper;
     // 加载底部文件
     $("#footer").load("../views/footer.html");

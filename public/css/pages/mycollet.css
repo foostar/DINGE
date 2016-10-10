@@ -1,0 +1,11 @@
+.mycollet{margin:0 .45rem;width:6.4rem;padding:.15rem 0;border-bottom:.02rem solid #e6e5e2;position: relative;}
+.mycollet-slide a {color:#55637C;display:block;}
+.mycollet_author{font-size:.20rem;font-family: "PingFang SC Light";color:#2e88ce;line-height: .32rem;}
+.mycollet_author span{color:#b5b5b6;margin-left:.08rem;}
+.mycollet_title{color:#55637c;font-size:.28rem;line-height:.57rem;margin-left: -.15rem;}
+.mycollet_content{font-size:.24rem;font-family: "PingFang SC Light";color:#828893;line-height:.38rem;}
+.del_collet{width:0px;height:100%;top:0;background:#e13030;transition:all .5s;position: absolute;right:-.45rem;opacity:0;}
+.swiper-wrapper .mycollet .del_visible{width:1.25rem;}
+.del_focus{width:0px;height:1.45rem;top:0;background:#e13030;transition:all .5s;position: absolute;right:0px;opacity:0;}
+.del_focus img{margin:.4rem .23rem;left:0%;top:0%;}
+.del_focus_visible{width:1rem;right:.45rem;opacity:1;transition:all .5s;}
