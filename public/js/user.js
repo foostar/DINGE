@@ -10,7 +10,13 @@ $(function(){
     UserInfo.prototype = {
         init:function(){
             dingeTools.init();
+            this.bindEvent();
             this.render();
+        },
+        bindEvent:function(){
+            $(".user_carouse").on("tap", function(){
+                window.location.href = "/views/edit_user.html";
+            });
         },
         // 加载底部
         loadingFooter:function(){    

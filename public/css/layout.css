@@ -1,8 +1,15 @@
 @import './layout/header.css';
 @import './layout/footer.css';
 @import './layout/list.css';
+@import './layout/info.css';
 .clear:after{
     content:"";display:table;clear:both;
+}
+.floatinner{
+    overflow: hidden;
+}
+.floatinner>div{
+    float:left;
 }
 .content-body{
     margin-bottom:.56rem;

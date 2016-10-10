@@ -10,14 +10,14 @@
     <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
-    <div class="mes_title fix_title">
-        <div class="goback"><a href="javascript:;" onclick="window.history.back()"><img src="../images/back.png" alt=""></a></div>
+    <div class="mes_title fix_title font-title">
+        <div class="goback"><a href="javascript:;"><img src="../images/back.png" alt=""></a></div>
         我收藏的
     </div>
-    <div class="swiper-container">
+    <div class="swiper-container list-wapper" id="mycollet">
         <div class="swiper-wrapper">
             <div class='swiper-slide'>
-                <div class='mycollet'>
+                <div class='info_mini'>
                     <div class='mycollet-slide'>
                         <a href="javascript:;">
                             <div class="mycollet_author">缺缺<span>16.07.06</span></div>
@@ -25,7 +25,7 @@
                             <div class="mycollet_content">昨天去看了《大鱼海棠》，不吹不黑，只能说还算是一个还行的作品，吧啦吧啦吧啦爸爸</div>
                         </a>
                     </div>
-                    <div class='del_collet' data-id='"+item._id+"'><img src='../images/delete.png'/></div>
+                    <div class='del_info_btn' data-id='"+item._id+"'></div>
                 </div>
             </div>
         </div>
