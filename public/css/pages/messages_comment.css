@@ -2,7 +2,7 @@
 .comment li{float:left;}
 .comment .head_img{width:1.08rem;}
 .comment .head_img img{width:0.58rem;height:0.58rem;border-radius:50%;}
-.comment .head_img em{display:block;font-size:0.24rem;color:#2e88ce;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.comment .head_img em{display:block;color:#2e88ce;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .comment .comment_ri{width:4.56rem;}
-.comment .comment_ri p{color:#55637c;font-size:0.28rem;font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.comment .comment_ri h4{color:#55637c;font-size:0.24rem;font-weight:normal;padding:0.24rem 0 0 0.72rem;}
+.comment .comment_ri p{color:#55637c;font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.comment .comment_ri h4{color:#55637c;font-weight:normal;padding:0.24rem 0 0 0.72rem;}

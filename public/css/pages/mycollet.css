@@ -1,8 +1,8 @@
 .mycollet-slide{transition:all .5s;}
 .mycollet-slide a {color:#55637C;display:block;}
-.mycollet_author{font-size:.20rem;font-family: "PingFang SC Light";color:#2e88ce;line-height: .32rem;}
+.mycollet_author{font-family: "PingFang SC Light";color:#2e88ce;line-height: .32rem;}
 .mycollet_author span{color:#b5b5b6;margin-left:.08rem;}
-.mycollet_title{color:#55637c;font-size:.28rem;line-height:.57rem;margin-left: -.15rem;}
-.mycollet_content{font-size:.24rem;font-family: "PingFang SC Light";color:#828893;line-height:.38rem;}
+.mycollet_title{color:#55637c;line-height:.57rem;margin-left: -.15rem;}
+.mycollet_content{font-family: "PingFang SC Light";color:#828893;line-height:.38rem;}
 
 .swiper-wrapper .mycollet .del_visible{width:1.25rem;}

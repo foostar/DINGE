@@ -4,6 +4,6 @@
 .myfocus-slide{float:left}
 .myfocus-slide .focus_carouse{margin-right:.15rem;}
 .myfocus-slide .focus_carouse,.myfocus-slide .focus_carouse img{width:1rem;height:1rem;border-radius: 50%;}
-.myfocus-slide a .focus_nickname{color:#2E88CE;font-size:.28rem;}
-.myfocus-slide a .focus_notice{color:#55637C;font-size:.24rem;font-family:"PingFang SC Light"}
+.myfocus-slide a .focus_nickname{color:#2E88CE;}
+.myfocus-slide a .focus_notice{color:#55637C;font-family:"PingFang SC Light"}
 .focus_content{margin-top:.16rem;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}

@@ -21,9 +21,9 @@ $(function(){
                 html += "<ul>"
                             +"<li class='search_tag1img'><img src="+data[ i ].images.large+" alt=''></li>"
                             +"<li class='search_tag1txt'>"
-                                +"<div class='tag1_title'>"+data[ i ].title+"</div>"
-                                +"<div class='tag1_midtxt'><span>"+monsubstr+"</span><em>"+data[ i ].directors[ i ].name+"</em></div>"
-                                +"<div class='tag1_bnttxt'><span>"+data[ i ].rating.average+"</span>评分</div>"
+                                +"<div class='tag1_title font-title'>"+data[ i ].title+"</div>"
+                                +"<div class='tag1_midtxt'><span class='font-normal'>"+monsubstr+"</span><em class='font-normal'>"+data[ i ].directors[ i ].name+"</em></div>"
+                                +"<div class='tag1_bnttxt font-normal'><span class='font-title'>"+data[ i ].rating.average+"</span>评分</div>"
                             +"</li>"
                         +"</ul>";
             }

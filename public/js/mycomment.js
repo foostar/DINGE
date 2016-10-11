@@ -72,8 +72,8 @@ $(function(){
                                 +"<div class='swiper-slide'>"
                                     +"<div class='info_mini'>"
                                         +"<a href='javascript:;'>"
-                                            +"<div class='mycomment_title'>「"+item.content+"」</div>"
-                                            +"<ul class='mycomment_body'><li class='mycomment_heart'><img src='../images/comment_likeS.png' alt=''><span>"+item.star+"</span></li><li class='mycomment_say'><img src='../images/comment_commentS.png' alt=''><span>"+item.reading+"</span></li></ul>"
+                                            +"<div class='mycomment_title font-h'>「"+item.content+"」</div>"
+                                            +"<ul class='mycomment_body font-normal'><li class='mycomment_heart'><img src='../images/comment_likeS.png' alt=''><span>"+item.star+"</span></li><li class='mycomment_say'><img src='../images/comment_commentS.png' alt=''><span>"+item.reading+"</span></li></ul>"
                                         +"</a>"
                                     +"</div>"
                                 +"</div>"
@@ -94,5 +94,5 @@ $(function(){
         }
     };
     var mycomment = new MyComment();
-    mycomment.init()
+    mycomment.init();
 });

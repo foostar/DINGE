@@ -18,9 +18,9 @@ $(function(){
             //console.log(data);         
             for(var i=0;i<data.length;i++){
                 html += "<div class='review_div'>"
-                            +"<div class='review_title'>"+data[ i ].title+"</div>"
-                            +"<span>——《"+data[ i ].movie+"》</span>"
-                            +"<p>"+data[ i ].content+"</p>"
+                            +"<div class='review_title font-title'>"+data[ i ].title+"</div>"
+                            +"<span class='font-normal'>——《"+data[ i ].movie+"》</span>"
+                            +"<p class='font-normal'>"+data[ i ].content+"</p>"
                         +"</div>";
             }
             $(html).appendTo($("#searchMovie_review"));

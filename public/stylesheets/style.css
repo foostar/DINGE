@@ -335,6 +335,7 @@ textarea::-webkit-input-placeholder {
 
 
 /* -----------------------------------------------书写页start----------------------------- */
+.writepage{margin:0 28px;}
 .write_back{overflow:hidden;padding:12px 10px 0;}
 .write_back li.w_back{float:left;}
 .write_back li.w_back a{display:inline-block;}

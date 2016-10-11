@@ -33,7 +33,7 @@ $(function(){
                     data.forEach(function(item){
                        //console.log(item.images.medium);
 
-                        html += "<li><img src="+item.images.large+" alt=''><span>"+item.title+"</span></li>";
+                        html += "<li><img src="+item.images.large+" alt=''><span class='font-h'>"+item.title+"</span></li>";
                     });
                     $(html).appendTo($(".search_body"));
                 }
@@ -53,7 +53,7 @@ $(function(){
             this.loadingFooter();
             this.loadingImg();
             self.changeHref();
-            $.when(this.movieList())
+            this.movieList()
             .then(function(){
                 $(".loading").hide();   
             });
