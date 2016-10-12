@@ -1,6 +1,10 @@
-var $ = window.jQuery;
-
+var $ = window.jQuery,
+        dingeTools = window.dingeTools;
 $(function(){
+    dingeTools.init();
+    $(".goback").on("tap", function(){
+        window.history.back();
+    });
     // 加载底部
     $("#footer").load("../views/footer.html");
     /*--------------------------------他人资料-更多-举报用户--------------*/

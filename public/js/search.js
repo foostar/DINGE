@@ -7,7 +7,22 @@ $(function(){
     Search.prototype={
         init:function(){
             dingeTools.init();
+            this.bindEvent();
             this.render();
+        },
+        bindEvent:function(){
+            this.changeHref();
+        },
+        //渲染页面
+        render:function(){
+            var self = this;
+            self.loadingFooter();
+            self.loadingImg();
+            /*self.movieList()*/
+            $.when(self.movieList())
+            .then(function(){
+                $(".loading").hide();   
+            });
         },
         loadingFooter:function(){
             // 加载底部  
@@ -46,18 +61,8 @@ $(function(){
                 //$(document).load(searchMovie.html);
                 window.location.href = "searchMovie.html";
             });
-        },
-        //渲染页面
-        render:function(){
-            var self = this;
-            this.loadingFooter();
-            this.loadingImg();
-            self.changeHref();
-            this.movieList()
-            .then(function(){
-                $(".loading").hide();   
-            });
         }
     };
-    new Search();
+    var search = new Search();
+    search.init();
 });

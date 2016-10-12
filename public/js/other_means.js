@@ -1,5 +1,10 @@
-var $ = window.jQuery;
+var $ = window.jQuery,
+        dingeTools = window.dingeTools;
 $(function(){
+    dingeTools.init();
+    $(".goback").on("tap", function(){
+        window.history.back();
+    });
     // 加载底部
     $("#footer").load("../views/footer.html");
     $("#goback_user").click(function(){
@@ -42,8 +47,8 @@ $(function(){
             $(html).appendTo($("#other_conts"));*/
             data.forEach(function(item){
                 html += "<div class='mar_28 other_pinglun'>"
-                            +"<h4>「<span>"+item.title+"</span>」</h4>"
-                            +"<p>"+item.content+"</p>"
+                            +"<h4 class='font-bold'>「<span>"+item.title+"</span>」</h4>"
+                            +"<p class='font-normal'>"+item.content+"</p>"
                         +"</div>";
             });
             $(html).appendTo($("#other_conts"));
