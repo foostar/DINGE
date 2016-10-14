@@ -12,25 +12,27 @@
 </style>
 </head>
 <body>
-    <div class="mes_title fix_title">
-        <div class="goback"><a href="/views/messagelist.html"><img src="../images/back.png" alt=""></a></div>
-        缺缺
+    <div class="container flex-container flex-column">
+      <div class="mes_title fix_title">
+          <div class="goback"><a href="/views/messagelist.html"><img src="../images/back.png" alt=""></a></div>
+          缺缺
+      </div>
+      <div class="preloader font-normal">
+          Loading...
+      </div>
+      <div class="swiper-container message_detail flex-normal">
+          <div class="swiper-wrapper">
+          </div>
+      </div>
+      <footer>
+          <form id="sendMessage" class="footer">
+              <div class="form-group">
+                <input type="text" class="user-input" id="message_input"/>
+                <input type="submit" class="send" value="发送">
+              </div>
+          </form>
+      </footer>
     </div>
-    <div class="preloader font-normal">
-        Loading...
-    </div>
-    <div class="swiper-container message_detail">
-        <div class="swiper-wrapper">
-        </div>
-    </div>
-    <footer>
-        <form id="sendMessage" class="footer">
-            <div class="form-group">
-              <input type="text" class="user-input" id="message_input"/>
-              <input type="submit" class="send" value="发送">
-            </div>
-        </form>
-    </footer>
     <!-- <div id="footer"></div> -->
     <script src="/js/jquery-3.1.0.min.js"></script>
     <script src="/js/dingeTools.js" type="text/javascript"></script>

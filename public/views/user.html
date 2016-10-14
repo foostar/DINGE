@@ -10,27 +10,29 @@
     <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
-	<div class="mes_title font-title">我的</div>
-	<div class="content-body">
-        <div id="userinfo" class="user_box">
-            <div class="flex-container user_carouse">
-                <img src="" alt="Kitten">
-                <div class="user_notice font-bold flex-normal">
-                    <h3 class="user_nickname">Love song</h3>
-                    <p class="notice font-normal">一直想写一首lovesong...</p>
+    <div class="container flex-container flex-column">
+    	<div class="mes_title font-title">我的</div>
+    	<div class="flex-normal">
+            <div id="userinfo" class="user_box">
+                <div class="flex-container user_carouse">
+                    <img src="" alt="Kitten">
+                    <div class="user_notice font-bold flex-normal">
+                        <h3 class="user_nickname">Love song</h3>
+                        <p class="notice font-normal">一直想写一首lovesong...</p>
+                    </div>
                 </div>
             </div>
+            <div class="user_line">
+                <div class="infolist_normal user_write"><a href="mycomment.html"><span class="font-bold">我的影评</span></a></div>
+                <div class="infolist_normal user_like"><a href="myfocus.html"><span class="font-bold">我关注的</span></a></div>
+                <div class="infolist_normal user_sc"><a href="mycollet.html"><span class="font-bold">我收藏的</span></a></div>
+                <div class="infolist_normal user_history"><a href="history.html"><span class="font-bold">浏览历史</span></a></div>
+                <!-- <div class="user_l user_draft"><a href="javascript:;"><span>草稿箱</span></a></div> -->
+                <div class="infolist_normal user_night"><a href="javascript:;"><span class="font-bold">夜间模式</span></a></div>
+            </div>
         </div>
-        <div class="user_line">
-            <div class="infolist_normal user_write"><a href="mycomment.html"><span class="font-bold">我的影评</span></a></div>
-            <div class="infolist_normal user_like"><a href="myfocus.html"><span class="font-bold">我关注的</span></a></div>
-            <div class="infolist_normal user_sc"><a href="mycollet.html"><span class="font-bold">我收藏的</span></a></div>
-            <div class="infolist_normal user_history"><a href="history.html"><span class="font-bold">浏览历史</span></a></div>
-            <!-- <div class="user_l user_draft"><a href="javascript:;"><span>草稿箱</span></a></div> -->
-            <div class="infolist_normal user_night"><a href="javascript:;"><span class="font-bold">夜间模式</span></a></div>
-        </div>
+    	<div id="footer"></div>
     </div>
-	<div id="footer"></div>
 	<script src="../js/jquery-3.1.0.min.js"></script>
 	<script src="../js/dingeTools.js"></script>
     <script src="/js/user.js" type="text/javascript"></script>

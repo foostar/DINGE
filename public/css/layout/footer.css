@@ -1,5 +1,4 @@
-footer{position:fixed;left:0;bottom:0;z-index:100;width:100%;}
-
+#footer,footer{width:100%;}
 .footer{background:url(../../images/footer_bg.png) repeat-x left -0.05rem;overflow:hidden;background-color:#fdfcf8;}
 .footer li{text-align:center;}
 .footer li a{display:inline-block;padding-top:.78rem;}

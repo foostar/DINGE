@@ -35,7 +35,6 @@ $(function(){
         loadingFooter:function(){
             var dtd = $.Deferred();
             $("#footer").load("../views/footer.html",function(){
-                $(".swiper-container").height($(window).height()-($(".mes_title").height()+$(".footer").height()));
                 dtd.resolve({status:1});
             });
             return dtd;

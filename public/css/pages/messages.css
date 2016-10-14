@@ -1,4 +1,4 @@
-.fix_title{position:absolute;top:0;left:0;background:#FDFCF8;z-index:100;font-family: "PingFang SC Medium"}
+.fix_title{background:#FDFCF8;z-index:100;font-family: "PingFang SC Medium"}
 .mes_pl{width:6.4rem;height:1.18rem;border-bottom:0.01rem solid #a4a4a4;background:url(../../images/ahead.png) no-repeat 5.6rem center;box-shadow: 0px 0.02rem #efeeea;background-size:0.52rem;}
 .mes_pl a{display: block}
 /* .user_info{overflow:hidden}
