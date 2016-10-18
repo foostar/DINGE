@@ -14,6 +14,7 @@
 .pop_bnt{overflow:hidden;}
 .pop_bnt button{float:left;width:2.76rem;height:1.13rem;border:none;border-right:.02rem solid #efeeea;line-height:1.06rem;color:#248bfb;background:none;font-weight:bold;}
 .pop_bnt button.ri{width:2.77rem;}
+.width64{width:6.4rem;}
 /* .fans{width:5.64rem;height:1.5rem;line-height:1.5rem;font-size:28px;color:#55637c;border-bottom:.02rem solid #a4a4a4;margin:0 auto;}
 .fans span,.like em{padding-right:.1rem;}
 .comment{overflow:hidden;width:6.4rem;padding:.4rem 0;border-bottom:.02rem solid #a4a4a4;margin:0 auto;}

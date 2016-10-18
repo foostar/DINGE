@@ -12,6 +12,7 @@ $(function(){
         },
         bindEvent:function(){
             this.changeHref();
+            this.movieHref();
         },
         //渲染页面
         render:function(){
@@ -60,6 +61,11 @@ $(function(){
             $("#sousuo").change(function(){
                 //$(document).load(searchMovie.html);
                 window.location.href = "searchMovie.html";
+            });
+        },
+        movieHref:function(){
+            $(".search_body").on("click","li",function(){
+                window.location.href = "moviedetails.html";
             });
         }
     };
