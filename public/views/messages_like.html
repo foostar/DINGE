@@ -10,14 +10,25 @@
     <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
+<div class="container flex-container flex-column">
 	<div class="mes_title">
 		<div class="goback"><a href="javascript:;" onclick="window.history.back()"><img src="../images/back.png" alt=""></a></div>
 	喜欢
 	</div>
-	<div class="like"><em>Dreams</em>喜欢了你的「<span>荒野中，你为什么活下来？</span>」</div>
+	<div class="swiper-container flex-normal">
+        <div class="swiper-wrapper"> 
+            <div class='swiper-slide'>
+                <div class="like"><em>Dreams</em>喜欢了你的「<span>荒野中，你为什么活下来？</span>」</div>
+            </div>
+        </div>
+    </div>
+    <div class="preloader prebottom">
+        Loading...
+    </div>
+	
 
 	<div id="footer"></div>
-
+</div>
 	<script src="../js/jquery-3.1.0.min.js"></script>
 	<script src="/js/dingeTools.js" type="text/javascript"></script>
 	<script src="../js/messages_like.js" type="text/javascript"></script>

@@ -10,14 +10,25 @@
     <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
+<div class="container flex-container flex-column">
 	<div class="mes_title">
 		<div class="goback"><a href="javascript:;" onclick="window.history.back()"><img src="../images/back.png" alt=""></a></div>
 	粉丝
-	</div>	
-	<div class="fans"><span>大灰狼</span>成为了你的粉丝</div>
+	</div>
+	<div class="swiper-container flex-normal">
+        <div class="swiper-wrapper"> 
+            <div class='swiper-slide'>
+                <div class="fans"><span>大灰狼</span>成为了你的粉丝</div>
+            </div>
+        </div>
+    </div>
+    <div class="preloader prebottom">
+        Loading...
+    </div>	
+	
 
 	<div id="footer"></div>
-
+</div>
 	<script src="../js/jquery-3.1.0.min.js"></script>
 	<script src="/js/dingeTools.js" type="text/javascript"></script>
 	<script src="../js/messages_fans.js" type="text/javascript"></script>
