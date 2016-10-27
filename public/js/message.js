@@ -5,11 +5,12 @@
 var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
-$(function(){
+(function($){
     function Message(){
         this.holdPosition = 0;
         this.page = 0;
         this.mySwiper = "";
+        this.init();
     }
     Message.prototype = {
         init:function(){
@@ -22,32 +23,33 @@ $(function(){
             // 发送私信
             self.sendMessage();
             // 向上返回
-            $(".goback").on("tap", function(){
-                window.history.back();
+            dingeTools.goBack();
+            // 刷新拉取新的聊天信息
+            self.getRefresh();
+        },
+        getRefresh:function(){
+            var self = this;
+            $(".chat-refresh").on("tap", function(){
+                self.showList();
             });
         },
         sendMessage:function(){
             var self = this;
             $("#sendMessage").submit(function(event){
                 var messageInput = $.trim($("#message_input").val());
-                var src = $(".triangle-right").parent().find("img").attr("src");
                 event.preventDefault();
                 if(messageInput){
                     var toId = $(".triangle-left").attr("data-to");
-                    $.ajax({
-                        url:"../data/sendMessage.json",
-                        method:"GET",
-                        data:{
-                            token:$.cookie("dinge"),
-                            to:toId,
-                            content:messageInput
-                        },
-                        dataType:"json"
-                    }).done(function(result){
+                    self.sendPost({
+                        token:$.cookie("dinge"),
+                        to:toId,
+                        content:messageInput
+                    })
+                    .done(function(result){
                         if(result.status == 1){
                             self.mySwiper.appendSlide(
                                 "<div class='swiper-slide swiper-from'>"
-                                    +"<div class='dialog_carouse'><img src='"+src+"'/></div>"
+                                    +"<div class='dialog_carouse'><img src='"+result.data.avatar+"'/></div>"
                                     +"<div class='triangle-right'></div>"
                                     +"<div class='dialog_content'>"+messageInput+"</div>"
                                 +"</div>"
@@ -67,6 +69,14 @@ $(function(){
                 }  
             });
         },
+        sendPost:function(data){
+            return $.ajax({
+                url:"/data/sendMessage.json",
+                method:"GET",
+                data:data,
+                dataType:"json"
+            });
+        },
         render:function(){
             // 展示数据
             this.showList();
@@ -84,15 +94,14 @@ $(function(){
                 self.initSwiper(result);
             });
         },
-        loadMessage:function(){
-            var self = this;
+        loadMessage:function(page){
             // 加载详细信息
             return  $.ajax({
                 url:"../data/getMessageDetail.json",
                 method:"GET",
                 data:{
                     token:$.cookie("dinge"),
-                    page:self.page,
+                    page:page,
                     typeId:dingeTools.getQueryString("mId")
                 },
                 dataType:"json"
@@ -100,6 +109,7 @@ $(function(){
         },
         makeData:function(result){
             if(result.status == 1 && result.data.length>0){
+                $(".swiper-wrapper").html("");
                 var html = "";
                 var data = result.data;
                 data.forEach(function(item){
@@ -190,8 +200,7 @@ $(function(){
             }
         }   
     };
-    var message = new Message();
-    message.init();
-});
+    new Message();
+})($);
 
     

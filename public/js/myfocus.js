@@ -1,12 +1,13 @@
 var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
-$(function(){
+(function($){
     function MyFocus(opt){
         this.holdPosition = 0;
         this.page = 0;
         this.mySwiper = "";
         this.ele = $("#"+opt.id);
+        this.init();
     }
     MyFocus.prototype = {
         init:function(){
@@ -17,55 +18,52 @@ $(function(){
         bindEvent:function(){
             var self = this;
             // 初试化touchmove，解决tap中 swipe不生效的问题
-            self.initTouchMove();
+            dingeTools.initTouchMove();
             // 左滑出现删除按钮
-            self.showDelete();
+            dingeTools.showDelete(self.ele);
             // 关闭删除按钮
-            self.cancelDelete();
+            dingeTools.cancelDelete(self.ele);
             // 删除silder
-            self.deleteFocus();
+            self.deleteSlider();
             // 向上返回
-            $(".goback").on("tap", function(){
-                window.history.back();
-            });
+            dingeTools.goBack();
+
         },
-        deleteFocus:function(){
+        getTemplate:function(item){
+            return "<div class='info_normal'>"
+                        +"<div class='info_slide'>"
+                            +"<div class='myfocus_carouse'>"
+                                +"<a href='javascript:;'>"
+                                    +"<img src='"+item.avatar+"'>"
+                                +"</a>"
+                            +"</div>"
+                            +"<div class='myfocus_content'>"
+                                +"<a href='javascript:;'>"
+                                    +"<div class='myfocus_nickname'>"+item.nickname+"</div>"
+                                    +"<div class='myfocus_notice font-normal'>"+item.sign+"</div>"
+                                +"</a>"
+                            +"</div>"
+                        +"</div>"
+                        +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                    +"</div>";
+        },
+        deleteSlider:function(){
             // 删除slider
             var self = this;
-            $(".swiper-container").on("tap",".del_focus",function(event){
+            $(".swiper-container").on("tap",".del_info_btn",function(event){
                 var userId = $(this).attr("data-id");
                 $(this).parent().parent().remove();
-                $.ajax({
-                    url:"../data/unfocus.json",
-                    method:"GET",
-                    data:{
-                        token:$.cookie("dinge"),
-                        page:self.page,
-                        userId:userId
-                    },
-                    dataType:"json"
+                self.deleteAction({
+                    token:$.cookie("dinge"),
+                    page:self.page,
+                    userId:userId
                 })
                 .done(function(result){
                     if(result.status == 1 && result.data){
                         var item = result.data;
+                        var template = self.getTemplate(item);
                         self.mySwiper.params.onlyExternal=true;
-                        self.mySwiper.appendSlide(
-                            "<div class='info_normal'>"
-                                +"<div class='myfocus-slide'>"
-                                    +"<div class='focus_carouse'>"
-                                        +"<a href='javascript:;'>"
-                                            +"<img src='"+item.avatar+"'>"
-                                        +"</a>"
-                                    +"</div>"
-                                    +"<div class='focus_content'>"
-                                        +"<a href='javascript:;'>"
-                                            +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                            +"<div class='focus_notice font-normal'>"+item.sign+"</div>"
-                                        +"</a>"
-                                    +"</div>"
-                                +"</div>"
-                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                            +"</div>");
+                        self.mySwiper.appendSlide(template);
                         self.mySwiper.params.onlyExternal=false;
                         //Update active slide
                         self.mySwiper.updateActiveSlide(0);
@@ -74,31 +72,18 @@ $(function(){
                 event.stopPropagation();
             });
         },
-        cancelDelete:function(){
-            this.ele.on("tap", function(){
-                if($(".slide-left")){
-                    $(".slide-left").removeClass("slide-left"); 
-                }
-                if($(".del_info_visible_normal")){
-                    $(".del_info_visible_normal").removeClass("del_info_visible_normal"); 
-                }
+        deleteAction:function(data){
+            return $.ajax({
+                url:"../data/unfocus.json",
+                method:"GET",
+                data:data,
+                dataType:"json"
             });
-        },
-        showDelete:function(){
-            this.ele.on("swipeLeft",".swiper-slide", function(){
-                $(this).find(".myfocus-slide").addClass("slide-left");
-                $(this).find(".del_info_btn").addClass("del_info_visible_normal");
-            });
-        },
-        initTouchMove:function(){
-            document.addEventListener("touchmove", function (event) {
-                event.preventDefault();
-            }, false);
         },
         render:function(){
             var self = this;
             // 加载底部文件
-            self.loadingFooter()
+            dingeTools.loadingFooter()
             .then(function(result){
                 if(result.status == 1){
                     // 展示数据
@@ -106,20 +91,13 @@ $(function(){
                 }
             });
         },
-        loadingFooter:function(){
-            var dtd = $.Deferred();
-            $("#footer").load("../views/footer.html",function(){
-                dtd.resolve({status:1});
-            });
-            return dtd;
-        },
-        loadFocusList:function(){
+        loadFocusList:function(page){
             return  $.ajax({
                 url:"../data/getUserFocuslist.json",
                 method:"GET",
                 data:{
                     token:$.cookie("dinge"),
-                    page:this.page
+                    page:page
                 },
                 dataType:"json"
             });
@@ -138,28 +116,12 @@ $(function(){
             });
         },
         makeData:function(result){
+            var self = this;
             var html = "";
             if(result.status == 1 &&  result.data.length>0) {
                 var data = result.data;
                 data.forEach(function(item){
-                    html += "<div class='swiper-slide'>"
-                                +"<div class='info_normal'>"
-                                    +"<div class='myfocus-slide'>"
-                                        +"<div class='focus_carouse'>"
-                                            +"<a href='javascript:;'>"
-                                                +"<img src='"+item.avatar+"'>"
-                                            +"</a>"
-                                        +"</div>"
-                                        +"<div class='focus_content'>"
-                                            +"<a href='javascript:;'>"
-                                                +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                                +"<div class='focus_notice font-normal'>"+item.sign+"</div>"
-                                            +"</a>"
-                                        +"</div>"
-                                    +"</div>"
-                                    +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                                +"</div>"
-                            +"</div>";
+                    html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
                 $(html).appendTo($(".swiper-wrapper"));
             }
@@ -176,12 +138,7 @@ $(function(){
                         self.holdPosition = 0;
                     },
                     onTouchMove:function(){
-                        if($(".slide-left")){
-                            $(".slide-left").removeClass("slide-left"); 
-                        }
-                        if($(".del_visible")){
-                            $(".del_visible").removeClass("del_visible"); 
-                        }
+                        dingeTools.cancelBtn();
                     },
                     onResistanceAfter: function(s, pos){
                         self.holdPosition = pos;
@@ -209,23 +166,8 @@ $(function(){
                                 if(result.status == 1 && result.data.length>0){
                                     var data = result.data;
                                     data.forEach(function(item){
-                                        self.mySwiper.appendSlide(
-                                            "<div class='info_normal'>"
-                                                +"<div class='myfocus-slide'>"
-                                                    +"<div class='focus_carouse'>"
-                                                        +"<a href='javascript:;'>"
-                                                            +"<img src='"+item.avatar+"'>"
-                                                        +"</a>"
-                                                    +"</div>"
-                                                    +"<div class='focus_content'>"
-                                                        +"<a href='javascript:;'>"
-                                                            +"<div class='focus_nickname'>"+item.nickname+"</div>"
-                                                            +"<div class='focus_notice font-normal'>"+item.sign+"</div>"
-                                                        +"</a>"
-                                                    +"</div>"
-                                                +"</div>"
-                                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                                            +"</div>");
+                                        var template = self.getTemplate(item);
+                                        self.mySwiper.appendSlide(template);
                                     });
                                     self.mySwiper.params.onlyExternal=false;
                                     //Update active slide
@@ -242,6 +184,5 @@ $(function(){
             }    
         }
     };
-    var myfocus = new MyFocus({id:"myfocus"});
-    myfocus.init(); 
-});
+    new MyFocus({id:"myfocus"});
+})($);

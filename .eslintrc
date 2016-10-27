@@ -16,7 +16,7 @@
     },
     "rules": {
         "camelcase": 2,
-        "curly": 2,
+        "curly": 0,
         "no-console":1,
         "no-var":0,
         "no-constant-condition":0,

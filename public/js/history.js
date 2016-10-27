@@ -17,27 +17,18 @@ $(function(){
         },
         bindEvent:function(){
             // 向上返回
-            $(".goback").on("tap", function(){
-                window.history.back();
-            });
+            dingeTools.goBack();
         },
         render:function(){
             var self = this;
             // 加载底部文件
-            self.loadingFooter()
+            dingeTools.loadingFooter()
             .then(function(result){
                 if(result.status == 1){
                     // 展示数据
                     self.showList();
                 }
             });
-        },
-        loadingFooter:function(){
-            var dtd = $.Deferred();
-            $("#footer").load("../views/footer.html",function(){
-                dtd.resolve({status:1});
-            });
-            return dtd;
         },
         showList:function(){
             var self = this;

@@ -62,13 +62,12 @@
 
 
 /* ----------------------message page start------------ */
-.message_list_slide{width:100%;overflow:hidden;float:left;}
-.message_list_slide a{display:block;color:#333}
 .message_carouse{height:.80rem;margin-right:.20rem;float:left;}
 .message_carouse img{width:.80rem;height:.80rem;border-radius: 50%;}
 .message_list{position:relative;width:4.40rem;float:left;}
-.message_date{position: absolute;right:.05rem;top:.05rem;font-family: "PingFang SC Light",arial;}
+.message_date{position: absolute;right:.05rem;top:.05rem;color:#c8ccd2;font-family: "PingFang SC Light",arial;}
 .message_nickname{color:#2E88CE;line-height:.42rem;}
+.message_nickname a{color:#2E88CE}
 .message_talk{white-space: nowrap;line-height:.33rem;overflow: hidden;text-overflow:ellipsis;color:#55637C}
 .message_detail .swiper-slide{padding-top:.25rem}
 .goback{position:absolute;left:.40rem;top:.14rem;}

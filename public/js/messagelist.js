@@ -5,12 +5,13 @@
 var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
-$(function(){
+(function($){
     function MessageList(opt){
         this.holdPosition = 0;
         this.page = 0;
         this.mySwiper = "";
         this.ele = $("#"+opt.id);
+        this.init();
     }
     MessageList.prototype={
         init:function(){
@@ -21,17 +22,29 @@ $(function(){
         bindEvent:function(){
             var self = this;
             // 初试化touchmove，解决tap中 swipe不生效的问题
-            self.initTouchMove();
+            dingeTools.initTouchMove();
             // 左滑出现删除按钮
-            self.showDelete();
+            dingeTools.showDelete(self.ele);
             // 关闭删除按钮
-            self.cancelDelete();
+            dingeTools.cancelDelete(self.ele);
             // 删除silder
             self.deleteFocus();
             // 向上返回
-            $(".goback").on("tap", function(){
-                window.history.back();
-            });
+            dingeTools.goBack();
+        },
+        getTemplate:function(item){
+            return "<div class='info_mini'>"
+                        +"<div class='info_slide'>"
+                            +"<div class='message_carouse'><a href='/views/message.html?mId="+item.typeId+"'><img src='"+item.avatar+"'/></a></div>"
+                            +"<div class='message_list'>"
+                                +"<div class='message_nickname'><a href='/views/message.html?mId="+item.typeId+"'>"+item.username+"</a></div>"
+                                +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
+                                +"<div class='message_talk'>"+item.content+"</div>"
+                            +"</div>"
+                        +"</div>"
+                        +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                        +"<div class='del_info_mask'></div>"
+                    +"</div>";
         },
         deleteFocus:function(){
             // 删除slider
@@ -52,21 +65,9 @@ $(function(){
                 .done(function(result){
                     if(result.status == 1 && result.data){
                         var item = result.data;
+                        var template = self.getTemplate(item);
                         self.mySwiper.params.onlyExternal=true;
-                        self.mySwiper.appendSlide(
-                            "<div class='info_mini'>"
-                                +"<div class='message_list_slide'>"
-                                    +"<a href='/views/message.html?mId="+item.typeId+"'>"
-                                        +"<div class='message_carouse'><img src='"+item.avatar+"'/></div>"
-                                        +"<div class='message_list'>"
-                                            +"<div class='message_nickname'>"+item.username+"</div>"
-                                            +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
-                                            +"<div class='message_talk'>"+item.content+"</div>"
-                                        +"</div>"
-                                    +"</a>"
-                                +"</div>"
-                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                            +"</div>");
+                        self.mySwiper.appendSlide(template);
                         self.mySwiper.params.onlyExternal=false;
                         //Update active slide
                         self.mySwiper.updateActiveSlide(0);
@@ -75,31 +76,10 @@ $(function(){
                 event.stopPropagation();
             });
         },
-        cancelDelete:function(){
-            this.ele.on("tap", function(){
-                if($(".slide-left")){
-                    $(".slide-left").removeClass("slide-left"); 
-                }
-                if($(".del_info_visible_normal")){
-                    $(".del_info_visible_normal").removeClass("del_info_visible_normal"); 
-                }
-            });
-        },
-        showDelete:function(){
-            this.ele.on("swipeLeft",".swiper-slide", function(){
-                $(this).find(".message_list_slide").addClass("slide-left");
-                $(this).find(".del_info_btn").addClass("del_info_visible_normal");
-            });
-        },
-        initTouchMove:function(){
-            document.addEventListener("touchmove", function (event) {
-                event.preventDefault();
-            }, false);
-        },
         render:function(){
             var self = this;
             // 加载底部文件
-            self.loadingFooter()
+            dingeTools.loadingFooter()
             .then(function(result){
                 if(result.status == 1){
                     // 展示数据
@@ -107,20 +87,13 @@ $(function(){
                 }
             });
         },
-        loadingFooter:function(){
-            var dtd = $.Deferred();
-            $("#footer").load("../views/footer.html",function(){
-                dtd.resolve({status:1});
-            });
-            return dtd;
-        },
-        loadMessageList:function(){
+        loadMessageList:function(page){
             return  $.ajax({
                 url:"../data/getMessageList.json",
                 method:"GET",
                 data:{
                     token:$.cookie("dinge"),
-                    page:this.page
+                    page:page
                 },
                 dataType:"json"
             });
@@ -139,25 +112,12 @@ $(function(){
             });
         },
         makeData:function(result){
+            var self = this;
             var html = "";
             if(result.status == 1 &&  result.data.length>0) {
                 var data = result.data;
                 data.forEach(function(item){
-                    html += "<div class='swiper-slide'>"
-                            +"<div class='info_mini'>"
-                                +"<div class='message_list_slide'>"
-                                    +"<a href='/views/message.html?mId="+item.typeId+"'>"
-                                        +"<div class='message_carouse'><img src='"+item.avatar+"'/></div>"
-                                        +"<div class='message_list'>"
-                                            +"<div class='message_nickname'>"+item.username+"</div>"
-                                            +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
-                                            +"<div class='message_talk'>"+item.content+"</div>"
-                                        +"</div>"
-                                    +"</a>"
-                                +"</div>"
-                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                            +"</div>"
-                        +"</div>";
+                    html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
                 $(html).appendTo($(".swiper-wrapper"));
             }
@@ -174,12 +134,7 @@ $(function(){
                         self.holdPosition = 0;
                     },
                     onTouchMove:function(){
-                        if($(".slide-left")){
-                            $(".slide-left").removeClass("slide-left"); 
-                        }
-                        if($(".del_visible")){
-                            $(".del_visible").removeClass("del_visible"); 
-                        }
+                        dingeTools.cancelBtn();
                     },
                     onResistanceAfter: function(s, pos){
                         self.holdPosition = pos;
@@ -207,20 +162,8 @@ $(function(){
                                 if(result.status == 1 && result.data.length>0){
                                     var data = result.data;
                                     data.forEach(function(item){
-                                        self.mySwiper.appendSlide(
-                                            "<div class='info_mini'>"
-                                                +"<div class='message_list_slide'>"
-                                                    +"<a href='/views/message.html?mId="+item.typeId+"'>"
-                                                        +"<div class='message_carouse'><img src='"+item.avatar+"'/></div>"
-                                                        +"<div class='message_list'>"
-                                                            +"<div class='message_nickname'>"+item.username+"</div>"
-                                                            +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
-                                                            +"<div class='message_talk'>"+item.content+"</div>"
-                                                        +"</div>"
-                                                    +"</a>"
-                                                +"</div>"
-                                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                                            +"</div>");
+                                        var template = self.getTemplate(item);
+                                        self.mySwiper.appendSlide(template);
                                     });
                                     self.mySwiper.params.onlyExternal=false;
                                     //Update active slide
@@ -237,6 +180,6 @@ $(function(){
             }    
         }
     };
-    var messagelist = new MessageList({id:"messagelist"});
-    messagelist.init();
-});
+
+    new MessageList({id:"messagelist"});
+})($);

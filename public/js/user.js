@@ -1,11 +1,9 @@
 var $ = window.jQuery;
 var dingeTools = window.dingeTools;
-
-$(function(){ 
-    //localStorage.removeItem("userinfo");
+(function($){
     function UserInfo(opt){
-        this.init();
         this.id = opt.id;
+        this.init();
     }
     UserInfo.prototype = {
         init:function(){
@@ -17,10 +15,6 @@ $(function(){
             $(".user_carouse").on("tap", function(){
                 window.location.href = "/views/edit_user.html";
             });
-        },
-        // 加载底部
-        loadingFooter:function(){    
-            $("#footer").load("../views/footer.html");
         },
         // 存储storage
         setStorage:function(data){
@@ -63,7 +57,7 @@ $(function(){
         // 渲染页面
         render:function(){
             var self = this;
-            this.loadingFooter();
+            dingeTools.loadingFooter();
             this.getData()
             .done(function(result){
                 self.renderData(result);
@@ -73,4 +67,4 @@ $(function(){
     new UserInfo({
         id:"userinfo"
     });
-});
+})($);

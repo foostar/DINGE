@@ -1,5 +1,5 @@
-#footer,footer{width:100%;}
-.footer{background:url(../../images/footer_bg.png) repeat-x left -0.05rem;overflow:hidden;background-color:#fdfcf8;}
+#footer{width:100%;}
+footer{width:100%;background:url(../../images/footer_bg.png) repeat-x left -0.05rem;overflow:hidden;background-color:#fdfcf8;}
 .footer li{text-align:center;}
 .footer li a{display:inline-block;padding-top:.78rem;}
 .footer li a.sy_bg{background:url(../../images/iconHome.png) no-repeat center center;background-size:.48rem .48rem;color:#adb3bf;}

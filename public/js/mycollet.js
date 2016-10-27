@@ -5,12 +5,13 @@
 var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
-$(function(){
+(function($){
     function MyCollet(opt){
         this.holdPosition = 0;
         this.page = 0;
         this.mySwiper = "";
         this.ele = $("#"+opt.id);
+        this.init();
     }
     MyCollet.prototype = {
         init:function(){
@@ -21,49 +22,43 @@ $(function(){
         bindEvent:function(){
             var self = this;
             // 初试化touchmove，解决tap中 swipe不生效的问题
-            self.initTouchMove();
+            dingeTools.initTouchMove();
             // 左滑出现删除按钮
-            self.showDelete();
+            dingeTools.showDelete(self.ele);
             // 关闭删除按钮
-            self.cancelDelete();
+            dingeTools.cancelDelete(self.ele);
             // 删除silder
-            self.deleteFocus();
+            self.deleteSilder();
             // 向上返回
-            $(".goback").on("tap", function(){
-                window.history.back();
-            });
+            dingeTools.goBack();
         },
-        deleteFocus:function(){
+        getTemplate:function(item){
+            return "<div class='info_mini'>"
+                        +"<div class='info_slide'>"
+                            +"<div class='mycollet_author font-normal'><a href='javascript:;'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></a></div>"
+                            +"<div class='mycollet_title'><a href='javascript:;'>「"+item.title+"」</a></div>"
+                            +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
+                        +"</div>"
+                        +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                    +"</div>";
+        },
+        deleteSilder:function(){
             var self = this;
             // 删除slider
-            this.ele.on("tap",".del_collet",function(event){
+            this.ele.on("tap",".del_info_btn",function(event){
                 var userId = $(this).attr("data-id");
                 $(this).parent().parent().remove();
-                $.ajax({
-                    url:"../data/unfocus.json",
-                    method:"GET",
-                    data:{
-                        token:$.cookie("dinge"),
-                        page:self.page,
-                        userId:userId
-                    },
-                    dataType:"json"
+                self.deleteAction({
+                    token:$.cookie("dinge"),
+                    page:self.page,
+                    userId:userId
                 })
                 .done(function(result){
                     if(result.status == 1 && result.data){
                         var item = result.data;
+                        var template = self.getTemplate(item);
                         self.mySwiper.params.onlyExternal=true;
-                        self.mySwiper.appendSlide(
-                            "<div class='info_mini'>"
-                                +"<div class='mycollet-slide'>"
-                                    +"<a href='javascript:;'>"
-                                        +"<div class='mycollet_author font-normal'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
-                                        +"<div class='mycollet_title'>「"+item.title+"」</div>"
-                                        +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
-                                    +"</a>"
-                                +"</div>"
-                                +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                            +"</div>");
+                        self.mySwiper.appendSlide(template);
                         self.mySwiper.params.onlyExternal=false;
                         //Update active slide
                         self.mySwiper.updateActiveSlide(0);
@@ -72,44 +67,19 @@ $(function(){
                 event.stopPropagation();
             });
         },
-        cancelDelete:function(){
-            this.ele.on("tap", function(){
-                if($(".slide-left")){
-                    $(".slide-left").removeClass("slide-left"); 
-                }
-                if($(".del_info_visible")){
-                    $(".del_info_visible").removeClass("del_info_visible"); 
-                }
+        deleteAction:function(data){
+            return $.ajax({
+                url:"../data/unfocus.json",
+                method:"GET",
+                data:data,
+                dataType:"json"
             });
-        },
-        showDelete:function(){
-            this.ele.on("swipeLeft",".swiper-slide", function(){
-                $(this).find(".mycollet-slide").addClass("slide-left");
-                $(this).find(".del_info_btn").addClass("del_info_visible");
-            });
-        },
-        initTouchMove:function(){
-            document.addEventListener("touchmove", function (event) {
-                event.preventDefault();
-            }, false);
         },
         render:function(){
             var self = this;
             // 加载底部文件
-            self.loadingFooter()
-            .then(function(result){
-                if(result.status == 1){
-                    // 展示数据
-                    self.showList();
-                }
-            });
-        },
-        loadingFooter:function(){
-            var dtd = $.Deferred();
-            $("#footer").load("../views/footer.html",function(){
-                dtd.resolve({status:1});
-            });
-            return dtd;
+            dingeTools.loadingFooter();
+            self.showList(); 
         },
         showList:function(){
             var self = this;
@@ -124,34 +94,24 @@ $(function(){
                 self.initSwiper(result);
             });
         },
-        loadColletList:function(){
+        loadColletList:function(page){
             return  $.ajax({
                 url:"../data/getMyCollet.json",
                 method:"GET",
                 data:{
                     token:$.cookie("dinge"),
-                    page:this.page
+                    page:page
                 },
                 dataType:"json"
             });
         },
         makeData:function(result){
+            var self = this;
             var html = "";
             if(result.status == 1 &&  result.data.length>0) {
                 var data = result.data;
                 data.forEach(function(item){
-                    html += "<div class='swiper-slide'>"
-                                +"<div class='info_mini'>"
-                                    +"<div class='mycollet-slide'>"
-                                        +"<a href='javascript:;'>"
-                                            +"<div class='mycollet_author font-normal'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
-                                            +"<div class='mycollet_title'>「"+item.title+"」</div>"
-                                            +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
-                                        +"</a>"
-                                    +"</div>"
-                                    +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                                +"</div>"
-                            +"</div>";
+                    html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
                 $(html).appendTo($(".swiper-wrapper"));
             }
@@ -168,12 +128,7 @@ $(function(){
                         self.holdPosition = 0;
                     },
                     onTouchMove:function(){
-                        if($(".slide-left")){
-                            $(".slide-left").removeClass("slide-left"); 
-                        }
-                        if($(".del_visible")){
-                            $(".del_visible").removeClass("del_visible"); 
-                        }
+                        dingeTools.cancelBtn();
                     },
                     onResistanceAfter: function(s, pos){
                         self.holdPosition = pos;
@@ -186,32 +141,17 @@ $(function(){
                                 var transition = "-"+(swiperHeight-containerHeight+100);
                                 self.mySwiper.setWrapperTranslate(0,transition,0);
                             }
-                            // Hold Swiper in required position
-                            //mySwiper.setWrapperTranslate(0,100,0);
-
-                            //Dissalow futher interactions
                             self.mySwiper.params.onlyExternal=true;
-
                             //Show loader
                             $(".preloader").addClass("visible_bottom");
-
                             //加载新的slide
                             self.loadColletList(self.page)
                             .done(function(result){
                                 if(result.status == 1 &&  result.data.length>0){
                                     var data = result.data;
                                     data.forEach(function(item){
-                                        self.mySwiper.appendSlide(
-                                            "<div class='info_mini'>"
-                                                +"<div class='mycollet-slide'>"
-                                                    +"<a href='javascript:;'>"
-                                                        +"<div class='mycollet_author font-normal'>"+item.commentFrom.nickname+"<span>"+dingeTools.format(item.createdAt,"yy-MM-dd")+"</span></div>"
-                                                        +"<div class='mycollet_title'>「"+item.title+"」</div>"
-                                                        +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
-                                                    +"</a>"
-                                                +"</div>"
-                                                +"<div class='del_collet' data-id='"+item._id+"'></div>"
-                                            +"</div>");
+                                        var template = self.getTemplate(item);
+                                        self.mySwiper.appendSlide(template);
                                     });
                                     self.mySwiper.params.onlyExternal=false;
                                     //Update active slide
@@ -228,6 +168,5 @@ $(function(){
             }    
         }
     };
-    var mycollet = new MyCollet({id:"mycollet"});
-    mycollet.init();
-});
+    new MyCollet({id:"mycollet"});
+})($);

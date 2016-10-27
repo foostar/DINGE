@@ -89,14 +89,58 @@ var jQuery = window.jQuery
                 }
             });
         },
+        //  初始化底层font-size
         init:function(){
-            console.log("aaa")
+            FastClick.attach(document.body);
             var evt = "onorientationchange" in window ? "orientationchange" : "resize"
             var remPage = function(){
                 document.documentElement.style.fontSize = document.documentElement.clientWidth / 6.4 + 'px';
             }
             window.addEventListener(evt, remPage, false);
             remPage()
+        },
+        // 左滑出现删除按钮
+        showDelete:function(ele){
+            ele.on("swipeLeft",".swiper-slide", function(){
+                $(this).find(".del_info_mask").show()
+                $(this).find(".info_slide").addClass("slide-left");
+                $(this).find(".del_info_btn").addClass("del_info_visible_normal");
+            });
+        },
+        // 关闭删除按钮
+        cancelDelete:function(ele){
+            var self = this
+            ele.on("click",'.del_info_mask', function(event){
+                self.cancelBtn()  
+            });
+        },
+        // 关闭删除特效
+        cancelBtn:function(){
+            if($(".slide-left")){
+                $(".slide-left").removeClass("slide-left");
+                $(".del_info_visible_normal").removeClass("del_info_visible_normal");  
+                $(".del_info_mask").hide();  
+            }
+        },
+        // 加载底部
+        loadingFooter:function(){    
+            var dtd = $.Deferred();
+            $("#footer").load("../views/footer.html",function(){
+                dtd.resolve({status:1});
+            });
+            return dtd;
+        },
+        // 初试化touchmove，解决tap中 swipe不生效的问题
+        initTouchMove:function(){
+            document.addEventListener("touchmove", function (event) {
+                event.preventDefault();
+            }, false);
+        },
+        // 向上返回
+        goBack:function(){
+            $(".goback").on("tap", function(){
+                window.history.back();
+            });
         },
         // 获取url的参数
         getQueryString:function(name){

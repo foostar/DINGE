@@ -27,3 +27,4 @@ li.search_tag1txt .tag1_bnttxt span{margin-right:0.1rem;}
 .user_txt{width:4.64rem;white-space:nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden;}
 
 .search_h{height:20px;}
+.tagClass{display:none}

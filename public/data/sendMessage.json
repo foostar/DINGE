@@ -1,4 +1,7 @@
 {
 	"status":1,
-	"message":"呵呵呵"
+	"data":{
+        "avatar":"../carouse/head.png",
+        "content":"123124"
+    }
 }

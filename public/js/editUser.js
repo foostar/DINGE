@@ -20,6 +20,45 @@ $(function(){
         bindEvent:function(){
             var self = this;
             // 提交用户资料
+            self.submitUserData();
+            // 性别选择弹出层
+            self.alertSexChoice();
+            // 选择性别
+            self.choiceSex();
+            // 上传图片
+            self.uploadCarouse(); 
+        },
+        uploadCarouse:function(){
+            new dingeTools.LUploader(document.getElementById("carouse"), {
+                url: "/carouse/api/addCarouse",//post请求地址
+                multiple: false,//是否一次上传多个文件 默认false
+                maxsize: 102400,//忽略压缩操作的文件体积上限 默认100kb
+                accept: "image/*",//可上传的图片类型
+                quality: 0.1,//压缩比 默认0.1  范围0.1-1.0 越小压缩率越大
+                showsize:false//是否显示原始文件大小 默认false
+            });
+        },
+        choiceSex:function(){
+            $(".edit_modal a").on("tap", function(){
+                $(".edit_content_sex").html($(this).html());
+                $(".edit_mask").addClass("edit_mask_out");
+                setTimeout(function(){
+                    $(".edit_mask").removeClass("edit_mask_out edit_mask_in");
+                    $(".edit_mask").hide();
+                },100);
+            });
+        },
+        alertSexChoice:function(){
+            var self = this;
+            self.ele.on("click",".edit_content_sex", function(){
+                $(".edit_mask").show();
+                setTimeout(function(){
+                    $(".edit_mask").addClass("edit_mask_in");
+                },0);
+            });
+        },
+        submitUserData:function(){
+            var self = this;
             $(".goback").on("click", function(event){
                 event.preventDefault();
                 if($("#sign").val().length > 30){
@@ -35,31 +74,6 @@ $(function(){
                 data.birthday = $("#birthday").val();
                 // 修改数据
                 self.editUserInfo(data);
-            });
-            // 性别选择弹出层
-            self.ele.on("click",".edit_content_sex", function(){
-                $(".edit_mask").show();
-                setTimeout(function(){
-                    $(".edit_mask").addClass("edit_mask_in");
-                },0);
-            });
-            // 选择性别
-            $(".edit_modal a").on("tap", function(){
-                $(".edit_content_sex").html($(this).html());
-                $(".edit_mask").addClass("edit_mask_out");
-                setTimeout(function(){
-                    $(".edit_mask").removeClass("edit_mask_out edit_mask_in");
-                    $(".edit_mask").hide();
-                },100);
-            });
-            // 上传图片
-            new dingeTools.LUploader(document.getElementById("carouse"), {
-                url: "/carouse/api/addCarouse",//post请求地址
-                multiple: false,//是否一次上传多个文件 默认false
-                maxsize: 102400,//忽略压缩操作的文件体积上限 默认100kb
-                accept: "image/*",//可上传的图片类型
-                quality: 0.1,//压缩比 默认0.1  范围0.1-1.0 越小压缩率越大
-                showsize:false//是否显示原始文件大小 默认false
             });
         },
         editUserInfo:function(data){
@@ -79,21 +93,13 @@ $(function(){
         render:function(){
             var self = this;
             // 加载底部文件
-            self.loadingFooter()
+            dingeTools.loadingFooter()
             .then(function(result){
                 if(result.status == 1){
                     // 展示数据
                     self.showUserData();
                 }
             });
-        },
-        loadingFooter:function(){
-            var dtd = $.Deferred();
-            $("#footer").load("../views/footer.html",function(){
-                $(".swiper-container").height($(window).height()-($(".mes_title").height()+$(".footer").height()));
-                dtd.resolve({status:1});
-            });
-            return dtd;
         },
         showUserData:function(){
             var self = this;
