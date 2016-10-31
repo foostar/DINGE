@@ -33,6 +33,9 @@ var $ = window.jQuery,
             $(".m_details_top").tap(function(){
                 window.location.href = "/views/moviedetails_top.html";
             });
+            $(".m_detail_href").tap(function(){
+                window.location.href="/views/moviedetails_comment.html";
+            });
         },
         getTemplate:function(item){
             return "<div class='info_mini'>"
