@@ -5,8 +5,6 @@
 .other_le{float:left;}
 .other_le img{width:0.52rem;height:0.52rem;}
 .other_le a{display:inline-block;}
-.other_ri{float:right;width:.52rem;height:.52rem;}
-.other_ri img{width:0.52rem;height:0.52rem;}
 .other_ul2{overflow: hidden;margin:.3rem 0 .24rem;}
 .other_ul2 li{float:left;color:#55637c;}
 .other_le2{}
@@ -28,3 +26,4 @@
 .other_pinglun h4{color:#55637c;margin-top:.3rem;}
 .other_pinglun p{color:#828893;height:.78rem;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:.24rem 0;}
 .border_bnt{border-bottom:.02rem solid #efeeea;}
+.height_60{height:.6rem;}

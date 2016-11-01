@@ -70,5 +70,4 @@
 .message_nickname a{color:#2E88CE}
 .message_talk{white-space: nowrap;line-height:.33rem;overflow: hidden;text-overflow:ellipsis;color:#55637C}
 .message_detail .swiper-slide{padding-top:.25rem}
-.goback{position:absolute;left:.40rem;top:.14rem;}
 .goback a{display:block} 

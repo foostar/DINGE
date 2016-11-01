@@ -15,7 +15,7 @@
 .color_blue{color:#55637c}
 .befoc_bg_img{background:url(../../images/comment_followedH.png) no-repeat right top;width:.8rem;height:.8rem;background-size:.5rem;padding-top:.46rem;}
 .mar_bot32{margin-bottom:.32rem;}
-.mar_100{margin-top:1rem;}
+.mar_100{margin:1rem 0;}
 .img_width60 img{width:.6rem;height:.6rem;border-radius:50px;}
 .height60{height:.6rem;}
 .line_height32{line-height:.32rem;}
@@ -28,5 +28,11 @@
 .mar_top20{margin-top:.2rem;}
 .width_10{width:1rem;}
 .width_200{width:7rem;height:.76rem;}
-.text_ellipsis{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-
+.single_text_ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.width_504{width:5.04rem;}
+.double_text_ellipsis{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;}
+.double_text_ellipsis2{-webkit-line-clamp:2;}
+.double_text_ellipsis6{-webkit-line-clamp:6;}
+.double_text_ellipsis10{-webkit-line-clamp:10;}
+.no_pad20{padding:0;}
+.footer_fixed{position:fixed;left:0;bottom:0;}

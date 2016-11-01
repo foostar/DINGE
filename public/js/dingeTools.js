@@ -130,6 +130,14 @@ var jQuery = window.jQuery
             });
             return dtd;
         },
+        // 加载底部
+        loadingFooter2:function(){    
+            var dtd = $.Deferred();
+            $("#footer2").load("../views/footer2.html",function(){
+                dtd.resolve({status:1});
+            });
+            return dtd;
+        },
         // 初试化touchmove，解决tap中 swipe不生效的问题
         initTouchMove:function(){
             document.addEventListener("touchmove", function (event) {
