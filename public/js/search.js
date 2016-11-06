@@ -33,6 +33,7 @@ $(function(){
             $(".loading").show();
         },
         movieList:function(){
+             //debugger
             //电影列表的接口
             var dtd = $.Deferred();
             $.ajax({
@@ -49,7 +50,7 @@ $(function(){
                     data.forEach(function(item){
                        //console.log(item.images.medium);
 
-                        html += "<li><img src="+item.images.large+" alt=''><span class='font-h'>"+item.title+"</span></li>";
+                        html += "<li><a href='moviedetails.html?id="+item._id+"'><img src="+item.images.large+" alt=''><span class='font-h'>"+item.title+"</span></a></li>";
                     });
                     $(html).appendTo($(".search_body"));
                 }
@@ -65,10 +66,12 @@ $(function(){
         },
         movieHref:function(){
             $(".search_body").on("click","li",function(){
+                var   li  =this;
+            
                 window.location.href = "moviedetails.html";
             });
         }
     };
     var search = new Search();
-    search.init();
+ //   search.init();
 });

@@ -20,39 +20,41 @@ var $ = window.jQuery,
             // 初试化touchmove，解决tap中 swipe不生效的问题
             dingeTools.initTouchMove();
             // 左滑出现删除按钮
-            dingeTools.showDelete(self.ele);
+            //dingeTools.showDelete(self.ele);
             // 关闭删除按钮
-            dingeTools.cancelDelete(self.ele);
+            //dingeTools.cancelDelete(self.ele);
             // 删除silder
-            self.deleteSilder();
+            //self.deleteSilder();
             // 向上返回
             dingeTools.goBack();
-            self.goHref();
+            //self.goHref();
+            self.moviedetailsTop(); //电影详情页上面部分
         },
-        goHref:function(){
+        /*goHref:function(){
             $(".m_details_top").tap(function(){
                 window.location.href = "/views/moviedetails_top.html";
             });
             $(".m_detail_href").tap(function(){
                 window.location.href="/views/moviedetails_comment.html";
             });
-        },
+        },*/
         getTemplate:function(item){
-            return "<div class='info_mini'>"
-                        +"<div class='info_slide'>"
-                            +"<div class='mycollet_author font-normal'>"
-                                +"<div class='m_detail_left'>"
-                                    +"<a href='javascript:;'>"
+            //debugger
+            return  "<a href='moviedetails_comment.html?id="+item._id+"'>"
+                        +"<div class='info_mini'>"
+                            +"<div class='info_slide'>"
+                                +"<div class='mycollet_author font-normal'>"
+                                    +"<div class='m_detail_left'>"  
                                         +"<img src='"+item.commentFrom.avatar+"' alt=''><span>"+item.commentFrom.nickname+"</span>"
-                                    +"</a>"
+                                    +"</div>"
+                                    +"<div class='m_detail_comment'>"+item.rank+"</div>"
                                 +"</div>"
-                                +"<div class='m_detail_comment'>"+item.rank+"</div>"
+                                +"<div class='mycollet_title m_detail_title'>"+item.title+"</div>"
+                                +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
                             +"</div>"
-                            +"<div class='mycollet_title m_detail_title'>"+item.title+"</div>"
-                            +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
+                            +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
                         +"</div>"
-                        +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
-                    +"</div>";
+                    +"</a>";
         },
         deleteSilder:function(){
             var self = this;
@@ -107,14 +109,49 @@ var $ = window.jQuery,
             });
         },
         loadColletList:function(page){
+            var id=  dingeTools.getURLParam("id");
             return  $.ajax({
                 url:"../data/commentsDetail.json",
                 method:"GET",
                 data:{
                     token:$.cookie("dinge"),
-                    page:page
+                    page:page,
+                    id:id
                 },
                 dataType:"json"
+            });
+        },
+        moviedetailsTop:function(){   //TODO 加载头部部分
+            //debugger
+            var id=  dingeTools.getURLParam("id");
+            return  $.ajax({
+                url:"../data/movieFindOne.json",
+                method:"GET",
+                data:{
+                    token:$.cookie("dinge"),
+                    id:id
+                },
+                dataType:"json"
+            }).done(function(result){
+                //debugger
+                var html = "";
+                if(result.status == 1 && result.data.length>0){ 
+                    var data = result.data;
+                    data.forEach(function(item){
+                        html += "<a href='moviedetails_top.html?id="+item._id+"'>"
+                                    +"<div class='m_details_topimg'><img src="+item.images.large+" alt=''></div>"
+                                    +"<div class='m_d_top_position'>"
+                                        +"<div class='m_mask font-normal'><span class='font-title'>"+item.rating.average+"</span>评分</div>"
+                                        +"<p class='font-bold'>"
+                                            +"<span>"+item.title+"</span>"
+                                            +"<span>"+item.aka[0].name+"</span>"
+                                            +"<span>"+item.etitle+"</span>"
+                                        +"</p>"
+                                    +"</div>"
+                                +"</a>";
+                    });
+                    $(html).appendTo($(".m_details_top"));
+                }
             });
         },
         makeData:function(result){

@@ -32,6 +32,23 @@ var jQuery = window.jQuery
         };  
     } 
     var DingeTools = {
+        getURLParam:function (key){
+            var  url=  window.location;
+            var  paramStrArr= url.href.split('?');
+         // alert(params[1]);
+         if(paramStrArr.length>=2&&paramStrArr[1]!=""){
+           var  paramStr=paramStrArr[1];
+              var  paramArr = paramStr.split('&');
+                     for (var index  in paramArr){
+                        var paramstr= paramArr[index];    //key=value
+                        var paramArray =  paramstr.split('=');
+                      if(paramArray.length==2&&paramArray[0]==key){
+                          return   paramArray[1];
+                        }
+                }       
+            }
+            return null;
+        },
         //重置表单
         resetForm:function(opt){
             var _option = {
