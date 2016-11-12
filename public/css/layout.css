@@ -19,6 +19,12 @@
     width:100%;
     height:100%;
 }
+.goback{position:absolute;left:.2rem;top:.14rem;}
+.other_ri{position:absolute;right:.2rem;top:.14rem;}
+.goback img,.chat-refresh img,.other_ri img{width:.52rem;height:.52rem;}
+.chat-refresh{position:absolute;right:.40rem;top:.14rem;}
+.triangle-left {width:0;height:0;border-top:.2rem solid transparent;border-bottom:.2rem solid transparent;border-right:.2rem solid #f3f3f3;margin-top:.3rem;}
+.triangle-right {width:0;height:0;border-top:.2rem solid transparent;border-bottom:.2rem solid transparent;border-left:.2rem solid #b2f074;margin-top:.3rem;}
 .tagContent .active{
     display:block
 }

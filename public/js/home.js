@@ -136,8 +136,9 @@ $(function(){
 
                     });
                 }
+                dtd.resolve();
             });
-            dtd.resolve();
+            return dtd;
         },
         loadingComent:function(){
             var dtd = $.Deferred();
@@ -171,9 +172,10 @@ $(function(){
                                 +"</div>"
                             +"</div>";
                 });
-                $(html).appendTo($("#loadingComent"));       
+                $(html).appendTo($("#loadingComent"));
+                dtd.resolve();      
             });
-            dtd.resolve();
+            return dtd;
         }
     };
     new Home();

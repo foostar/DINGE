@@ -7,9 +7,9 @@ $(function(){
     });
     // 加载底部
     $("#footer").load("../views/footer.html");
-    $("#goback_user").click(function(){
+    /*$("#goback_user").click(function(){
         history.back();
-    });
+    });*/
     $.ajax({
         url:"../data/getUserInfo.json",
         method:"GET",
