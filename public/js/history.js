@@ -34,12 +34,10 @@ $(function(){
             var self = this;
             // 加载数据
             self.loadHistoryList()
-            // 拼凑数据
             .done(function(result){
+                // 拼凑数据
                 self.makeData(result);
-            })
-            // 初始化swiper
-            .done(function(result){
+                // 初始化swiper
                 self.initSwiper(result);
             });
         },

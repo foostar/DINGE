@@ -28,7 +28,7 @@ var $ = window.jQuery,
             // 关闭删除按钮
             dingeTools.cancelDelete(self.ele);
             // 删除silder
-            self.deleteSilder();
+            dingeTools.deleteSilder();
             // 向上返回
             dingeTools.goBack();
         },
@@ -40,6 +40,7 @@ var $ = window.jQuery,
                             +"<div class='mycollet_content font-normal'>"+item.content+"</div>"
                         +"</div>"
                         +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                        +"<div class='del_info_mask'></div>"
                     +"</div>";
         },
         deleteSilder:function(){
@@ -85,12 +86,10 @@ var $ = window.jQuery,
             var self = this;
             // 加载数据
             self.loadColletList(self.page)
-            // 拼凑数据
             .done(function(result){
+                // 拼凑数据
                 self.makeData(result);
-            })
-            // 初始化swiper
-            .done(function(result){
+                // 初始化swiper
                 self.initSwiper(result);
             });
         },

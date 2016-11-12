@@ -51,6 +51,40 @@ $(function(){
             dingeTools.init();
             // loading
             $(".loading").hide();
+            /*var ajaxBack = $.ajax;
+            var ajaxCount = 0;
+            var allAjaxDone = function(){$('#test').append('all done!<br>');} //一行代码，就可以知道所有ajax请求什么时候结束
+            //由于get/post/getJSON等，最后还是调用到ajax，因此只要改ajax函数即可
+            $.ajax = function(setting){
+                ajaxCount++;
+                var cb = setting.complete;
+                setting.complete = function(){
+                    if($.isFunction(cb)){cb.apply(setting.context, arguments);}
+                    ajaxCount--;
+                    if(ajaxCount==0 && $.isFunction(allAjaxDone)){
+                        allAjaxDone();
+                    }
+                }
+                ajaxBack(setting);
+            }*/
+            /*var ajaxCount = 0; 
+            var api = function(data) {
+                return $.ajax({
+                    url: data.url,
+                    data: data.body,
+                    header: data.headers,
+                    method: data.method,
+                    beforeSend:function(){
+                        ajaxCount++;
+                    },
+                    complete:function(){
+                        ajaxCount--;
+                        if(ajaxCount < 1){
+                            console.log("全部wa")
+                        }
+                    }
+                })
+            }*/
             //this.bindEvent();
             this.render();
 

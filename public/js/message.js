@@ -85,12 +85,10 @@ var $ = window.jQuery,
             var self = this;
             // 加载数据
             self.loadMessage(self.page)
-            // 拼凑数据
             .done(function(result){
+                // 拼凑数据
                 self.makeData(result);
-            })
-            // 初始化swiper
-            .done(function(result){
+                // 初始化swiper
                 self.initSwiper(result);
             });
         },

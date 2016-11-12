@@ -10,6 +10,8 @@ var dingeTools = window.dingeTools;
             dingeTools.init();
             this.bindEvent();
             this.render();
+            //this.bindEvent();
+            this.render();
         },
         bindEvent:function(){
             $(".user_carouse").on("tap", function(){

@@ -89,6 +89,58 @@ var jQuery = window.jQuery
                 }
             });
         },
+        // 检测账户
+        checkAccount: function(val) {
+            if(val.length < 1){
+                return '账号不能为空！'
+            }
+            if(val.length > 10){
+                return '账号不能大于10个字符！'
+            }
+        },
+        // 检测用户名
+        checkUsername: function(val) {
+            if(val.length < 1){
+                return "用户名不能为空！";
+            }
+            if(val.length > 8){
+                return "用户名不能多于8个字符！";
+            }
+        },
+        // 检测邮箱
+        checkEmail: function(val) {
+            var reg=/^\w{3,}@\w+(\.\w+)+$/; 
+            if (!val) {
+                return "邮箱不能为空！";
+            }
+            if(!reg.test(val)){
+                return "邮箱格式不正确！";
+            }
+        },
+        // 检测密码
+        checkPassword: function(val){
+            var regNumber=/^[a-zA-Z]+$/;
+            var regAscll=/^[a-zA-Z0-9]+$/;
+            var regLetter=/^[A-Z0-9]+$/;
+            if(val.length < 6){
+                return "密码不能少于6位！"
+            }
+            if(val.length > 18){
+                return "密码不能多于18位！"
+            }
+            if(regNumber.test(val)){
+                return "密码至少包含一位数字"
+            }
+            if(regLetter.test(val)){
+                return "密码至少包含一位小写字符"
+            }
+            if(!regAscll.test(val)){
+                return "密码不能包含特殊字符"
+            }
+            /*if(regAscll.test(val)){
+                return "密码至少包含一位大写字符"
+            }*/
+        },
         //  初始化底层font-size
         init:function(){
             FastClick.attach(document.body);

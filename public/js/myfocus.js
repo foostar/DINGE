@@ -45,6 +45,7 @@ var $ = window.jQuery,
                             +"</div>"
                         +"</div>"
                         +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                        +"<div class='del_info_mask'></div>"
                     +"</div>";
         },
         deleteSlider:function(){
@@ -106,12 +107,10 @@ var $ = window.jQuery,
             var self = this;
             // 加载数据
             self.loadFocusList(self.page)
-            // 拼凑数据
             .done(function(result){
+                // 拼凑数据
                 self.makeData(result);
-            })
-            // 初始化swiper
-            .done(function(result){
+                // 初始化swiper
                 self.initSwiper(result);
             });
         },

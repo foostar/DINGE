@@ -2,45 +2,38 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>缺的电影指南</title>
-    <meta name="viewport" content="width=640,target-densitydpi=device-dpi,user-scalable=no" />
+    <title>Dinge-登录</title>
+    <link type="text/css" href="../css/stylesheet.less" rel="stylesheet/less">
+    <meta name="viewport" content="width=device-width,target-densitydpi=device-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name=”format-detection” content=”telephone=no” />
 </head>
 <body>
-    <header>
+    <div class="container login_container">
         <!-- 头部背景图+logo -->
-        <div id="headerLogo" >
-            <!-- <img class="bg" src="images/signup_background@2x.png"> -->
-            <img class="lo" src="../images/logo_background@2x.png"> 
+        <div class="login_logo" >
+            <img class="logo" src="../images/logo_background@2x.png"> 
         </div>
-    </header>
-    <section id="aaa">
-    <!-- 用户登录框 -->
-    <div class="user_login">
-        <!-- 账号密码输入 -->
-        <div class="user_name">
-        	<input type="text" value="" placeholder="手机号/邮箱/账号" id="email"></input><br>
-             <span></span><br>    
-        	<input type="password" value="" placeholder="密码" id="password"></input>
+        <!-- 用户登录框 -->
+        <div class="user_login">
+            <!-- 账号密码输入 -->
+            <div class="login_formitem">
+                <input class="placeholder" type="text" value="" placeholder="邮箱 / 账号" id="email"></input>
+            </div>
+            <div class="login_formitem noborder">
+                <input class="placeholder" type="password" value="" placeholder="密码" id="password"></input>
+            </div>
+            <!-- 登录按钮 -->
+            <div class="login">
+                <button class="login_btn" data-type="login">登&nbsp;&nbsp;&nbsp;录</button>
+                <a class="login_info" href="/views/register.html">还没有账号?</a>
+            </div>
         </div>
-        <!-- 登录按钮 -->
-        <div class="userLoginBtn">
-            <a href="#" id ="topa" >忘记密码</a><br>
-            <button id="submit">登&nbsp;&nbsp;&nbsp;录</button><br>
-            <a href="register.html" id="bota">还没有账号？</a>
-        </div>
-	</div>
-		<!-- 友情链接 -->
-		<div class="partnerLink">
-			<a href="" class="a1"><img src="../images/qq.png"></a>
-			<a href="" class="a2"><img src="../images/weibo.png"></a>
-			<a href="" class="a3"><img src="../images/weixin.png"></a>
-		</div>
-    </section>
-    <footer>
-    	
-    </footer>
-    <!-- <img src="./images/loginpicture.png"> -->
-    <link type="text/css" href="../stylesheets/style.css" rel="stylesheet">
+    </div>
     <script src="../js/jquery-3.1.0.min.js"></script>
+    <script src="../js/dingeTools.js"></script>
+    <script src="../js/register.js"></script>
+    <script src="../js/less.min.js"></script>   
 </body>
 </html>

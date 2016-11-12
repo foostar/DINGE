@@ -1,0 +1,21 @@
+/*
+ *   @页面信息
+ */
+@import './user.css';
+@import './login.css';
+@import './edituser.css';
+@import './home.css'; 
+@import './search.css'; 
+@import './searchMovie.css'; 
+@import './messages.css'; 
+@import './messages_comment.css';
+@import './messagelist.css';
+@import './messages_like.css';
+@import './messages_fans.css';
+@import './message.css';
+@import './mycomment.css';
+@import './myfocus.css';
+@import './mycollet.css';
+@import './history.css';
+@import './other_means.css';
+@import './other_means_more.css';
