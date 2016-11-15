@@ -28,7 +28,7 @@ var $ = window.jQuery,
             // 关闭删除按钮
             dingeTools.cancelDelete(self.ele);
             // 删除silder
-            dingeTools.deleteSilder();
+            self.deleteSilder();
             // 向上返回
             dingeTools.goBack();
         },
