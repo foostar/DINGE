@@ -38,12 +38,26 @@ exports.signUp = function(req, res){
         return res.json({ "status":-1, msg:"密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" });
     }
     //检测重复用户
-    User.find({username:_user.email}).exec()
+    User.findOne({username:_user.email}).exec()
         .then(function(user) {
-            if(user.length > 0){
+            if(user){
                 return res.json({"status":-1,msg:"邮箱已经被注册"});
             }
-            var _User = new User(_user);
+            return User.find({nickname:_user.username}).exec();
+        })
+        .then(function(result){
+            if(result) {
+                return res.json({"status":-1,msg:"邮箱已经被注册"});
+            }
+            var _User = new User({
+                username:_user.email,
+                password:_user.password,
+                nickname:_user.nickname,
+                birthday:"1990-01-01",
+                city:"北京市,东城区",
+                sex:"男",
+                avatar:"/carouse/head.png"
+            });
             _User.save(function (err) {
                 if(err){
                     return res.json({"status":-1,msg:"注册失败，请重试！"});
@@ -62,7 +76,6 @@ exports.signin = function(req, res, next) {
             var response = Tools.merge({}, {status:-1}, info);
             return res.json(response);
         }
-        console.log("user._id",user._id)
         var token = jwt.encode(user._id, Tools.secret);
         //模拟token
         req.session.token = token;
@@ -89,7 +102,7 @@ exports.focusList = function(req, res) {
     if(!userId){
         return res.json({status:-1,msg:"没有token"});
     }
-    User.findById(userId).populate("lovedTo","avatar nickname -_id").exec()
+    User.findById(userId).populate("lovedTo","avatar nickname").exec()
     .then(result => {
         if(result){
             res.json({status:1,data:result.lovedTo});
@@ -159,9 +172,11 @@ exports.focusUser = function(req, res) {
 exports.unFocusUser = function(req, res) {
     let userId = jwt.decode(req.body.token, Tools.secret);
     let foucsTo = req.body.userId;
+    const page = req.body.page;
+    const index = page*10-1;
     if(!userId){
         return res.json({status:-1,msg:"没有token"});
-    }
+    } 
     User.findById(userId).exec()
         .then(result => {
             if(result){
@@ -174,10 +189,18 @@ exports.unFocusUser = function(req, res) {
         })
         .then(result => {
             if(result[ 0 ].n == 1 && result[ 1 ].n == 1){
-                res.json({status:1,msg:"修改成功"});
-            }else{
-                res.json({status:-1,msg:"修改失败"});
+                return User.findById(userId).populate("lovedFrom","avatar nickname").exec();
             }
+            res.json({status:-1,msg:"修改失败"});
+        })
+        .then(result => {
+            if(result){
+                if(index < result.lovedFrom.length){
+                    const data = result.lovedFrom[ index ]; 
+                    return res.json({status:1,data:data});
+                }
+                res.json({status:1,msg:"修改成功！"});
+            } 
         });
 };
 /*
@@ -233,32 +256,51 @@ exports.editUserInfo = function(req, res){
  * @tip  需要使用token
  */
 exports.getAvatar = function(req, res){
+    var token = req.body.userId;
+    if(!token){
+        return res.json({ status:-1, msg:"没有token" });
+    }
+    var userId = jwt.decode(token, Tools.secret);
+    //接收前台POST过来的base64
+    var imgData = req.body.formFile;
+    //过滤data:URL
+    var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
+    var dataBuffer = new Buffer(base64Data, "base64");
+    var timestamp = Date.now();
+    var poster = timestamp + ".png";
+    var newPath = path.join(__dirname, "../../", "public/carouse/"+poster);
+    fs.writeFile(newPath, dataBuffer, function(err) {
+        if(err){
+            return res.json({status:-1,msg:"上传失败！"});
+        }
+        User.findById(userId).exec()
+            .then(function(result){
+                result.avatar = newPath;
+                return result.save();
+            })
+            .then(function(result){
+                return res.json({status:1,url:result.avatar});
+            });  
+    });
+};
+/*
+ * @desc 查看浏览历史
+ * @tip  需要使用token
+ */
+exports.getHistory = function(req, res){
     var token = req.body.token;
     if(!token){
         return res.json({ status:-1, msg:"没有token" });
     }
     var userId = jwt.decode(token, Tools.secret);
-    var posterData = req.files.poster;
-    var filePath = posterData.path;
-    var originalFilename = posterData.originalFilename;
-    if(originalFilename){
-        fs.readFile(filePath, function(err, data){
-            var timestamp = Date.now();
-            var type = posterData.type.split("/")[ 1 ];
-            var poster = timestamp + "." + type;
-            var newPath = path.join(__dirname, "../../", "public/carouse/"+poster);
-            fs.writeFile(newPath, data, function(err){
-                if(!err){
-                    User.findById(userId).exec()
-                        .then(function(result){
-                            result.avatar = newPath;
-                            return result.save();
-                        })
-                        .then(function(result){
-                            return res.json({status:1,url:result.avatar});
-                        });
-                }
-            });
+    User.findById(userId).populate("history","title createdAt").exec()
+        .then(function(result){
+            if(result){
+                return res.json({ status: 1, data: result });
+            }
+        },function(err){
+            if(err){
+                return res.json({ status: -1, msg: "查询失败，请重试！" });
+            }
         });
-    }
 };

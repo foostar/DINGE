@@ -15,11 +15,11 @@ var userSchema = new mongoose.Schema({
     sign:String,
     sex:{
         type:String,
-        default:"male"
+        default:"男"
     },
     city:{
         type:String,
-        default:"北京"
+        default:"北京市,东城区"
     },
     birthday:{
         type:Date,
@@ -32,7 +32,7 @@ var userSchema = new mongoose.Schema({
     nickname:{
         unique:true,
         type:String,
-        default:'小米加步枪'
+        default:"dinge"+Date.now()
     },
     avatar:{
         type:String,
@@ -43,6 +43,9 @@ var userSchema = new mongoose.Schema({
     } ],
     lovedFrom:[ {
         type:ObjectId, ref:"User"
+    } ],
+    history:[ {
+        type:ObjectId, ref:"comment" 
     } ],
     star:[ {
         type:ObjectId, ref:"comment" 

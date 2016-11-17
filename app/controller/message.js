@@ -43,6 +43,8 @@ exports.sendMessage = function(req, res){
 //查看私信列表
 exports.getMessageList = function(req, res){
     var token = req.query.token;
+    var page = req.query.page;
+    var index = page * 10;
     if(!token){
         return res.json({ status:-1, msg:"没有token" });
     }
@@ -51,6 +53,8 @@ exports.getMessageList = function(req, res){
         .match({"$or":[ {fromStr:userId}, {toStr:userId} ]})
         .group({_id:"$typeId",from:{$last:"$from"},to:{$last:"$to"},content:{$last:"$content"},createdAt:{$last:"$createdAt"},readAble:{$last:"$readAble"}})
         .sort({createdAt:-1})
+        .limit(10)
+        .skip(index)
         .exec()
         .then(result => {
             var opts = [ {
@@ -70,7 +74,9 @@ exports.getMessageList = function(req, res){
                             typeId:item._id,
                             username:item.to.nickname,
                             avatar:item.to.avatar,
+                            userId:item.to._id,
                             content:item.content,
+                            createdAt:item.createdAt,
                             readAble:false
                         });
                     }else{
@@ -79,6 +85,8 @@ exports.getMessageList = function(req, res){
                             username:item.from.nickname,
                             avatar:item.from.avatar,
                             content:item.content,
+                            userId:item.from._id,
+                            createdAt:item.createdAt,
                             readAble:item.readAble
                         });
                     }
@@ -90,13 +98,15 @@ exports.getMessageList = function(req, res){
 //查看私信详情
 exports.getMessageDetail = function(req, res){
     var token = req.query.token;
+    var page = req.query.page;
+    var index = page * 10;
     if(!token){
         return res.json({ status:-1, msg:"没有token" });
-    }
+    } 
     var typeId = req.query.typeId;
     Message.update({typeId:typeId},{$set: { readAble: true }},{multi:true}).exec()
-        .then(() => {
-            return Message.find({typeId:typeId}).populate("from to","avatar nickname").exec();
+        .then(() => { 
+            return Message.find({typeId:typeId}).populate("from to","avatar nickname").sort({ createdAt: 1 }).limit(10).skip(index).exec();
         })
         .then(result => {
             return res.json({status:1, data:result});

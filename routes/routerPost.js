@@ -85,6 +85,8 @@ module.exports = function(app) {
     app.post("/Api/user/editUserInfo", User.editUserInfo);
     //上传头像
     app.post("/Api/user/getAvatar", User.getAvatar);
+    //加载用户信息
+    app.get("/Api/user/getHistory", User.getHistory);
     /*
      *  @desc  movie相关
      */

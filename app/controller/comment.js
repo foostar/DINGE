@@ -5,7 +5,6 @@ var jwt = require("jwt-simple");
 var User = require("../model/user");
 var Tools = require("../tools/tool");
 var Comment = require("../model/comment");
-var moment = require("moment");
 
 /*
  * @desc 创建一条电影评论
@@ -128,6 +127,19 @@ exports.commentDetail = function(req, res){
     if(!commentId){
         return res.json({status:-1,msg:"缺少评论id"});
     }
+    if(token.length>1){
+        var userId = jwt.decode(token, Tools.secret);
+        User.findById(userId).exec()
+            .then(function(result){
+                if(result.history.length >= 10){
+                    result.history.pop();
+                    result.history.unshift(commentId);
+                } else {
+                    result.history.unshift(commentId);
+                }
+                return result.save();
+            });
+    }
     Comment.findById(commentId).populate("reply.commentFrom reply.commentTo commentFrom","nickname avatar -_id").exec()
         .then(function(result){
             var colletful = true;
@@ -236,6 +248,8 @@ exports.unCollet = function(req, res){
     if(!req.body.token){
         return res.json({ status:-1, msg:"没有token" });
     }
+    const page = req.body.page;
+    const index = page*10-1;
     var token = req.body.token;
     var commentId = req.body.commentId;
     var userId = jwt.decode(token, Tools.secret);
@@ -244,9 +258,18 @@ exports.unCollet = function(req, res){
     Promise.all([ updateCommentP, updateUserP ])
         .then(([ updateComment, updateUser ]) => {
             if(updateComment.n == 1 && updateUser.n == 1){
-                return res.json({status:1, msg:"修改成功"});
+                return User.findById(userId).populate("collet","title createdAt").exec();
             }
             return res.json({status:-1, msg:"修改失败，请重试！"});
+        })
+        .then(result => {
+            if(result){
+                if(index < result.collet.length){
+                    const data = result.collet[ index ]; 
+                    return res.json({status:1,data:data});
+                }
+                res.json({status:1,msg:"修改成功！"});
+            } 
         });
 };
 /*
