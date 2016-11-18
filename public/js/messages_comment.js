@@ -24,7 +24,7 @@ var $ = window.jQuery,
                                     +"<em class='font-normal'>"+item.commentFrom.nickname+"</em>"
                                 +"</a>"
                             +"</div>"
-                            +"<div class='mescomment_comment flex-normal'>"
+                            +"<div class='mescomment_comment'>"
                                 +"<a href='javascript:;'>"
                                     +"<p class='font-bold'>"+item.content+"</p>"
                                     +"<h4 class='font-normal'>——「<span>"+item.commentId.title+"</span>」</h4>"
@@ -56,11 +56,12 @@ var $ = window.jQuery,
         showList:function(){
             var self = this;
             // 加载数据
+            this.page++;
             self.loadMessageComment({
                 token:$.cookie("dinge"),
                 page:self.page
             })
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -68,28 +69,22 @@ var $ = window.jQuery,
             });
         },
         loadMessageComment:function(data){
-            return  $.ajax({
-                url:"../data/commentToMe.json",
-                method:"GET",
-                data:data,
-                dataType:"json"
-            });
+            return  dingeTools.commentToMe(data);
         },
         makeData:function(result){
             var self = this;
             var html = "";
-            if(result.status == 1 &&  result.data.length>0) {
-                var data = result.data;
+            if(result.status == 1 &&  result.data.list.length>0) {
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
-                console.log(html);
                 $(html).appendTo($(".swiper-wrapper"));
             }
         },
         initSwiper:function(result){
             var self = this;
-            if(result.status == 1 && self.page == 0){
+            if(result.status == 1 && self.page == 1){
                 // 初始化swiper
                 self.mySwiper = new Swiper(".swiper-container",{
                     slidesPerView:"auto",
@@ -116,13 +111,14 @@ var $ = window.jQuery,
                             //Show loader
                             $(".preloader").addClass("visible_bottom");
                             //加载新的slide
+                            self.page++;
                             self.loadMessageComment({
                                 token:$.cookie("dinge"),
                                 page:self.page
                             })
-                            .done(function(result){
-                                if(result.status == 1 &&  result.data.length>0){
-                                    var data = result.data;
+                            .then(function(result){
+                                if(result.status == 1 &&  result.data.list.length>0){
+                                    var data = result.data.list;
                                     data.forEach(function(item){
                                         var template = self.getTemplate(item);
                                         self.mySwiper.appendSlide(template);
@@ -132,13 +128,12 @@ var $ = window.jQuery,
                                     self.mySwiper.updateActiveSlide(0);
                                     //Hide loader
                                     $(".preloader").removeClass("visible_bottom");
-                                    self.page++;
                                 }
                             });
                         }
                     }
                 });
-                self.page++;
+                
             } 
         }
     };

@@ -3,7 +3,7 @@ var $ = window.jQuery,
         dingeTools = window.dingeTools;
 $(function(){
     function MessagesLike(){
-
+        this.page = 0;
     }
     MessagesLike.prototype = {
         init:function(){
@@ -31,7 +31,7 @@ $(function(){
         loadingFooter:function(){
             var dtd = $.Deferred();
             $("#footer").load("../views/footer.html",function(){
-                dtd.resolve({status:1});
+                dtd.resolve({ status: 1 });
             });
             return dtd;
         },
@@ -39,7 +39,7 @@ $(function(){
             var self = this;
             // 加载数据
             self.loadCommentList()
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -47,19 +47,17 @@ $(function(){
             });
         },
         loadCommentList:function(){
-            return $.ajax({
-                url:"../data/commentsDetail.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge")
-                },
-                dataType:"json"
+            var self = this;
+            this.page++;
+            return dingeTools.commentLikeMe({
+                token:$.cookie("dinge"),
+                page: self.page
             });
         },
         makeData:function(result){
             var html = "";
-            if(result.status == 1 && result.data.length>0){ 
-                var data = result.data;
+            if(result.status == 1 && result.data.list.length>0){ 
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-wrapper'>"
                                 +"<div class='swiper-slide'>"

@@ -3,7 +3,7 @@ var $ = window.jQuery,
         dingeTools = window.dingeTools;
 $(function(){
     function MessagesFans(){
-
+        this.page = 0;
     }
     MessagesFans.prototype = {
         init:function(){
@@ -39,7 +39,7 @@ $(function(){
             var self = this;
             // 加载数据
             self.loadCommentList()
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -47,19 +47,17 @@ $(function(){
             });
         },
         loadCommentList:function(){
-            return $.ajax({
-                url:"../data/commentsDetail.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge")
-                },
-                dataType:"json"
+            var self = this;
+            this.page++;
+            return dingeTools.userLikeMe({
+                token:$.cookie("dinge"),
+                page: self.page
             });
         },
         makeData:function(result){
             var html = "";
-            if(result.status == 1 && result.data.length>0){ 
-                var data = result.data;
+            if(result.status == 1 && result.data.list.length>0){ 
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-wrapper'>"
                                 +"<div class='swiper-slide'>"
@@ -71,7 +69,7 @@ $(function(){
             }
         },
         initSwiper:function(result){
-            if(result.status == 1){
+            if(result.status == 1 && this.page == 1){
                 // 初始化swiper
                 new Swiper(".swiper-container",{
                     slidesPerView:"auto",

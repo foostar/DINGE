@@ -8,7 +8,7 @@ var $ = window.jQuery,
 (function($){
     function MessageList(opt){
         this.holdPosition = 0;
-        this.page = 0;
+        this.page = 1;
         this.mySwiper = "";
         this.ele = $("#"+opt.id);
         this.init();
@@ -37,32 +37,27 @@ var $ = window.jQuery,
                         +"<div class='info_slide'>"
                             +"<div class='message_carouse'><a href='/views/message.html?mId="+item.typeId+"'><img src='"+item.avatar+"'/></a></div>"
                             +"<div class='message_list'>"
-                                +"<div class='message_nickname'><a href='/views/message.html?mId="+item.typeId+"'>"+item.username+"</a></div>"
+                                +"<div class='message_nickname'><a href='/views/message.html?mId="+item.typeId+"&name="+encodeURI(encodeURI(item.username))+"'>"+item.username+"</a></div>"
                                 +"<div class='message_date'>"+dingeTools.format(item.createdAt,"MM-dd")+"</div>"
                                 +"<div class='message_talk'>"+item.content+"</div>"
                             +"</div>"
                         +"</div>"
-                        +"<div class='del_info_btn' data-id='"+item._id+"'></div>"
+                        +"<div class='del_info_btn' data-id='"+item.typeId+"'></div>"
                         +"<div class='del_info_mask'></div>"
                     +"</div>";
         },
         deleteFocus:function(){
             // 删除slider
             var self = this;
-            $(".swiper-container").on("tap",".del_focus",function(event){
-                var userId = $(this).attr("data-id");
+            $(".swiper-container").on("tap",".del_info_btn",function(event){
+                var typeId = $(this).attr("data-id");
                 $(this).parent().parent().remove();
-                $.ajax({
-                    url:"../data/getMessageList.json",
-                    method:"GET",
-                    data:{
-                        token:$.cookie("dinge"),
-                        page:self.page,
-                        userId:userId
-                    },
-                    dataType:"json"
+                dingeTools.deleteMesList({
+                    token:$.cookie("dinge"),
+                    page:self.page,
+                    id:typeId
                 })
-                .done(function(result){
+                .then(function(result){
                     if(result.status == 1 && result.data){
                         var item = result.data;
                         var template = self.getTemplate(item);
@@ -88,21 +83,16 @@ var $ = window.jQuery,
             });
         },
         loadMessageList:function(page){
-            return  $.ajax({
-                url:"../data/getMessageList.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge"),
-                    page:page
-                },
-                dataType:"json"
+            return  dingeTools.messageList({
+                token:$.cookie("dinge"),
+                page:page
             });
         },
         showList:function(){
             var self = this;
             // 加载数据
             self.loadMessageList(self.page)
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -112,8 +102,8 @@ var $ = window.jQuery,
         makeData:function(result){
             var self = this;
             var html = "";
-            if(result.status == 1 &&  result.data.length>0) {
-                var data = result.data;
+            if(result.status == 1 &&  result.data.list.length>0) {
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
@@ -122,7 +112,7 @@ var $ = window.jQuery,
         },
         initSwiper:function(result){
             var self = this;
-            if(result.status == 1 && self.page == 0){
+            if(result.status == 1 && self.page == 1){
                 // 初始化swiper
                 self.mySwiper = new Swiper(".swiper-container",{
                     slidesPerView:"auto",
@@ -155,10 +145,11 @@ var $ = window.jQuery,
                             $(".preloader").addClass("visible_bottom");
 
                             //加载新的slide
+                            self.page++;
                             self.loadMessageList(self.page)
                             .done(function(result){
-                                if(result.status == 1 && result.data.length>0){
-                                    var data = result.data;
+                                if(result.status == 1 && result.data.list.length>0){
+                                    var data = result.data.list;
                                     data.forEach(function(item){
                                         var template = self.getTemplate(item);
                                         self.mySwiper.appendSlide(template);
@@ -168,13 +159,12 @@ var $ = window.jQuery,
                                     self.mySwiper.updateActiveSlide(0);
                                     //Hide loader
                                     $(".preloader").removeClass("visible_bottom");
-                                    self.page++;
                                 }
                             });
                         }
                     }
                 });
-                self.page++;
+                
             }    
         }
     };

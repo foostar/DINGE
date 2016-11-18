@@ -53,9 +53,9 @@ var $ = window.jQuery,
                 self.deleteAction({
                     token:$.cookie("dinge"),
                     page:self.page,
-                    userId:userId
+                    id:userId
                 })
-                .done(function(result){
+                .then(function(result){
                     if(result.status == 1 && result.data){
                         var item = result.data;
                         self.mySwiper.params.onlyExternal=true;
@@ -69,12 +69,7 @@ var $ = window.jQuery,
             });
         },
         deleteAction:function(data){
-            return $.ajax({
-                url:"../data/deleteMyConmment.json",
-                method:"GET",
-                data:data,
-                dataType:"json"
-            });
+            return dingeTools.delMyConmments(data);
         },  
         render:function(){
             var self = this;
@@ -89,9 +84,10 @@ var $ = window.jQuery,
         },
         showList:function(){
             var self = this;
+            self.page++; 
             // 加载数据
             self.loadCommentList(self.page)
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -99,21 +95,16 @@ var $ = window.jQuery,
             });
         },
         loadCommentList:function(page){
-            return $.ajax({
-                url:"../data/getMyConmment.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge"),
-                    page:page
-                },
-                dataType:"json"
+            return dingeTools.myConmments({
+                token:$.cookie("dinge"),
+                page:page
             });
         },
         makeData:function(result){
             var self = this;
             var html = "";
-            if(result.status == 1 && result.data.length>0){ 
-                var data = result.data;
+            if(result.status == 1 && result.data.list.length>0){ 
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-slide'>"+self.getTemplate(item)+"</div>";
                 });
@@ -122,7 +113,7 @@ var $ = window.jQuery,
         },
         initSwiper:function(result){
             var self = this;
-            if (result.status != 1 || self.page != 0) return;
+            if (result.status != 1 || self.page != 1) return;
             // 初始化swiper
             self.mySwiper = new Swiper(".swiper-container",{
                 slidesPerView:"auto",
@@ -139,13 +130,14 @@ var $ = window.jQuery,
                 },
                 onTouchEnd: function(){
                     if (self.holdPosition < 100) return;
+                    self.page++; 
                     // 准备加载新的slider
                     self.preAddSlider();
                     // 加载新的slide
                     self.addSlider(); 
                 }
             });
-            self.page++; 
+            
         },
         preAddSlider:function(){
             var self = this;
@@ -162,8 +154,8 @@ var $ = window.jQuery,
             var self = this;
             self.loadCommentList(self.page)
             .done(function(result){
-                if(result.status == 1 && result.data.length>0){
-                    var data = result.data;
+                if(result.status == 1 && result.data.list.length>0){
+                    var data = result.data.list;
                     data.forEach(function(item){
                         var template = self.getTemplate(item);
                         self.mySwiper.appendSlide(template);

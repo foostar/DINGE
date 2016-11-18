@@ -19,9 +19,7 @@ var dingeTools = window.dingeTools;
         // 获取数据
         getData:function(){
             return dingeTools.userInfo({
-                data:{
-                    token:$.cookie("dinge")
-                }
+                token:$.cookie("dinge")
             }, 5);
         },
         // 渲染数据

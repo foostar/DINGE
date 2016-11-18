@@ -23,9 +23,25 @@ var $ = window.jQuery,
             // 发送私信
             self.sendMessage();
             // 向上返回
-            dingeTools.goBack();
+            self.goBack();
             // 刷新拉取新的聊天信息
             self.getRefresh();
+        },
+        goBack: function() {
+            $(".goback").on("tap", function(){
+                var typeId = dingeTools.getQueryString("mId");
+                var messageData = JSON.parse(dingeTools.getStorage(typeId));
+                var messageList = JSON.parse(dingeTools.getStorage("messageList")) || {};
+                var lastData = messageData.list[ messageData.list.length - 1 ];
+                messageList.list && messageList.list.forEach(function(v){
+                    if(v.typeId == typeId && messageData.list.length > 0 && lastData.createdAt != v.createdAt) {
+                        v.content = lastData.content;
+                        v.createdAt = lastData.createdAt;
+                    }
+                });
+                dingeTools.setStorage("messageList", JSON.stringify(messageList));
+                window.history.back();
+            });
         },
         getRefresh:function(){
             var self = this;
@@ -43,7 +59,8 @@ var $ = window.jQuery,
                     self.sendPost({
                         token:$.cookie("dinge"),
                         to:toId,
-                        content:messageInput
+                        content:messageInput,
+                        typeId:dingeTools.getQueryString("mId")
                     })
                     .done(function(result){
                         if(result.status == 1){
@@ -70,14 +87,10 @@ var $ = window.jQuery,
             });
         },
         sendPost:function(data){
-            return $.ajax({
-                url:"/data/sendMessage.json",
-                method:"GET",
-                data:data,
-                dataType:"json"
-            });
+            return dingeTools.sendMessage(data);
         },
         render:function(){
+            $(".mes_to").html(decodeURI(decodeURI(dingeTools.getQueryString("name"))));
             // 展示数据
             this.showList();
         },

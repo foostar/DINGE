@@ -11,6 +11,7 @@ var jQuery = window.jQuery
         cacheTime: 5
     }
     var Api = new API(config)
+    $.cookie("dinge","577cc175ffd27d3c2f325c6f")
     // 增加foreach方法
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function(callback, thisArg) {  

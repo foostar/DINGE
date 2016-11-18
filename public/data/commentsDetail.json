@@ -2,7 +2,8 @@
     "status": 1,
     "starful": true, 
     "colletful": false, 
-    "data": [{
+    "data": {
+        "list":[{
         "_id": "577f5baed1e87df41602b045", 
         "updatedAt": "2016-07-08T07:56:39.355Z", 
         "createdAt": "2016-07-08T07:52:14.994Z", 
@@ -74,5 +75,5 @@
         ], 
         "reading": 0
     }]
-    
+    }
 }
