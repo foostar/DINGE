@@ -72,19 +72,14 @@ $(function(){
                 data.sex = $(".edit_content_sex").html();
                 data.city = $("#city").val();
                 data.birthday = $("#birthday").val();
+                data.token = $.cookie("dinge");
                 // 修改数据
                 self.editUserInfo(data);
             });
         },
         editUserInfo:function(data){
-            $.ajax({
-                url:"../data/editUserInfo.json",
-                method:"GET",
-                data:{
-                    data:data
-                },
-                dataType:"json"
-            }).done(function(result){
+            dingeTools.editUserInfo(data)
+            .then(function(result){
                 if(result.status == 1){
                     window.history.back();
                 }
@@ -106,18 +101,13 @@ $(function(){
             // 加载数据
             self.loadUserData()
             // 展示数据
-            .done(function(result){
+            .then(function(result){
                 self.makeData(result);
             });
         },
         loadUserData:function(){
-            return $.ajax({
-                url:"../data/getUserInfo.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge")
-                },
-                dataType:"json"
+            return dingeTools.userInfo({
+                token:$.cookie("dinge")
             });
         },
         makeData:function(result){

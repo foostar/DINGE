@@ -8,7 +8,7 @@ var $ = window.jQuery,
 (function($){
     function Message(){
         this.holdPosition = 0;
-        this.page = 0;
+        this.page = 1;
         this.mySwiper = "";
         this.init();
     }
@@ -85,7 +85,7 @@ var $ = window.jQuery,
             var self = this;
             // 加载数据
             self.loadMessage(self.page)
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -94,22 +94,17 @@ var $ = window.jQuery,
         },
         loadMessage:function(page){
             // 加载详细信息
-            return  $.ajax({
-                url:"../data/getMessageDetail.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge"),
-                    page:page,
-                    typeId:dingeTools.getQueryString("mId")
-                },
-                dataType:"json"
+            return  dingeTools.dialogue({
+                token:$.cookie("dinge"),
+                page:page,
+                typeId:dingeTools.getQueryString("mId")
             });
         },
         makeData:function(result){
-            if(result.status == 1 && result.data.length>0){
+            if(result.status == 1 && result.data.list.length>0){
                 $(".swiper-wrapper").html("");
                 var html = "";
-                var data = result.data;
+                var data = result.data.list;
                 data.forEach(function(item){
                     var frome = "";
                     var direction = "left";
@@ -130,7 +125,7 @@ var $ = window.jQuery,
         },
         initSwiper:function(result){
             var self = this;
-            if(result.status == 1 && self.page == 0){
+            if(result.status == 1 && self.page == 1){
                 // 初始化swiper
                 self.mySwiper = new Swiper(".swiper-container",{
                     slidesPerView:"auto",
@@ -164,8 +159,8 @@ var $ = window.jQuery,
                             //加载新的slide
                             self.loadMessage(self.page)
                             .done(function(result){
-                                if(result.status == 1 && result.data.length>0){
-                                    var data = result.data;
+                                if(result.status == 1 && result.data.list.length>0){
+                                    var data = result.data.list;
                                     data.forEach(function(item){
                                         var frome = "",direction = "left";
                                         if(item.from._id == $.cookie("dinge")){

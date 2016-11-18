@@ -34,7 +34,7 @@ $(function(){
             var self = this;
             // 加载数据
             self.loadHistoryList()
-            .done(function(result){
+            .then(function(result){
                 // 拼凑数据
                 self.makeData(result);
                 // 初始化swiper
@@ -42,19 +42,14 @@ $(function(){
             });
         },
         loadHistoryList:function(){
-            return $.ajax({
-                url:"../data/history.json",
-                method:"GET",
-                data:{
-                    token:$.cookie("dinge")
-                },
-                dataType:"json"
+            return dingeTools.historyList({
+                token:$.cookie("dinge")
             });
         },
         makeData:function(result){
             var html = "";
-            if(result.status == 1 && result.data.length>0){ 
-                var data = result.data;
+            if(result.status == 1 && result.data.list.length>0){ 
+                var data = result.data.list;
                 data.forEach(function(item){
                     html += "<div class='swiper-wrapper'>"
                                 +"<div class='swiper-slide'>"

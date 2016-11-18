@@ -5,6 +5,12 @@
  */
 var jQuery = window.jQuery
 ;(function($){
+    var config = {
+        env: 'test',
+        url: 'http://localhost:3080',
+        cacheTime: 5
+    }
+    var Api = new API(config)
     // 增加foreach方法
     if (!Array.prototype.forEach) {
         Array.prototype.forEach = function(callback, thisArg) {  
@@ -1376,7 +1382,7 @@ var jQuery = window.jQuery
         }
         return MobileCalendar;
     })()
-    var tools = $.extend({}, DingeTools);
+    var tools = $.extend({}, DingeTools, Api);
     function objCreat(proto){
         function Create(){}
         Create.prototype = proto;

@@ -2,48 +2,9 @@ var $ = window.jQuery,
         Swiper = window.Swiper,
         dingeTools = window.dingeTools;
 $(function(){
-    /*$.ajax({
-        url:"../data/getCarousels.json",
-        method:"GET",
-        data:{
-            token:""
-        },
-        dataType:"json"     
-    }).done(function(result){
-        var oul = $("#slide_ul"),
-                childNodes = oul[ 0 ].childNodes,
-                temp = "",
-                arr = [];
-        //console.log(childNodes);
-        for(var i=0,len=childNodes.length;i<len;i++){
-            var element = childNodes[ i ];
-            //console.log(element);
-            if(element.nodeType == 8){
-                temp = element.nodeValue;
-                break;              
-            }
-        }
-
-
-        $(result.data).each(function(i,ele){
-            var _url = ele.url;
-            //console.log(temp);
-            arr.push(temp.replace(/\%s/,_url).replace(/\%t/,_url));//console.log(arr);
-        });
-        oul.html(arr.join(""));
-
-        var mySwiper = new Swiper(".swiper-container",{  
-            direction:"horizontal",//横向滑动  
-            loop:true,//形成环路（即：可以从最后一张图跳转到第一张图 
-            pagination:".swiper-pagination",//分页器  
-            prevButton:".swiper-button-prev",//前进按钮 
-            nextButton:".swiper-button-next",//后退按钮 
-            autoplay:3000//每隔3秒自动播放
-
-        });
-    });*/
-
     function Home(){
+        this.page = 0;
+        this.pageSize = 20;
         this.init();
     }
     Home.prototype = {
@@ -51,41 +12,6 @@ $(function(){
             dingeTools.init();
             // loading
             $(".loading").hide();
-            /*var ajaxBack = $.ajax;
-            var ajaxCount = 0;
-            var allAjaxDone = function(){$('#test').append('all done!<br>');} //一行代码，就可以知道所有ajax请求什么时候结束
-            //由于get/post/getJSON等，最后还是调用到ajax，因此只要改ajax函数即可
-            $.ajax = function(setting){
-                ajaxCount++;
-                var cb = setting.complete;
-                setting.complete = function(){
-                    if($.isFunction(cb)){cb.apply(setting.context, arguments);}
-                    ajaxCount--;
-                    if(ajaxCount==0 && $.isFunction(allAjaxDone)){
-                        allAjaxDone();
-                    }
-                }
-                ajaxBack(setting);
-            }*/
-            /*var ajaxCount = 0; 
-            var api = function(data) {
-                return $.ajax({
-                    url: data.url,
-                    data: data.body,
-                    header: data.headers,
-                    method: data.method,
-                    beforeSend:function(){
-                        ajaxCount++;
-                    },
-                    complete:function(){
-                        ajaxCount--;
-                        if(ajaxCount < 1){
-                            console.log("全部wa")
-                        }
-                    }
-                })
-            }*/
-            //this.bindEvent();
             this.render();
 
         },
@@ -109,22 +35,16 @@ $(function(){
         loadingBanner:function(){
             //轮播图部分
             var dtd = $.Deferred();
-            $.ajax({
-                url:"../data/getCarousels.json",
-                method:"GET",
-                dataType:"json"
-            }).done(function(result){
+            dingeTools.banner({}, -1)
+            .then(function(result){
                 var html = "";
-                if(result.status == 1 && result.data.length>0){ 
-                    var data = result.data;
+                if(result.status == 1 && result.data.list.length>0){ 
+                    var data = result.data.list;
                     data.forEach(function(item){
-                       //console.log(item.url);
-
                         html += "<div class='swiper-slide'><a class='pic' href='javascript://'><img src="+item.url+" alt=''/></a></div>";
                     });
                     $(html).appendTo($(".swiper-wrapper"));
                 }
-            }).done(function(result){
                 if(result.status == 1){
                     new Swiper(".swiper-container",{  
                         direction:"horizontal",//横向滑动  
@@ -140,18 +60,21 @@ $(function(){
             });
             return dtd;
         },
+        nextPage: function () {
+            var self = this;
+            this.page++;
+            return dingeTools.comments({
+                page: self.page,
+                pageSize: self.pageSize
+            });
+        },
         loadingComent:function(){
             var dtd = $.Deferred();
-            $.ajax({
-                url:"../data/getCommentsByRight.json",
-                type:"GET",
-                data:{},
-                datatype:"json"
-            }).done(function(res){
-                var data = res.data;
+            this.nextPage()
+            .then(function(res){
+                var data = res.data.list;
                 var html = "";
-                //console.log(data);
-                data.forEach(function(item,index){                   
+                data.length > 0 && data.forEach(function(item,index){                   
                     html += "<div class='home_comment_block flex-container";
                     if(index%2){
                         html+=" home_comment_right";
