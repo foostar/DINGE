@@ -4,5 +4,6 @@
 ## 项目启动： 1.npm install   2.npm run dev 
 ## 项目发布： npm run build
 ## 项目线上启动命令  npm run start （借助docker实现）
+### 哈哈就这样
        
 
