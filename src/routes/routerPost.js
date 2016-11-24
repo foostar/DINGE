@@ -62,74 +62,74 @@ module.exports = (app) => {
     /*
      *  @desc  未来可能要挪到后台的功能
      */
-    app.get("/Api/getUserlist", User.showList)
+    app.get("/getUserlist", User.showList)
     /*
      *  @desc  common
      */
     // 加载首页轮播图
-    app.get("/Api/common/getCarousels", Common.getCarousels)
+    app.get("/common/getCarousels", Common.getCarousels)
     /*
      *  @desc  user相关
      */
     // 加载我关注的人
-    app.get("/Api/user/getUserFocuslist", User.focusList)
+    app.get("/user/getUserFocuslist", User.focusList)
     // 加载关注我的人
-    app.get("/Api/user/getUserFocusFromlist", User.focusFromList)
+    app.get("/user/getUserFocusFromlist", User.focusFromList)
     // 关注用户
-    app.post("/Api/user/FocusUser", User.focusUser)
+    app.post("/user/FocusUser", User.focusUser)
     // 取消关注用户
-    app.post("/Api/user/unFocusUser", User.unFocusUser)
+    app.post("/user/unFocusUser", User.unFocusUser)
     // 用户注册api
-    app.post("/Api/user/signup", User.signUp)
+    app.post("/user/signup", User.signUp)
     // 用户登录api
-    app.post("/Api/user/signin", User.signin)
+    app.post("/user/signin", User.signin)
     // 加载用户信息
-    app.get("/Api/user/getUserInfo", User.getUserInfo)
+    app.get("/user/getUserInfo", User.getUserInfo)
     // 编辑用户信息
-    app.post("/Api/user/editUserInfo", User.editUserInfo)
+    app.post("/user/editUserInfo", User.editUserInfo)
     // 上传头像
-    app.post("/Api/user/getAvatar", User.getAvatar)
+    app.post("/user/getAvatar", User.getAvatar)
     // 加载用户信息
-    app.get("/Api/user/getHistory", User.getHistory)
+    app.get("/user/getHistory", User.getHistory)
     /*
      *  @desc  movie相关
      */
     // 电影详情
-    app.get("/Api/movie/movieFindOne", Movie.find)
+    app.get("/movie/movieFindOne", Movie.find)
     // 电影列表
-    app.get("/Api/movie/showMovieList", Movie.find)
+    app.get("/movie/showMovieList", Movie.find)
     // 搜索电影
-    app.get("/Api/movie/serchMovie", Movie.search)
+    app.get("/movie/serchMovie", Movie.search)
     /*
      *  @desc  comment相关
      */
     // 评论电影
-    app.post("/Api/comment/commentMovie", Comment.save)
+    app.post("/comment/commentMovie", Comment.save)
     // 加载评论
-    app.get("/Api/comment/getComments", Comment.getCommentsList)
+    app.get("/comment/getComments", Comment.getCommentsList)
     // 加载我的影评
-    app.get("/Api/comment/myComments", Comment.getMyComments)
+    app.get("/comment/myComments", Comment.getMyComments)
     // 评论别人的评论
-    app.post("/Api/comment/addComments", Comment.addComments)
+    app.post("/comment/addComments", Comment.addComments)
     // 查看评论详情
-    app.get("/Api/comment/commentsDetail", Comment.commentDetail)
+    app.get("/comment/commentsDetail", Comment.commentDetail)
     // 查看评论我的
-    app.get("/Api/comment/commentsToMe", Comment.commentsToMe)
+    app.get("/comment/commentsToMe", Comment.commentsToMe)
     // 喜欢用户的评论
-    app.post("/Api/comment/addLike", Comment.addLike)
+    app.post("/comment/addLike", Comment.addLike)
     // 收藏评论
-    app.post("/Api/comment/addCollet", Comment.addCollet)
+    app.post("/comment/addCollet", Comment.addCollet)
     // 取消收藏评论
-    app.post("/Api/comment/unCollet", Comment.unCollet)
+    app.post("/comment/unCollet", Comment.unCollet)
     // 查看我收藏的评论
-    app.get("/Api/comment/getMyCollet", Comment.getMyCollet)
+    app.get("/comment/getMyCollet", Comment.getMyCollet)
     /*
      *  @desc  message相关
      */
     // 发送私信
-    app.post("/Api/message/sendMessage", Message.sendMessage)
+    app.post("/message/sendMessage", Message.sendMessage)
     // 私信列表
-    app.get("/Api/message/getMessageList", Message.getMessageList)
+    app.get("/message/getMessageList", Message.getMessageList)
     // 查看私信详情
-    app.get("/Api/message/getMessageDetail", Message.getMessageDetail)
+    app.get("/message/getMessageDetail", Message.getMessageDetail)
 }
