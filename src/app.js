@@ -12,18 +12,21 @@ import connect from "connect-mongo"
 import passport from "passport"
 import multiparty from "connect-multiparty"
 import promise from "promise"
-import userApi from "./routes/routerPost"
-import adminApi from "./routes/adminRouterPost"
+import clientRouter from "./routes/routerPost"
+import adminApiRouter from "./routes/adminRouterPost"
 
+// 建立服务
 const app = express()
-const admin = express()
+const adminApi = express()
+const client = express()
+// 数据库配置
 const MongoStore = connect(session)
 const dbUrl = "mongodb://localhost/dinge"
 mongoose.Promise = promise
 mongoose.connect(dbUrl)
 // 模板设定
-app.set("views", path.join(__dirname, "../views"))
-app.set("view engine", "pug")
+// app.set("views", path.join(__dirname, "../views"))
+// app.set("view engine", "pug")
 // 静态资源加载
 // app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(logger("dev"))
@@ -33,14 +36,15 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "../public")))
 app.use(multiparty())
 app.set("jwtTokenSecret", "international meeting")
-
+// 本地调试报错
 if (app.get("env") == "development") {
     app.set("showStackError", true)
     app.use(logger(":method :url :status"))
     mongoose.set("debug", true)
 }
+// 设置session
 app.use(session({
-    secret: "imooc",
+    secret: "yeah",
     name  : "keyvalue",
     store : new MongoStore({
         url       : dbUrl,
@@ -51,11 +55,13 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use("/admin", admin)
+// 设置公共路径
+app.use("/admin/api", adminApi)
+app.use("/Api", client)
 // 用户端API
-userApi(app)
+clientRouter(client)
 // 后台管理API
-adminApi(app)
+adminApiRouter(adminApi)
 // catch 404
 app.use((req, res, next) => {
     const err = new Error("Not Found")
@@ -68,7 +74,7 @@ app.use((err, req, res) => {
     send(req, path.join(__dirname, "../public/404.html")).pipe(res)
 })
 const server = app.listen(8686, () => {
-    const host = server.address().address
+    const host = server.address().address || "localhost"
     const port = server.address().port
     console.log("xiaoyun-app-wallet start, listening at http://%s:%s", host, port)
 })
