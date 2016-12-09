@@ -3,11 +3,11 @@
  * @desc 用户相关-model
  */
 import mongoose from "mongoose"
-import bcrypt from "bcryptjs"
+
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const userSchema = new mongoose.Schema({
-    email: {
+    username: {
         unique: true,
         type  : String
     },
@@ -16,8 +16,11 @@ const userSchema = new mongoose.Schema({
     // 2:professonal user
     // >10 admin
     // >50 super admin
-    sign: String,
-    sex : {
+    sign: {
+        type   : String,
+        default: "来说点什么吧！"
+    },
+    sex: {
         type   : String,
         default: "男"
     },
@@ -66,28 +69,5 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
-userSchema.pre("save", (next) => {
-    if (this.isNew) {
-        this.createdAt = this.updatedAt = Date.now()
-    } else {
-        this.updatedAt = Date.now()
-    }
-    let _password = this.password
-    let salt = bcrypt.genSaltSync(10)
-    let hash = bcrypt.hashSync(_password, salt)
-    this.password = hash
-    next()
-})
-userSchema.methods = {
-    comparePassword(_password, cb) {
-        const password = this.password
-        bcrypt.compare(_password, password, (err, isMatch) => {
-            if (err) {
-                return cb(err)
-            }
-            return cb(null, isMatch)
-        })
-    }
-}
 const User = mongoose.model("User", userSchema)
 module.exports = User
