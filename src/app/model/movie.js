@@ -4,47 +4,46 @@
  */
 import mongoose from "mongoose"
 const MovieSchema = new mongoose.Schema({
-    title : String,
-    etitle: String,
+    title : String,     // 电影标题
     rating: {
-        average: String,
-        star   : Number
+        average: {      // 评分平均分
+            type   : Number,
+            default: 8
+        },
+        star: {         // 电影星星
+            type   : Number,
+            default: 4
+        }
     },
-    directors: [ {
+    directors: [ {      // 电影导演
         name: String
     } ],
-    casts: [ {
+    casts: [ {          // 电影主演
         name: String
     } ],
-    releasetime: Date,
-    country    : [ {
+    country: [ {    // 国家
         name: String
     } ],
-    genres: [ {
+    genres: [ {         // 类型
         name: String
     } ],
-    aka: [ {
+    aka: [ {            // 又名
         name: String
     } ],
-    language: [ {
+    language: [ {       // 语言
         name: String
     } ],
-    actime: Number,
+    actime: Number,     // 片长
     images: {
-        large : String,
-        small : String,
-        medium: String
-    }
+        large : String,  // 大海报地址
+        small : String,  // 中海报地址
+        medium: String   // 小海报地址
+    },
+    subject    : String,   // 电影简介
+    videoUrl   : String,   // 预告片
+    releaseTime: String // 上映时间
 }, {
     timestamps: true
-})
-MovieSchema.pre("save", (next) => {
-    if (this.isNew) {
-        this.createdAt = this.updatedAt = Date.now()
-    } else {
-        this.updatedAt = Date.now()
-    }
-    next()
 })
 MovieSchema.statics = {
     fetch() {

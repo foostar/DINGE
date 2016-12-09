@@ -9,77 +9,110 @@ import passport from "passport"
 import jwt from "jwt-simple"
 import fs from "fs"
 import path from "path"
+import client from "../../redis/redis"
+import crypto from "crypto"
+import bcrypt from "bcryptjs"
+
 /*
  * 注册接口方法
  */
-exports.signUp = (req, res) => {
+exports.signUp = (req, res, next) => {
     const _user = req.body
     // 检测空账户
     if (!_user.email) {
-        return res.json({ status: -1, msg: "邮箱不能为空" })
+        return next({ status: 400, msg: "邮箱不能为空" })
     }
     // 检测空密码
     if (!_user.password) {
-        return res.json({ status: -1, msg: "密码不能为空" })
+        return next({ status: 400, msg: "密码不能为空" })
     }
     // 检测空昵称
     if (!_user.username) {
-        return res.json({ status: -1, msg: "昵称不能为空" })
+        return next({ status: 400, msg: "昵称不能为空" })
     }
     // 检测昵称不正确
     if (!Regexp.username.test(_user.username)) {
-        return res.json({ status: -1, msg: "昵称格式错误，不能包括特殊字符切长度在9位之内。" })
+        return next({ status: 400, msg: "昵称格式错误，不能包括特殊字符切长度在9位之内。" })
     }
     // 账号格式不正确
     if (!Regexp.email.test(_user.email)) {
-        return res.json({ "status": -1, msg: "邮箱格式不正确" })
+        return next({ status: 400, msg: "邮箱格式不正确" })
     }
     // 检测密码规范
     if (!Regexp.password.test(_user.password)) {
-        return res.json({ "status": -1, msg: "密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" })
+        return next({ status: 400, msg: "密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" })
     }
     // 检测重复用户
     User.findOne({ username: _user.email }).exec()
         .then((user) => {
-            if (user) {
-                return res.json({ status: -1, msg: "邮箱已经被注册" })
+            if (user && user.username) {
+                return next({ status: 400, msg: "邮箱已经被注册" })
             }
-            return User.find({ nickname: _user.username }).exec()
+            return User.findOne({ nickname: _user.username })
         })
         .then((result) => {
-            if (result) {
-                return res.json({ status: -1, msg: "邮箱已经被注册" })
+            if (result && result.nickname) {
+                return next({ status: 400, msg: "用户名已经被注册" })
             }
-            let _User = new User({
+            let _User = {
                 username: _user.email,
                 password: _user.password,
-                nickname: _user.nickname,
+                nickname: _user.username,
                 birthday: "1990-01-01",
                 city    : "北京市,东城区",
                 sex     : "男",
-                avatar  : "/carouse/head.png"
-            })
-            _User.save((err) => {
+                avatar  : "/images/carouse/head.png"
+            }
+            bcrypt.hash(_User.password, null, null, (err, hash) => {
                 if (err) {
-                    return res.json({ status: -1, msg: "注册失败，请重试！" })
+                    return next(err)
                 }
-                return res.json({ status: 1, msg: "" })
+                _User.password = hash
+                new User(_User).save((error) => {
+                    if (error) {
+                        return next({ status: 400, msg: "注册失败，请重试！" })
+                    }
+                    return res.json({ status: 1, msg: "注册成功" })
+                })
             })
+        })
+        .catch(err => {
+            next(err)
         })
 }
 /*
  * 登陆接口方法
  */
+const createSession = (value) => {
+    return new Promise((reslove, reject) => {
+        crypto.randomBytes(8, (err, buf) => {
+            if (err) reject(err)
+            const token = crypto.createHash("sha1").update(`${JSON.stringify(value)}${buf.toString("hex")}`).digest("hex")
+            .toString()
+            reslove({ token, value })
+        })
+    })
+}
 exports.signin = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
         if (!user) {
-            const response = Tools.merge({}, { status: -1 }, info)
-            return res.json(response)
+            const response = Tools.merge({}, { status: 400 }, info)
+            return next(response)
         }
-        const token = jwt.encode(user._id, Tools.secret)
-        // 模拟token
-        req.session.token = token
-        res.json({ status: 1, data: { token } })
+        createSession(user)
+        .then((result) => {
+            client.set(result.token, JSON.stringify(result.value), (error) => {
+                if (error) {
+                    return next(error)
+                }
+                client.expire(result.token, parseInt(1800, 10))
+                // 模拟token
+                res.json({ status: 1, data: { token: result.token, userId: user._id } })
+            })
+        })
+        .catch((error) => {
+            next(error)
+        })
     })(req, res, next)
 }
 /*
@@ -204,47 +237,39 @@ exports.unFocusUser = (req, res) => {
  * @desc 获取用户信息
  * @tip  需要使用token
  */
-exports.getUserInfo = (req, res) => {
-    const token = req.query.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).exec()
+exports.getUserInfo = (req, res, next) => {
+    const userInfo = JSON.parse(req.session.userInfo)
+    User.findById(userInfo._id).exec()
         .then((result) => {
             if (result) {
                 return res.json({ status: 1, data: result })
             }
-            return res.json({ status: -1, msg: "查找用户失败" })
-        }, (err) => {
-            if (err) {
-                return res.json({ status: -1, msg: "查找用户失败" })
-            }
+            return next({ status: 400, msg: "查找用户失败" })
+        })
+        .catch((err) => {
+            return next({ status: 400, msg: "查找用户失败", errmsg: err })
         })
 }
 /*
  * @desc 编辑用户资料
  * @tip  需要使用token
  */
-exports.editUserInfo = (req, res) => {
-    const token = req.body.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).exec()
-        .then((result) => {
-            result.sex = req.body.sex
-            result.sign = req.body.sign
-            result.birthday = req.body.birthday
-            result.city = req.body.city
-            result.avatar = req.body.avatar
-            result.save((err) => {
-                if (err) {
-                    return res.json({ status: -1, msg: "修改失败" })
-                }
+exports.editUserInfo = (req, res, next) => {
+    console.log(111)
+    console.log(req.session.userInfo)
+    const userInfo = JSON.parse(req.user)
+    const body = req.body
+    console.log("body", body)
+    User.update({ _id: userInfo._id }, { $set: body }).exec()
+        .then((data) => {
+            console.log("data", data)
+            if (data.n && data.n == 1) {
                 return res.json({ status: 1, msg: "修改成功" })
-            })
+            }
+            return next({ status: 400, msg: "修改失败" })
+        })
+        .catch((err) => {
+            return next({ status: 400, msg: "网络请求出错，请重试", errmsg: err })
         })
 }
 /*
