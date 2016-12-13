@@ -63,16 +63,18 @@ exports.signUp = (req, res, next) => {
                 sex     : "男",
                 avatar  : "/images/carouse/head.png"
             }
-            bcrypt.hash(_User.password, null, null, (err, hash) => {
-                if (err) {
-                    return next(err)
-                }
-                _User.password = hash
-                new User(_User).save((error) => {
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(_user.password, salt, (error, hash) => {
                     if (error) {
-                        return next({ status: 400, msg: "注册失败，请重试！" })
+                        return next(error)
                     }
-                    return res.json({ status: 1, msg: "注册成功" })
+                    _User.password = hash
+                    new User(_User).save((erro) => {
+                        if (erro) {
+                            return next({ status: 400, msg: "注册失败，请重试！" })
+                        }
+                        return res.json({ status: 1, msg: "注册成功" })
+                    })
                 })
             })
         })
@@ -255,14 +257,10 @@ exports.getUserInfo = (req, res, next) => {
  * @tip  需要使用token
  */
 exports.editUserInfo = (req, res, next) => {
-    console.log(111)
-    console.log(req.session.userInfo)
     const userInfo = JSON.parse(req.user)
     const body = req.body
-    console.log("body", body)
     User.update({ _id: userInfo._id }, { $set: body }).exec()
         .then((data) => {
-            console.log("data", data)
             if (data.n && data.n == 1) {
                 return res.json({ status: 1, msg: "修改成功" })
             }
