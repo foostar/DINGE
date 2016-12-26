@@ -2,16 +2,15 @@
  * Created by @xiusiteng on 2016-11-23.
  * @desc 用户相关-ctrl
  */
-import Regexp from "../tools/regex"
-import Tools from "../tools/tool"
 import User from "../model/user"
 import passport from "passport"
 import jwt from "jwt-simple"
 import fs from "fs"
 import path from "path"
-import client from "../../redis/redis"
+import { setItem, setExpire } from "../../redis/redis"
 import crypto from "crypto"
 import bcrypt from "bcryptjs"
+import { sendError, Regexp } from "../../utils/util.js"
 
 /*
  * 注册接口方法
@@ -46,13 +45,13 @@ exports.signUp = (req, res, next) => {
     User.findOne({ username: _user.email }).exec()
         .then((user) => {
             if (user && user.username) {
-                return next({ status: 400, msg: "邮箱已经被注册" })
+                return Promise.reject({ status: 400, msg: "邮箱已经被注册" })
             }
             return User.findOne({ nickname: _user.username })
         })
         .then((result) => {
             if (result && result.nickname) {
-                return next({ status: 400, msg: "用户名已经被注册" })
+                return Promise.reject({ status: 400, msg: "用户名已经被注册" })
             }
             let _User = {
                 username: _user.email,
@@ -63,21 +62,24 @@ exports.signUp = (req, res, next) => {
                 sex     : "男",
                 avatar  : "/images/carouse/head.png"
             }
-            bcrypt.hash(_User.password, null, null, (err, hash) => {
-                if (err) {
-                    return next(err)
-                }
-                _User.password = hash
-                new User(_User).save((error) => {
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(_user.password, salt, (error, hash) => {
                     if (error) {
-                        return next({ status: 400, msg: "注册失败，请重试！" })
+                        return next(error)
                     }
-                    return res.json({ status: 1, msg: "注册成功" })
+                    _User.password = hash
+                    new User(_User).save((erro) => {
+                        if (erro) {
+                            console.log("erro", erro.toJSON())
+                            return Promise.reject({ status: 400, msg: "注册失败，请重试！" })
+                        }
+                        return res.json({ status: 1, msg: "注册成功" })
+                    })
                 })
             })
         })
         .catch(err => {
-            next(err)
+            next(sendError(err))
         })
 }
 /*
@@ -96,34 +98,43 @@ const createSession = (value) => {
 exports.signin = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
         if (!user) {
-            const response = Tools.merge({}, { status: 400 }, info)
-            return next(response)
+            return Promise.reject(Object.assign({}, { status: 400 }, info))
         }
         createSession(user)
         .then((result) => {
-            client.set(result.token, JSON.stringify(result.value), (error) => {
-                if (error) {
-                    return next(error)
-                }
-                client.expire(result.token, parseInt(1800, 10))
-                // 模拟token
+            setItem(result.token, JSON.stringify(result.value))
+            .then(() => {
+                setExpire(result.token, parseInt(1800, 10))
                 res.json({ status: 1, data: { token: result.token, userId: user._id } })
             })
         })
         .catch((error) => {
-            next(error)
+            next(sendError(error))
         })
     })(req, res, next)
 }
 /*
  * @desc 加载用户列表
  */
-exports.showList = (req, res) => {
-    User.find({}).exec()
-    .then((result) => {
-        if (result) {
-            res.json({ status: 1, data: result })
-        }
+exports.showList = (req, res, next) => {
+    const page = req.query.page || 1
+    const index = (page - 1) * 20
+    Promise.all([ User.count({}),
+        User.find({}).sort({ updatedAt: -1 })
+        .limit(20)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ count, data ]) => {
+        res.json({
+            status: 1,
+            data  : {
+                list    : data,
+                totalNum: count
+            }
+        })
+    }, err => {
+        return next(sendError(err))
     })
 }
 /*
@@ -166,72 +177,59 @@ exports.focusFromList = (req, res) => {
  * @desc 关注用户
  * @tip  需要使用token
  */
-exports.focusUser = (req, res) => {
-    let userId = jwt.decode(req.body.token, Tools.secret)
-    let foucsTo = req.body.userId
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
+exports.focusUser = (req, res, next) => {
+    const userInfo = JSON.parse(req.user)
+    const id = userInfo._id
+    const { userId, type, isList, page } = req.body
+    if (!userId || (type == "unfocus" && isList && !page) || !type) {
+        return next({ status: 400, msg: "缺少必要的参数" })
     }
-    User.findById(userId).exec()
-        .then(result => {
-            if (result) {
-                return User.find({ lovedTo: foucsTo }).exec()
-            }
-            return res.json({ status: -1, msg: "token不正确" })
-        })
-        .then(result => {
-            if (result.length < 1 || !result) {
-                // 添加我关注的人、添加人的粉丝
-                let focus = User.update({ _id: userId }, { $push: { lovedTo: foucsTo } }).exec()
-                let froms = User.update({ _id: foucsTo }, { $push: { lovedFrom: userId } }).exec()
-                return Promise.all([ focus, froms ])
-            }
-            return res.json({ status: -1, msg: "您已经关注过了这个用户" })
-        })
-        .then(result => {
-            if (result[0].n == 1 && result[1].n == 1) {
-                res.json({ status: 1, msg: "修改成功" })
-            } else {
-                res.json({ status: -1, msg: "修改失败" })
-            }
-        })
-}
-/*
- * @desc 取消关注用户
- * @tip  需要使用token
- */
-exports.unFocusUser = (req, res) => {
-    let userId = jwt.decode(req.body.token, Tools.secret)
-    let foucsTo = req.body.userId
-    const page = req.body.page
-    const index = page * 10 - 1
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
+    if (id == userId) {
+        return next({ status: 400, msg: "不能关注自己" })
     }
-    User.findById(userId).exec()
-        .then(result => {
-            if (result) {
-                let focus = User.update({ _id: userId }, { $pull: { lovedTo: foucsTo } }).exec()
-                let froms = User.update({ _id: foucsTo }, { $pull: { lovedTo: userId } }).exec()
-                return Promise.all([ focus, froms ])
+    // 关注列表删除返回下一个用户
+    const addnewUser = (result) => {
+        const data = {
+            isFixed: false,
+            isOver : true,
+            result : {}
+        }
+        if (result[0].n == 1 && result[1].n == 1) {
+            data.isFixed = true
+            if (type == "unfocus" && isList) {
+                data.isOver = false
+                User.findById(id).populate("lovedTo", "avatar nickname").exec()
+                .then(user => {
+                    data.result = user
+                    return Promise.resolve(data)
+                })
             }
-            return res.json({ status: -1, msg: "token不正确" })
-        })
-        .then(result => {
-            if (result[0].n == 1 && result[1].n == 1) {
-                return User.findById(userId).populate("lovedFrom", "avatar nickname").exec()
-            }
-            res.json({ status: -1, msg: "修改失败" })
-        })
-        .then(result => {
-            if (result) {
-                if (index < result.lovedFrom.length) {
-                    const data = result.lovedFrom[index]
-                    return res.json({ status: 1, data })
-                }
-                res.json({ status: 1, msg: "修改成功！" })
-            }
-        })
+        }
+        return Promise.resolve(data)
+    }
+    // 添加我关注的人、添加人的粉丝
+    let focus = User.update({ _id: id }, { $addToSet: { lovedTo: userId } }).exec()
+    let froms = User.update({ _id: userId }, { $addToSet: { lovedFrom: id } }).exec()
+    if (type == "unfocus") {
+        focus = User.update({ _id: id }, { $pull: { lovedTo: userId } }).exec()
+        froms = User.update({ _id: userId }, { $pull: { lovedFrom: id } }).exec()
+    }
+    Promise.all([ focus, froms ])
+    .then(addnewUser)
+    .then((result) => {
+        if (!result.isFixed) return next({ status: 400, msg: "修改失败" })
+        if (result.isOver) return res.json({ status: 1, msg: "修改成功" })
+        const index = page * 10 - 1
+        const lovedTo = result.result.lovedTo || []
+        if (index > lovedTo.length) {
+            return next({ status: 400, msg: "已经到底啦！" })
+        }
+        const data = lovedTo[index]
+        res.json({ status: 1, data })
+    })
+    .catch((err) => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 获取用户信息
@@ -255,14 +253,10 @@ exports.getUserInfo = (req, res, next) => {
  * @tip  需要使用token
  */
 exports.editUserInfo = (req, res, next) => {
-    console.log(111)
-    console.log(req.session.userInfo)
     const userInfo = JSON.parse(req.user)
     const body = req.body
-    console.log("body", body)
     User.update({ _id: userInfo._id }, { $set: body }).exec()
         .then((data) => {
-            console.log("data", data)
             if (data.n && data.n == 1) {
                 return res.json({ status: 1, msg: "修改成功" })
             }

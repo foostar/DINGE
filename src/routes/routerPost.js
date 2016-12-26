@@ -6,12 +6,12 @@ import User from "../app/controller/user"
 import passport from "passport"
 import local from "passport-local"
 import userModel from "../app/model/user"
-import Regexp from "../app/tools/regex"
 import Movie from "../app/controller/movie"
 import Comment from "../app/controller/comment"
 import Common from "../app/controller/common"
 import Message from "../app/controller/message"
-import client from "../redis/redis"
+import { getItem, setExpire } from "../redis/redis"
+import { sendError, Regexp } from "../utils/util.js"
 import bcrypt from "bcryptjs"
 
 const Strategy = local.Strategy
@@ -63,21 +63,17 @@ const isAuth = (req, res, next) => {
         return next({ status: 400, errcode: 100401, msg: "token为必传参数" })
     }
     const sessionKey = req.headers.authentication
-    client.get(sessionKey, (err, result) => {
-        if (err || !result) {
-            return next({ status: 400, errcode: 100401, msg: "token过期" })
-        }
+    getItem(sessionKey)
+    .then(result => {
         req.user = result
-        client.expire(sessionKey, parseInt(1800, 10))
+        setExpire(sessionKey, parseInt(1800, 10))
         next()
+    })
+    .catch(err => {
+        return next(sendError(err))
     })
 }
 module.exports = (app) => {
-    // 加载用户列表
-    /*
-     *  @desc  未来可能要挪到后台的功能
-     */
-    app.get("/getUserlist", User.showList)
     /*
      *  @desc  common
      */
@@ -93,9 +89,7 @@ module.exports = (app) => {
     // 加载关注我的人
     app.get("/user/getUserFocusFromlist", User.focusFromList)
     // 关注用户
-    app.post("/user/FocusUser", User.focusUser)
-    // 取消关注用户
-    app.post("/user/unFocusUser", User.unFocusUser)
+    app.post("/user/FocusUser", isAuth, User.focusUser)
     // 用户注册api
     app.post("/user/signup", User.signUp)
     // 用户登录api
@@ -121,23 +115,21 @@ module.exports = (app) => {
      *  @desc  comment相关
      */
     // 评论电影
-    app.post("/comment/commentMovie", Comment.save)
+    app.post("/comment/commentMovie", isAuth, Comment.save)
     // 加载评论
     app.get("/comment/getComments", Comment.getCommentsList)
     // 加载我的影评
     app.get("/comment/myComments", Comment.getMyComments)
     // 评论别人的评论
-    app.post("/comment/addComments", Comment.addComments)
+    app.post("/comment/addComments", isAuth, Comment.addComments)
     // 查看评论详情
     app.get("/comment/commentsDetail", Comment.commentDetail)
     // 查看评论我的
     app.get("/comment/commentsToMe", Comment.commentsToMe)
     // 喜欢用户的评论
-    app.post("/comment/addLike", Comment.addLike)
+    app.post("/comment/addLike", isAuth, Comment.addLike)
     // 收藏评论
-    app.post("/comment/addCollet", Comment.addCollet)
-    // 取消收藏评论
-    app.post("/comment/unCollet", Comment.unCollet)
+    app.post("/comment/collet", isAuth, Comment.collet)
     // 查看我收藏的评论
     app.get("/comment/getMyCollet", Comment.getMyCollet)
     /*

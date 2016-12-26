@@ -4,7 +4,6 @@
  */
 import Message from "../model/message"
 import jwt from "jwt-simple"
-import Tools from "../tools/tool"
 // 发送私信
 exports.sendMessage = (req, res) => {
     const token = req.body.token
