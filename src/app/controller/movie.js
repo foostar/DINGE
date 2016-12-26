@@ -3,7 +3,6 @@
  * @desc 电影相关-ctrl
  */
 import Movie from "../model/movie"
-import Tools from "../tools/tool"
 // 添加电影方法
 exports.addMovie = (req, res) => {
     const body = req.body

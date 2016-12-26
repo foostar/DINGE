@@ -37,27 +37,10 @@ const CommentSchema = new mongoose.Schema({
         type   : Number,
         enum   : WEIGHT_TYPE
     },
-    reply: [ {
-        commentTo  : { type: ObjectId, ref: "User" },
-        commentFrom: { type: ObjectId, ref: "User" },
-        createdAt  : {
-            type   : Date,
-            default: Date.now()
-        },
-        commentId: { type: ObjectId, ref: "comment" },
-        content  : String
-    } ],
+    reply  : [ { type: ObjectId, ref: "reply" } ],
     content: String
 }, {
     timestamps: true
-})
-CommentSchema.pre("save", (next) => {
-    if (this.isNew) {
-        this.createdAt = this.updatedAt = Date.now()
-    } else {
-        this.updatedAt = Date.now()
-    }
-    next()
 })
 CommentSchema.statics = {
     fetch(opt) {

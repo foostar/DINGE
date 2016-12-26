@@ -4,61 +4,107 @@
  */
 import jwt from "jwt-simple"
 import User from "../model/user"
-import Tools from "../tools/tool"
 import Comment from "../model/comment"
+import Reply from "../model/reply"
+import { getItem, setExpire } from "../../redis/redis"
+import { sendError, Regexp } from "../../utils/util.js"
 
 /*
  * @desc 创建一条电影评论
  */
-exports.save = (req, res) => {
-    let _comment = req.body
-    if (!_comment.token) {
-        return res.json({ status: -1, msg: "没有token" })
+exports.save = (req, res, next) => {
+    const id = JSON.parse(req.user)._id
+    const _comment = req.body
+    if (!_comment.title || !_comment.content || !Regexp.xsscos.test(_comment.title) || !Regexp.xsscos.test(_comment.content)) {
+        return next({ status: 400, msg: "缺少必要的参数或传入参数不合法" })
     }
-    const username = jwt.decode(_comment.token, Tools.secret)
-    User.findOne({ _id: username }).exec()
+    if (_comment.title.length > 20) {
+        return next({ status: 400, msg: "标题不能超过20个字符！" })
+    }
+    if (_comment.content.length > 1000) {
+        return next({ status: 400, msg: "评论内容过长！" })
+    }
+    User.findOne({ _id: id }).exec()
         .then((result) => {
             if (!result) {
-                return res.json({ status: -1, msg: "操作失败" })
+                return Promise.reject({ status: 400, msg: "操作失败" })
             }
-            _comment.commentFrom = username
-            delete _comment.token
-            const comment = new Comment(_comment)
-            comment.save(() => {
-                return res.json({ status: 1 })
+            _comment.commentFrom = id
+            return _comment
+        })
+        .then((comment) => {
+            new Comment(comment).save(() => {
+                return res.json({ status: 1, msg: "评论成功" })
             })
+        })
+        .catch(err => {
+            next(sendError(err))
         })
 }
 /*
  * @desc 查看用户的评论 筛选：电影/首页
  */
-exports.getCommentsList = (req, res) => {
-    const _movieId = req.query.movieId
-    if (_movieId) {
-        Comment.find({ movie: _movieId })
-            .populate("commentFrom", "nickname").exec()
-            .then((result) => {
+exports.getCommentsList = (req, res, next) => {
+    const { movieId, page, rights } = req.query
+    const index = (page - 1) * 20
+    if ((movieId == "undefined" && !rights) || (rights == "undefined" && !movieId)) {
+        return next({ status: 400, msg: "缺少必要的参数" })
+    }
+    if (movieId) {
+        return Promise.all([
+            Comment.count({ movie: movieId }),
+            Comment.find({ movie: movieId })
+                .sort({ updatedAt: -1 })
+                .limit(20)
+                .skip(index)
+                .populate("commentFrom", "nickname")
+                .exec() ])
+            .then(([ count, result ]) => {
                 if (!result) {
-                    return res.json({ status: -1, msg: "操作失败" })
+                    return Promise.reject({ status: 400, msg: "操作失败" })
                 }
-                return res.json({ status: 1, data: result })
+                res.json({
+                    status: 1,
+                    data  : {
+                        list    : result,
+                        totalNum: count
+                    }
+                })
             })
-    } else {
-        Comment.find({ weight: { $gte: 90 } })
-            .populate([ {
-                path  : "commentFrom",
-                select: "avatar nickname -_id"
-            }, {
-                path  : "movie",
-                select: "images.small -_id"
-            } ]).exec()
-            .then((result) => {
-                if (!result) {
-                    return res.json({ status: -1, msg: "操作失败" })
-                }
-                return res.json({ status: 1, data: result })
+            .catch(err => {
+                next(sendError(err))
             })
     }
+    Promise.all([
+        Comment.count({ weight: { $gte: rights } }),
+        Comment.find({ weight: { $gte: rights } })
+        .populate([ {
+            path  : "commentFrom",
+            select: "avatar nickname -_id"
+        }, {
+            path  : "movie",
+            select: "images.small -_id"
+        } ])
+        .sort({ updatedAt: -1 })
+        .limit(20)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ count, result ]) => {
+        if (!result) {
+            return Promise.reject({ status: 400, msg: "操作失败" })
+        }
+        res.json({
+            status: 1,
+            data  : {
+                list    : result,
+                totalNum: count
+            }
+        })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 查看用户的所有电影评论 ops：列表
@@ -90,78 +136,97 @@ exports.getMyComments = (req, res) => {
 /*
  * @desc 评论其他用户的评论
  */
-exports.addComments = (req, res) => {
-    const token = req.body.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).exec()
-        .then((result) => {
-            if (!result) {
-                return res.json({ status: -1, msg: "token错误" })
-            }
-            const commentId = req.body.commentsId
-            Comment.findById(commentId, (err, comment) => {
-                if (err) {
-                    return res.json({ status: -1, msg: err })
-                }
-                let reply = {}
-                reply.commentTo = req.body.commentTo
-                reply.commentFrom = userId
-                reply.content = req.body.content
-                comment.reply.push(reply)
-                comment.save((error) => {
-                    if (error) {
-                        return res.json({ status: -1, msg: "修改失败" })
-                    }
-                    res.json({ status: 1, msg: "修改成功" })
-                })
-            })
+const saveReply = (opts) => {
+    return new Promise((reslove, reject) => {
+        new Reply(opts).save((err, reply) => {
+            if (err) return reject(err)
+            reslove(reply)
         })
+    })
+}
+exports.addComments = (req, res, next) => {
+    const { commentTo, commentFrom, commentId, content } = req.body
+    if (!commentTo || !commentFrom || !commentId || !content || Regexp.xsscos.test(content)) {
+        return next({ status: 400, msg: "缺少必要的参数，或者传入参数不合法!" })
+    }
+    saveReply(req.body)
+    .then(reply => {
+        const replyId = reply._id
+        return Comment.update({ _id: commentId }, { $push: { reply: replyId } }).exec()
+    })
+    .then(result => {
+        if (result.n != 1) {
+            return Promise.reject({ status: 400, msg: "修改失败！" })
+        }
+        res.json({ status: 1, msg: "评论成功!" })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 评论详情
  */
-exports.commentDetail = (req, res) => {
-    const commentId = req.query.commentId
-    const token = req.query.token
+
+exports.commentDetail = (req, res, next) => {
+    const { commentId, token } = req.query
     if (!commentId) {
         return res.json({ status: -1, msg: "缺少评论id" })
     }
-    if (token.length > 1) {
-        const userId = jwt.decode(token, Tools.secret)
-        User.findById(userId).exec()
-            .then((result) => {
-                if (result.history.length >= 10) {
-                    result.history.pop()
-                    result.history.unshift(commentId)
-                } else {
-                    result.history.unshift(commentId)
-                }
-                return result.save()
-            })
-    }
-    Comment.findById(commentId).populate("reply.commentFrom reply.commentTo commentFrom", "nickname avatar -_id").exec()
+    let userId
+    // 设置访问历史
+    const setHistory = new Promise((reslove, reject) => {
+        if (!token) {
+            reslove()
+        }
+        return getItem(token)
         .then((result) => {
-            let colletful = true
-            let starNumber = result.star
-            let colletNumber = result.collet.length
-            if (!result) {
-                return res.json({ status: -1, msg: "缺少评论id" })
-            }
-            if (token == "") {
-                result.colletful = true
-                return res.json({ status: 1, data: result, colletful, starNumber, colletNumber })
-            }
-            const userId = jwt.decode(token, Tools.secret)
-            result.collet.forEach((v) => {
-                if (v == userId) {
-                    colletful = false
-                }
-            })
-            return res.json({ status: 1, data: result, colletful, starNumber, colletNumber })
+            userId = JSON.parse(result)._id
+            return User.findOne({ _id: userId }).exec()
         })
+        .then((data) => {
+            let history = User.update({ _id: userId }, { $pop: { history: 1 }, $addToSet: { history: commentId } })
+            if (data.history.length < 10) {
+                history = User.update({ _id: userId }, { $addToSet: { history: commentId } })
+            }
+            return history
+        })
+        .then(() => {
+            setExpire(token, parseInt(1800, 10))
+            reslove()
+        })
+        .catch(err => {
+            return reject(sendError(err))
+        })
+    })
+    // 先修改reading数量
+    Promise.all([ setHistory, Comment.update({ _id: commentId }, { $inc: { reading: 1 } }) ])
+    .then((comment) => {
+        if (comment[1].n != 1) return Promise.reject({ status: 400, msg: "操作失败！" })
+        // 查出详细信息
+        return Comment.findOne({ _id: commentId }).populate({ path: "reply", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec()
+    })
+    .then((result) => {
+        let colletful = true
+        let starNumber = result.star
+        let colletNumber = result.collet.length
+        if (!result) {
+            return Promise.reject({ status: -1, msg: "缺少评论id" })
+        }
+        if (!userId) {
+            result.colletful = true
+            return res.json({ status: 1, data: result, colletful, starNumber, colletNumber })
+        }
+        result.collet.forEach((v) => {
+            if (v == userId) {
+                colletful = false
+            }
+        })
+        return res.json({ status: 1, data: result, colletful, starNumber, colletNumber })
+    })
+    .catch(err => {
+        return next(sendError(err))
+    })
 }
 /*
  * @desc 所有评论我的人
@@ -206,75 +271,63 @@ exports.commentsToMe = (req, res) => {
 /*
  * @desc 喜欢用户的评论
  */
-exports.addLike = (req, res) => {
-    if (!req.body.token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
+exports.addLike = (req, res, next) => {
     const commentId = req.body.commentId
-    Comment.findById(commentId).exec()
+    Comment.update({ _id: commentId }, { $inc: { star: 1 } }).exec()
         .then(result => {
-            result.star = parseInt(result.star, 10) + 1
-            return result.save()
+            res.json({ status: 1, star: result.star })
         })
-        .then(result => {
-            if (result) {
-                res.json({ status: 1, star: result.star })
-            }
-        }, err => {
-            if (err) {
-                res.json({ status: -1, msg: "修改失败！" })
-            }
+        .catch(err => {
+            next(sendError(err))
         })
 }
 /*
  * @desc 收藏用户的评论
  */
-exports.addCollet = (req, res) => {
-    if (!req.body.token) {
-        return res.json({ status: -1, msg: "没有token" })
+exports.collet = (req, res, next) => {
+    const { commentId, type, isList, page } = req.body
+    const userId = JSON.parse(req.user)._id
+    let updateCommentP = Comment.update({ _id: commentId }, { $addToSet: { collet: userId } }).exec()
+    let updateUserP = User.update({ _id: userId }, { $addToSet: { collet: commentId } }).exec()
+    if (type == "uncollet") {
+        updateCommentP = Comment.update({ _id: commentId }, { $pull: { collet: userId } }).exec()
+        updateUserP = User.update({ _id: userId }, { $pull: { collet: commentId } }).exec()
     }
-    const token = req.body.token
-    const commentId = req.body.commentId
-    const userId = jwt.decode(token, Tools.secret)
-    const updateCommentP = Comment.update({ _id: commentId }, { $addToSet: { collet: userId } }).exec()
-    const updateUserP = User.update({ _id: userId }, { $addToSet: { collet: commentId } }).exec()
-    Promise.all([ updateCommentP, updateUserP ])
-        .then(([ updateComment, updateUser ]) => {
-            if (updateComment.n == 1 && updateUser.n == 1) {
-                return res.json({ status: 1, msg: "修改成功" })
+    const addnewUser = (result) => {
+        const data = {
+            isFixed: false,
+            isOver : true,
+            result : {}
+        }
+        if (result[0].n == 1 && result[1].n == 1) {
+            data.isFixed = true
+            if (type == "uncollet" && isList) {
+                data.isOver = false
+                User.findById(userId).populate({ path: "collet", select: "_id title content commentFrom", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec()
+                .then(user => {
+                    data.result = user
+                    return Promise.resolve(data)
+                })
             }
-            return res.json({ status: -1, msg: "修改失败，请重试!" })
-        })
-}
-/*
- * @desc 删除收藏的评论
- */
-exports.unCollet = (req, res) => {
-    if (!req.body.token) {
-        return res.json({ status: -1, msg: "没有token" })
+        }
+        return Promise.resolve(data)
     }
-    const page = req.body.page
-    const index = page * 10 - 1
-    const token = req.body.token
-    const commentId = req.body.commentId
-    const userId = jwt.decode(token, Tools.secret)
-    const updateCommentP = Comment.update({ _id: commentId }, { $pull: { collet: userId } }).exec()
-    const updateUserP = User.update({ _id: userId }, { $pull: { collet: commentId } }).exec()
+    // 返回值
     Promise.all([ updateCommentP, updateUserP ])
-        .then(([ updateComment, updateUser ]) => {
-            if (updateComment.n == 1 && updateUser.n == 1) {
-                return User.findById(userId).populate("collet", "title createdAt").exec()
-            }
-            return res.json({ status: -1, msg: "修改失败，请重试！" })
-        })
+        .then(addnewUser)
         .then(result => {
-            if (result) {
-                if (index < result.collet.length) {
-                    const data = result.collet[index]
-                    return res.json({ status: 1, data })
-                }
-                res.json({ status: 1, msg: "修改成功！" })
+            if (!result.isFixed) return next({ status: 400, msg: "修改失败" })
+            if (result.isOver) return res.json({ status: 1, msg: "修改成功" })
+            const index = page * 10 - 1
+            const colletTo = result.result.collet || []
+            if (index > colletTo.length) {
+                return next({ status: 400, msg: "已经到底啦！" })
             }
+            const data = colletTo[index]
+            return res.json({ status: 1, data })
+        })
+        .catch((err) => {
+            next(sendError(err))
         })
 }
 /*
