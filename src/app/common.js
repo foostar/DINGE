@@ -26,7 +26,6 @@ exports.search = (req, res, next) => {
     let count = null
     const _page = req.query.page || 1
     const _index = (_page - 1) * 20
-    console.log(222)
     if (req.query.movieName) {
         _name = req.query.movieName
         listPro = Movie.find({ title: new RegExp(_name) })
@@ -52,7 +51,6 @@ exports.search = (req, res, next) => {
                     .exec()
         count = User.count({ nickname: new RegExp(_name) })
     }
-    console.log(111)
     Promise.all([ count, listPro ])
         .then(([ totalNum, list ]) => {
             if (!list) {

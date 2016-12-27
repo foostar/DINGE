@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "babel src --out-dir dist",
-    "start": "node ./dist/app.js",
+    "start": "NODE_ENV=pro node ./dist/app.js",
     "dev": "babel-node ./node_modules/concurrently/src/main.js --kill-others \"npm run babel\"",
     "babel": "babel-node ./server.dev.js"
   },

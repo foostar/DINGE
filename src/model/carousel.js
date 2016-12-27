@@ -4,9 +4,9 @@
  */
 import mongoose from "mongoose"
 const carouselSchema = new mongoose.Schema({
-    name  : String,
-    url   : String,
-    weight: {
+    title : String,         // 轮播图标题
+    url   : String,         // 轮播图跳转地址
+    weight: {               // 权重
         type   : Number,
         default: 90
     }

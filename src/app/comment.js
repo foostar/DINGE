@@ -6,8 +6,8 @@ import jwt from "jwt-simple"
 import User from "../model/user"
 import Comment from "../model/comment"
 import Reply from "../model/reply"
-import { getItem, setExpire } from "../../redis/redis"
-import { sendError, Regexp } from "../../utils/util.js"
+import { getItem, setExpire } from "../redis/redis"
+import { sendError, Regexp } from "../utils/util.js"
 
 /*
  * @desc 创建一条电影评论
@@ -45,15 +45,37 @@ exports.save = (req, res, next) => {
  * @desc 查看用户的评论 筛选：电影/首页
  */
 exports.getCommentsList = (req, res, next) => {
-    const { movieId, page, rights } = req.query
+    const { movieId, page, rights, userId } = req.query
     const index = (page - 1) * 20
-    if ((movieId == "undefined" && !rights) || (rights == "undefined" && !movieId)) {
-        return next({ status: 400, msg: "缺少必要的参数" })
-    }
     if (movieId) {
         return Promise.all([
             Comment.count({ movie: movieId }),
             Comment.find({ movie: movieId })
+                .sort({ updatedAt: -1 })
+                .limit(20)
+                .skip(index)
+                .populate("commentFrom", "nickname")
+                .exec() ])
+            .then(([ count, result ]) => {
+                if (!result) {
+                    return Promise.reject({ status: 400, msg: "操作失败" })
+                }
+                res.json({
+                    status: 1,
+                    data  : {
+                        list    : result,
+                        totalNum: count
+                    }
+                })
+            })
+            .catch(err => {
+                next(sendError(err))
+            })
+    }
+    if (userId) {
+        return Promise.all([
+            Comment.count({ commentFrom: userId }),
+            Comment.find({ commentFrom: userId })
                 .sort({ updatedAt: -1 })
                 .limit(20)
                 .skip(index)
@@ -107,7 +129,7 @@ exports.getCommentsList = (req, res, next) => {
     })
 }
 /*
- * @desc 查看用户的所有电影评论 ops：列表
+ * @desc 查看我的所有电影评论 ops：列表
  */
 exports.getMyComments = (req, res) => {
     const token = req.query.token
@@ -185,7 +207,10 @@ exports.commentDetail = (req, res, next) => {
             return User.findOne({ _id: userId }).exec()
         })
         .then((data) => {
-            let history = User.update({ _id: userId }, { $pop: { history: 1 }, $addToSet: { history: commentId } })
+            let history = User.update({ _id: userId }, { $pop: { history: 1 } }).then((result) => {
+                if (result.n != 1) return Promise.reject({ status: 400, msg: "修改失败！" })
+                return User.update({ _id: userId }, { $addToSet: { history: commentId } })
+            })
             if (data.history.length < 10) {
                 history = User.update({ _id: userId }, { $addToSet: { history: commentId } })
             }
@@ -272,14 +297,18 @@ exports.commentsToMe = (req, res) => {
  * @desc 喜欢用户的评论
  */
 exports.addLike = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
     const commentId = req.body.commentId
-    Comment.update({ _id: commentId }, { $inc: { star: 1 } }).exec()
-        .then(result => {
-            res.json({ status: 1, star: result.star })
-        })
-        .catch(err => {
-            next(sendError(err))
-        })
+    Promise.all([
+        Comment.update({ _id: commentId }, { $addToSet: { star: userId } }).exec(),
+        User.update({ _id: userId }, { $addToSet: { star: commentId } }).exec()
+    ])
+    .then(() => {
+        res.json({ status: 1, msg: "修改成功！" })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 收藏用户的评论

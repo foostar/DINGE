@@ -1,4 +1,4 @@
-import User from "../app/controller/user"
+import User from "../app/user"
 /**
  * Created by @xiusiteng on 2016-11-23.
  * @desc 后台接口

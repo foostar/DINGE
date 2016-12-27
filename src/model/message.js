@@ -5,29 +5,38 @@
 import mongoose from "mongoose"
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
+const MESSAGE_TYPE = {
+    0: "vaild",
+    1: "invaild"
+}
 const messageSchema = new mongoose.Schema({
-    from: {
+    from: {                   // 发起会话的人
         type   : ObjectId,
         ref    : "User",
         require: true
     },
-    fromStr: {
+    fromStr: {               // 发起会话的人
         type: String
     },
-    to: {
+    to: {                    // 接受会话的人
         type   : ObjectId,
         ref    : "User",
         require: true
     },
-    toStr   : String,
-    typeId  : String,
-    readAble: {
+    toStr   : String,        // 接受会话的人
+    typeId  : String,        // 会话id
+    readAble: {              // 是否未读
         type   : Boolean,
         default: false
     },
-    content: {
+    content: {               // 会话内容
         type   : String,
         require: true
+    },
+    vaild: {
+        default: 0,
+        type   : Number,
+        enum   : MESSAGE_TYPE
     }
 }, {
     timestamps: true

@@ -29,7 +29,7 @@ exports.find = (req, res, next) => {
                 if (!result) {
                     return next({ status: 400, msg: "抱歉，没有这部电影！" })
                 }
-                return res.json(Tools.merge({}, { status: 1 }, { data: result }))
+                return res.json(Object.assign({}, { status: 1 }, { data: result }))
             })
     }
     // 查看电影列表
@@ -46,7 +46,7 @@ exports.find = (req, res, next) => {
             if (!list) {
                 return next({ status: 400, msg: "查找失败" })
             }
-            return res.json(Tools.merge({}, { status: 1 }, { data: { list, totalNum } }))
+            return res.json(Object.assign({}, { status: 1 }, { data: { list, totalNum } }))
         })
         .catch((err) => {
             next({ status: 400, msg: "网络出错请重试", errmsg: err })

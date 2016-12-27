@@ -1,6 +1,7 @@
 import redis from "redis"
+import config from "../../config/index"
 
-const client = redis.createClient("redis://127.0.0.1:6379")
+const client = redis.createClient(config.redisUrl)
 
 const setItem = (key, value) => {
     return new Promise((reslove, reject) => {

@@ -2,14 +2,14 @@
  * Created by @xiusiteng on 2016-11-23.
  * @desc 用户接口
  */
-import User from "../app/controller/user"
+import User from "../app/user"
 import passport from "passport"
 import local from "passport-local"
-import userModel from "../app/model/user"
-import Movie from "../app/controller/movie"
-import Comment from "../app/controller/comment"
-import Common from "../app/controller/common"
-import Message from "../app/controller/message"
+import userModel from "../model/user"
+import Movie from "../app/movie"
+import Comment from "../app/comment"
+import Common from "../app/common"
+import Message from "../app/message"
 import { getItem, setExpire } from "../redis/redis"
 import { sendError, Regexp } from "../utils/util.js"
 import bcrypt from "bcryptjs"
@@ -100,8 +100,14 @@ module.exports = (app) => {
     app.post("/user/editUserInfo", isAuth, User.editUserInfo)
     // 上传头像
     app.post("/user/getAvatar", User.getAvatar)
-    // 加载用户信息
+    // 加载用户历史记录
     app.get("/user/getHistory", User.getHistory)
+    // 加载他人资料
+    app.get("/user/userInfo", User.userInfo)
+    // 拉入黑名单
+    app.get("/user/blackList", isAuth, User.blackList)
+    // 举报用户
+    app.get("/user/reportUser", User.reportUser)
     /*
      *  @desc  movie相关
      */
