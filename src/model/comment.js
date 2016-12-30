@@ -10,44 +10,41 @@ const WEIGHT_TYPE = {
     3: "indexWeight"
 }
 const CommentSchema = new mongoose.Schema({
-    movie: {
+    movie: {                // 评论电影的id
         type: ObjectId,
         ref : "movie"
     },
-    title      : String,
-    commentFrom: {
+    title      : String,    // 评论的标题
+    commentFrom: {          // 评论人id
         type: ObjectId,
         ref : "User"
     },
-    reading: { type: Number, default: 0 },
-    rank   : {
+    reading: { type: Number, default: 0 },  // 阅读数
+    rank   : {              // 星星评分
         type   : Number,
         default: 0
     },
-    star: {
-        type   : Number,
-        default: 0
-    },
-    collet: [ {
+    star: [ {               // 点赞
+        type: ObjectId,
+        ref : "zanlist"
+    } ],
+    collet: [ {             // 收藏此评论的人
         type: ObjectId,
         ref : "User"
     } ],
-    weight: {
+    weight: {               // 评论类型
         default: 0,
         type   : Number,
         enum   : WEIGHT_TYPE
     },
-    reply  : [ { type: ObjectId, ref: "reply" } ],
-    content: String
+    valid: {                // 是否屏蔽
+        default: 0,
+        type   : Number
+    },
+    reply  : [ { type: ObjectId, ref: "reply" } ],  // 回复评论的id
+    content: String         // 评论内容
 }, {
     timestamps: true
 })
-CommentSchema.statics = {
-    fetch(opt) {
-        return this
-            .find(opt)
-            .sort({ updatedAt: -1 })
-    }
-}
 const Comment = mongoose.model("comment", CommentSchema)
 module.exports = Comment

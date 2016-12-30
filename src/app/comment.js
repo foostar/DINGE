@@ -2,12 +2,12 @@
  * Created by @xiusiteng on 2016-11-23.
  * @desc 评论相关-ctrl
  */
-import jwt from "jwt-simple"
 import User from "../model/user"
 import Comment from "../model/comment"
 import Reply from "../model/reply"
-import { getItem, setExpire } from "../../redis/redis"
-import { sendError, Regexp } from "../../utils/util.js"
+import Zanlist from "../model/zanlist"
+import { getItem, setExpire } from "../redis/redis"
+import { sendError, Regexp } from "../utils/util.js"
 
 /*
  * @desc 创建一条电影评论
@@ -45,15 +45,37 @@ exports.save = (req, res, next) => {
  * @desc 查看用户的评论 筛选：电影/首页
  */
 exports.getCommentsList = (req, res, next) => {
-    const { movieId, page, rights } = req.query
+    const { movieId, page, rights, userId } = req.query
     const index = (page - 1) * 20
-    if ((movieId == "undefined" && !rights) || (rights == "undefined" && !movieId)) {
-        return next({ status: 400, msg: "缺少必要的参数" })
-    }
     if (movieId) {
         return Promise.all([
             Comment.count({ movie: movieId }),
             Comment.find({ movie: movieId })
+                .sort({ updatedAt: -1 })
+                .limit(20)
+                .skip(index)
+                .populate("commentFrom", "nickname")
+                .exec() ])
+            .then(([ count, result ]) => {
+                if (!result) {
+                    return Promise.reject({ status: 400, msg: "操作失败" })
+                }
+                res.json({
+                    status: 1,
+                    data  : {
+                        list    : result,
+                        totalNum: count
+                    }
+                })
+            })
+            .catch(err => {
+                next(sendError(err))
+            })
+    }
+    if (userId) {
+        return Promise.all([
+            Comment.count({ commentFrom: userId }),
+            Comment.find({ commentFrom: userId })
                 .sort({ updatedAt: -1 })
                 .limit(20)
                 .skip(index)
@@ -83,7 +105,7 @@ exports.getCommentsList = (req, res, next) => {
             select: "avatar nickname -_id"
         }, {
             path  : "movie",
-            select: "images.small -_id"
+            select: "images.large -_id"
         } ])
         .sort({ updatedAt: -1 })
         .limit(20)
@@ -107,31 +129,40 @@ exports.getCommentsList = (req, res, next) => {
     })
 }
 /*
- * @desc 查看用户的所有电影评论 ops：列表
+ * @desc 查看我的所有电影评论 ops：列表
  */
-exports.getMyComments = (req, res) => {
-    const token = req.query.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).exec()
-        .then((result) => {
-            if (!result) {
-                return res.json({ status: -1, msg: "token错误" })
+exports.getMyComments = (req, res, next) => {
+    const { page } = req.query
+    const userId = JSON.parse(req.user)._id
+    const index = (page - 1) * 10
+    Promise.all([
+        Comment.count({ commentFrom: userId, vaild: 0 }),
+        Comment.find({ commentFrom: userId, vaild: 0 }).populate([ {
+            path  : "movie",
+            select: "title -_id"
+        }, {
+            path: "commentFrom"
+        } ])
+        .sort({ updatedAt: -1 })
+        .limit(10)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ count, data ]) => {
+        const list = data.map((v) => {
+            const item = {
+                _id  : v._id,
+                title: v.title,
+                star : v.star.length,
+                reply: v.reply.length
             }
-            return Comment.fetch({ commentFrom: userId }).populate([ {
-                path  : "movie",
-                select: "title -_id"
-            }, {
-                path: "commentFrom"
-            } ]).exec()
+            return item
         })
-        .then((result) => {
-            if (result) {
-                return res.json({ status: 1, data: result })
-            }
-        })
+        res.json({ status: 1, data: { totalNum: count, list } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 评论其他用户的评论
@@ -171,7 +202,7 @@ exports.addComments = (req, res, next) => {
 exports.commentDetail = (req, res, next) => {
     const { commentId, token } = req.query
     if (!commentId) {
-        return res.json({ status: -1, msg: "缺少评论id" })
+        return next({ status: -1, msg: "缺少评论id" })
     }
     let userId
     // 设置访问历史
@@ -185,7 +216,10 @@ exports.commentDetail = (req, res, next) => {
             return User.findOne({ _id: userId }).exec()
         })
         .then((data) => {
-            let history = User.update({ _id: userId }, { $pop: { history: 1 }, $addToSet: { history: commentId } })
+            let history = User.update({ _id: userId }, { $pop: { history: 1 } }).then((result) => {
+                if (result.n != 1) return Promise.reject({ status: 400, msg: "修改失败！" })
+                return User.update({ _id: userId }, { $addToSet: { history: commentId } })
+            })
             if (data.history.length < 10) {
                 history = User.update({ _id: userId }, { $addToSet: { history: commentId } })
             }
@@ -231,55 +265,57 @@ exports.commentDetail = (req, res, next) => {
 /*
  * @desc 所有评论我的人
  */
-exports.commentsToMe = (req, res) => {
-    if (!req.query.token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const token = req.query.token
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).exec()
-        .then((result) => {
-            if (!result) {
-                return res.json({ status: -1, msg: "token错误" })
-            }
-            return Comment.find({ commentFrom: userId }).populate([ {
-                path  : "reply.commentFrom",
-                select: "nickname avatar -_id"
-            }, {
-                path  : "reply.commentTo",
-                select: "nickname avatar -_id"
-            }, {
-                path  : "commentFrom",
-                select: "nickname avatar -_id"
-            }, {
-                path  : "reply.commentId",
-                select: "title"
-            } ]).exec()
-/*            "reply.commentFrom reply.commentTo commentFrom","email role -_id"*/
-        })
-        .then((result) => {
-            if (result) {
-                let data = []
-                result.length.forEach((v) => {
-                    data = data.concat(v.reply)
-                })
-                return res.json({ status: 1, data })
-            }
-            res.json({ status: -1, msg: "查找失败" })
-        })
+exports.commentsToMe = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    Promise.all([
+        Reply.count({ commentTo: userId, vaild: 0 }).exec(),
+        Reply.find({ commentTo: userId, vaild: 0 }).populate([ {
+            path  : "commentFrom",
+            select: "nickname avatar"
+        }, {
+            path  : "commentId",
+            select: "title"
+        } ])
+        .limit(10)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ count, data ]) => {
+        res.json({ status: 1, data: { totalNum: count, list: data } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  * @desc 喜欢用户的评论
  */
 exports.addLike = (req, res, next) => {
-    const commentId = req.body.commentId
-    Comment.update({ _id: commentId }, { $inc: { star: 1 } }).exec()
-        .then(result => {
-            res.json({ status: 1, star: result.star })
+    const userId = JSON.parse(req.user)._id
+    const { zanTo, commentId } = req.body
+    if (!commentId || !zanTo) {
+        return next({ status: 400, msg: "缺少评论id" })
+    }
+    new Zanlist({
+        zanTo,
+        commentId,
+        zanFrom: userId
+    }).save((err, result) => {
+        if (err) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
+        Comment.update({ _id: commentId }, { $addToSet: { star: result._id } }).exec()
+        .then((data) => {
+            console.log("data", data)
+            if (data.n != 1) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
+            console.log(111)
+            return res.json({ status: 1, msg: "修改成功！" })
         })
-        .catch(err => {
-            next(sendError(err))
-        })
+    })
+    .catch(err => {
+        console.log("err", err)
+        next(sendError(err))
+    })
 }
 /*
  * @desc 收藏用户的评论
@@ -333,23 +369,60 @@ exports.collet = (req, res, next) => {
 /*
  * @desc 我收藏的评论
  */
-exports.getMyCollet = (req, res) => {
-    if (!req.query.token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const token = req.query.token
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).populate("collet", "title content commentFrom createdAt").exec()
-        .then(result => {
-            if (result) {
-                let opts = [ {
-                    path  : "collet.commentFrom",
-                    select: "nickname avatar",
-                    model : "User"
-                } ]
-                User.populate(result, opts, (err, populateDoc) => {
-                    return res.json({ status: 1, data: populateDoc.collet })
-                })
+exports.getMyCollet = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    Promise.all([
+        User.count({ _id: userId, vaild: 0 }).exec(),
+        User.findOne({ _id: userId, vaild: 0 })
+        .populate({
+            path    : "collet",
+            select  : "title content commentFrom createdAt",
+            populate: {
+                path  : "commentFrom",
+                select: "nickname avatar _id"
             }
         })
+        .limit(10)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ count, data ]) => {
+        res.json({ status: 1, data: { totalNum: count, list: data.collet } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
+}
+/*
+ * @desc 给我点赞的人
+ */
+exports.zanList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    User.findOne({ _id: userId, vaild: 0 })
+    .then((data) => {
+        if (!data) return Promise.reject({ status: 400, msg: "此用户不存在或账号存在问题！" })
+        return Promise.all([
+            Zanlist.count({ zanTo: userId }).exec(),
+            Zanlist.find({ zanTo: userId }).populate([ {
+                path  : "zanFrom",
+                select: "nickname"
+            }, {
+                path  : "commentId",
+                select: "title"
+            } ])
+            .limit(10)
+            .skip(index)
+            .exec()
+        ])
+    })
+    .then(([ count, data ]) => {
+        res.json({ status: 1, data: { totalNum: count, list: data } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }

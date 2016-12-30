@@ -13,7 +13,7 @@ import multiparty from "connect-multiparty"
 import promise from "promise"
 import clientRouter from "./routes/routerPost"
 import adminApiRouter from "./routes/adminRouterPost"
-
+import config from "../config/index"
 // 建立服务
 const app = express()
 const adminApi = express()
@@ -29,10 +29,9 @@ app.all("*", (req, res, next) => {
     next()
 })
 // 数据库配置
-const MongoStore = connect(session)
-const dbUrl = "mongodb://localhost/dinge"
+mongoose.connect(config.mongoUrl)
 mongoose.Promise = promise
-mongoose.connect(dbUrl)
+const MongoStore = connect(session)
 // 模板设定
 app.set("views", path.join(__dirname, "../views"))
 app.set("view engine", "pug")
@@ -44,7 +43,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "../public")))
 app.use(multiparty())
-app.set("jwtTokenSecret", "international meeting")
 // 本地调试报错
 // if (app.get("env") == "development") {
 //     app.set("showStackError", true)
@@ -56,7 +54,7 @@ app.use(session({
     secret: "yeah",
     name  : "keyvalue",
     store : new MongoStore({
-        url       : dbUrl,
+        url       : config.mongoUrl,
         collection: "sessions"
     }),
     cookie           : { maxAge: 259200000 },

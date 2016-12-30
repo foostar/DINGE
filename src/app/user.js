@@ -3,14 +3,15 @@
  * @desc 用户相关-ctrl
  */
 import User from "../model/user"
+import Report from "../model/report"
 import passport from "passport"
 import jwt from "jwt-simple"
 import fs from "fs"
 import path from "path"
-import { setItem, setExpire } from "../../redis/redis"
+import { setItem, setExpire, getItem } from "../redis/redis"
 import crypto from "crypto"
 import bcrypt from "bcryptjs"
-import { sendError, Regexp } from "../../utils/util.js"
+import { sendError, Regexp } from "../utils/util.js"
 
 /*
  * 注册接口方法
@@ -70,7 +71,6 @@ exports.signUp = (req, res, next) => {
                     _User.password = hash
                     new User(_User).save((erro) => {
                         if (erro) {
-                            console.log("erro", erro.toJSON())
                             return Promise.reject({ status: 400, msg: "注册失败，请重试！" })
                         }
                         return res.json({ status: 1, msg: "注册成功" })
@@ -97,8 +97,9 @@ const createSession = (value) => {
 }
 exports.signin = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
+        console.log("user", user)
         if (!user) {
-            return Promise.reject(Object.assign({}, { status: 400 }, info))
+            return next(Object.assign({}, { status: 400 }, info))
         }
         createSession(user)
         .then((result) => {
@@ -114,63 +115,43 @@ exports.signin = (req, res, next) => {
     })(req, res, next)
 }
 /*
- * @desc 加载用户列表
- */
-exports.showList = (req, res, next) => {
-    const page = req.query.page || 1
-    const index = (page - 1) * 20
-    Promise.all([ User.count({}),
-        User.find({}).sort({ updatedAt: -1 })
-        .limit(20)
-        .skip(index)
-        .exec()
-    ])
-    .then(([ count, data ]) => {
-        res.json({
-            status: 1,
-            data  : {
-                list    : data,
-                totalNum: count
-            }
-        })
-    }, err => {
-        return next(sendError(err))
-    })
-}
-/*
  * @desc 加载我关注的人
  * @tip  需要使用token
  */
-exports.focusList = (req, res) => {
-    let userId = jwt.decode(req.query.token, Tools.secret)
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    User.findById(userId).populate("lovedTo", "avatar nickname").exec()
+exports.focusList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    User.findOne({ _id: userId, vaild: 0 }).populate("lovedTo", "avatar nickname sign").exec()
     .then(result => {
-        if (result) {
-            res.json({ status: 1, data: result.lovedTo })
-        } else {
-            res.json({ status: -1, msg: "token不正确" })
+        const data = {
+            totalNum: result.lovedTo.length,
+            list    : result.lovedTo.slice(index, index + 10)
         }
+        res.json({ status: 1, data })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }
 /*
  * @desc 加载关注我的人
  * @tip  需要使用token
  */
-exports.focusFromList = (req, res) => {
-    let userId = jwt.decode(req.query.token, Tools.secret)
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    User.findById(userId).populate("lovedFrom", "avatar nickname -_id").exec()
+exports.focusFromList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    User.findById(userId).populate("lovedFrom", "avatar nickname sign").exec()
     .then(result => {
-        if (result) {
-            res.json({ status: 1, data: result.lovedFrom })
-        } else {
-            res.json({ status: -1, msg: "token不正确" })
+        const data = {
+            totalNum: result.lovedFrom.length,
+            list    : result.lovedFrom.slice(index, index + 10)
         }
+        res.json({ status: 1, data })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }
 /*
@@ -236,7 +217,7 @@ exports.focusUser = (req, res, next) => {
  * @tip  需要使用token
  */
 exports.getUserInfo = (req, res, next) => {
-    const userInfo = JSON.parse(req.session.userInfo)
+    const userInfo = JSON.parse(req.user)
     User.findById(userInfo._id).exec()
         .then((result) => {
             if (result) {
@@ -302,20 +283,103 @@ exports.getAvatar = (req, res) => {
  * @desc 查看浏览历史
  * @tip  需要使用token
  */
-exports.getHistory = (req, res) => {
-    const token = req.body.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).populate("history", "title createdAt").exec()
+exports.getHistory = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    User.findOne({ _id: userId }).populate("history", "title createdAt").exec()
         .then((result) => {
-            if (result) {
-                return res.json({ status: 1, data: result })
+            if (!result) {
+                return Promise.reject({ status: 400, msg: "此用户不存在！" })
             }
-        }, (err) => {
-            if (err) {
-                return res.json({ status: -1, msg: "查询失败，请重试！" })
+            res.json({ status: 1, data: { totalNum: result.history.length, list: result.history } })
+        })
+        .catch(err => {
+            next(sendError(err))
+        })
+}
+/*
+ * @desc 查看他人资料
+ */
+exports.userInfo = (req, res, next) => {
+    const { userId } = req.query
+    let body
+    User.findOne({ _id: userId, vaild: 0 })
+        .then((data) => {
+            if (!data) return Promise.reject({ status: 400, msg: "此用户不存在！" })
+            body = {
+                nickname : data.nickname,
+                _id      : data._id,
+                sign     : data.sign,
+                avatar   : data.avatar,
+                lovedTo  : data.lovedTo.length,
+                lovedFrom: data.lovedFrom.length,
+                focusAble: false
+            }
+            if (req.headers.authentication) {
+                const sessionKey = req.headers.authentication
+                return getItem(sessionKey).then((result) => {
+                    return Promise.resolve({
+                        focus: result,
+                        sessionKey,
+                        data
+                    })
+                })
+            }
+            return {
+                noauth: 1,
             }
         })
+        .then(result => {
+            if (result.noauth) return res.json({ status: 1, data: body })
+            const user = JSON.parse(result.focus)._id
+            body.focusAble = result.data.lovedFrom.some(x => x.toString() == user)
+            setExpire(result.sessionKey, parseInt(1800, 10))
+            return res.json({ status: 1, data: body })
+        })
+        .catch(err => {
+            if (err.errcode && err.errcode) {
+                return res.json({ status: 1, data: body })
+            }
+            next(sendError(err))
+        })
+}
+/*
+ * @desc 拉入黑名单
+ */
+exports.blackList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const blackId = req.query.userId
+    Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: blackId, vaild: 0 }).exec() ])
+    .then((result) => {
+        if (!result[0] || !result[1]) return Promise.reject({ status: 400, msg: "用户不存在或出现异常！" })
+        return User.update({ _id: userId }, { $addToSet: { blackList: blackId } }).exec()
+    })
+    .then((result) => {
+        if (result.n != 1) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
+        res.json({ status: 1, msg: "操作成功!" })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
+}
+/*
+ * @desc 举报用户
+ */
+exports.reportUser = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const reportId = req.query.userId
+    Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: reportId, vaild: 0 }).exec() ])
+    .then((result) => {
+        if (!result[0] || !result[1]) return Promise.reject({ status: 400, msg: "用户不存在或出现异常！" })
+        return new Report({
+            reportTo  : reportId,
+            reportFrom: userId
+        })
+    })
+    .then((err) => {
+        if (err) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
+        res.json({ status: 1, msg: "操作成功!" })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
