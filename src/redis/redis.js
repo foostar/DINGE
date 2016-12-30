@@ -26,6 +26,17 @@ const getItem = (key) => {
     })
 }
 
+const removeItem = (key) => {
+    return new Promise((reslove, reject) => {
+        client.del(key, (err, result) => {
+            if (err || !result) {
+                return reject({ status: 400, msg: "操作失败，请重试！" })
+            }
+            reslove()
+        })
+    })
+}
+
 const setExpire = (key, time) => {
     client.expire(key, time)
 }
@@ -33,5 +44,6 @@ const setExpire = (key, time) => {
 module.exports = {
     setItem,
     getItem,
+    removeItem,
     setExpire
 }

@@ -8,11 +8,11 @@ import local from "passport-local"
 import userModel from "../model/user"
 import Movie from "../app/movie"
 import Comment from "../app/comment"
-import Common from "../app/common"
+import Common from "../common/common"
 import Message from "../app/message"
-import { getItem, setExpire } from "../redis/redis"
-import { sendError, Regexp } from "../utils/util.js"
+import { Regexp } from "../utils/util.js"
 import bcrypt from "bcryptjs"
+import { isAuth } from "../middleware/middleware"
 
 const Strategy = local.Strategy
 
@@ -58,21 +58,7 @@ passport.use(new Strategy({ usernameField: "email" },
             })
     })
 )
-const isAuth = (req, res, next) => {
-    if (!req.headers.authentication) {
-        return next({ status: 400, errcode: 100401, msg: "token为必传参数" })
-    }
-    const sessionKey = req.headers.authentication
-    getItem(sessionKey)
-    .then(result => {
-        req.user = result
-        setExpire(sessionKey, parseInt(1800, 10))
-        next()
-    })
-    .catch(err => {
-        return next(sendError(err))
-    })
-}
+
 module.exports = (app) => {
     /*
      *  @desc  common
@@ -85,9 +71,9 @@ module.exports = (app) => {
      *  @desc  user相关
      */
     // 加载我关注的人
-    app.get("/user/getUserFocuslist", User.focusList)
+    app.get("/user/getUserFocuslist", isAuth, User.focusList)
     // 加载关注我的人
-    app.get("/user/getUserFocusFromlist", User.focusFromList)
+    app.get("/user/getUserFocusFromlist", isAuth, User.focusFromList)
     // 关注用户
     app.post("/user/FocusUser", isAuth, User.focusUser)
     // 用户注册api
@@ -101,13 +87,13 @@ module.exports = (app) => {
     // 上传头像
     app.post("/user/getAvatar", User.getAvatar)
     // 加载用户历史记录
-    app.get("/user/getHistory", User.getHistory)
+    app.get("/user/getHistory", isAuth, User.getHistory)
     // 加载他人资料
     app.get("/user/userInfo", User.userInfo)
     // 拉入黑名单
     app.get("/user/blackList", isAuth, User.blackList)
     // 举报用户
-    app.get("/user/reportUser", User.reportUser)
+    app.get("/user/reportUser", isAuth, User.reportUser)
     /*
      *  @desc  movie相关
      */
@@ -125,19 +111,21 @@ module.exports = (app) => {
     // 加载评论
     app.get("/comment/getComments", Comment.getCommentsList)
     // 加载我的影评
-    app.get("/comment/myComments", Comment.getMyComments)
+    app.get("/comment/myComments", isAuth, Comment.getMyComments)
     // 评论别人的评论
     app.post("/comment/addComments", isAuth, Comment.addComments)
     // 查看评论详情
     app.get("/comment/commentsDetail", Comment.commentDetail)
     // 查看评论我的
-    app.get("/comment/commentsToMe", Comment.commentsToMe)
+    app.get("/comment/commentsToMe", isAuth, Comment.commentsToMe)
+    // 查看给我点赞的
+    app.get("/comment/zanList", isAuth, Comment.zanList)
     // 喜欢用户的评论
     app.post("/comment/addLike", isAuth, Comment.addLike)
     // 收藏评论
     app.post("/comment/collet", isAuth, Comment.collet)
     // 查看我收藏的评论
-    app.get("/comment/getMyCollet", Comment.getMyCollet)
+    app.get("/comment/getMyCollet", isAuth, Comment.getMyCollet)
     /*
      *  @desc  message相关
      */

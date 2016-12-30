@@ -96,10 +96,10 @@ const createSession = (value) => {
     })
 }
 exports.signin = (req, res, next) => {
-    console.log(111)
     passport.authenticate("local", (err, user, info) => {
+        console.log("user", user)
         if (!user) {
-            return Promise.reject(Object.assign({}, { status: 400 }, info))
+            return next(Object.assign({}, { status: 400 }, info))
         }
         createSession(user)
         .then((result) => {
@@ -115,63 +115,43 @@ exports.signin = (req, res, next) => {
     })(req, res, next)
 }
 /*
- * @desc 加载用户列表
- */
-exports.showList = (req, res, next) => {
-    const page = req.query.page || 1
-    const index = (page - 1) * 20
-    Promise.all([ User.count({}),
-        User.find({}).sort({ updatedAt: -1 })
-        .limit(20)
-        .skip(index)
-        .exec()
-    ])
-    .then(([ count, data ]) => {
-        res.json({
-            status: 1,
-            data  : {
-                list    : data,
-                totalNum: count
-            }
-        })
-    }, err => {
-        return next(sendError(err))
-    })
-}
-/*
  * @desc 加载我关注的人
  * @tip  需要使用token
  */
-exports.focusList = (req, res) => {
-    let userId = jwt.decode(req.query.token, Tools.secret)
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    User.findById(userId).populate("lovedTo", "avatar nickname").exec()
+exports.focusList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    User.findOne({ _id: userId, vaild: 0 }).populate("lovedTo", "avatar nickname sign").exec()
     .then(result => {
-        if (result) {
-            res.json({ status: 1, data: result.lovedTo })
-        } else {
-            res.json({ status: -1, msg: "token不正确" })
+        const data = {
+            totalNum: result.lovedTo.length,
+            list    : result.lovedTo.slice(index, index + 10)
         }
+        res.json({ status: 1, data })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }
 /*
  * @desc 加载关注我的人
  * @tip  需要使用token
  */
-exports.focusFromList = (req, res) => {
-    let userId = jwt.decode(req.query.token, Tools.secret)
-    if (!userId) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    User.findById(userId).populate("lovedFrom", "avatar nickname -_id").exec()
+exports.focusFromList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    const { page } = req.query
+    const index = (page - 1) * 10
+    User.findById(userId).populate("lovedFrom", "avatar nickname sign").exec()
     .then(result => {
-        if (result) {
-            res.json({ status: 1, data: result.lovedFrom })
-        } else {
-            res.json({ status: -1, msg: "token不正确" })
+        const data = {
+            totalNum: result.lovedFrom.length,
+            list    : result.lovedFrom.slice(index, index + 10)
         }
+        res.json({ status: 1, data })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }
 /*
@@ -303,21 +283,17 @@ exports.getAvatar = (req, res) => {
  * @desc 查看浏览历史
  * @tip  需要使用token
  */
-exports.getHistory = (req, res) => {
-    const token = req.body.token
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" })
-    }
-    const userId = jwt.decode(token, Tools.secret)
-    User.findById(userId).populate("history", "title createdAt").exec()
+exports.getHistory = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id
+    User.findOne({ _id: userId }).populate("history", "title createdAt").exec()
         .then((result) => {
-            if (result) {
-                return res.json({ status: 1, data: result })
+            if (!result) {
+                return Promise.reject({ status: 400, msg: "此用户不存在！" })
             }
-        }, (err) => {
-            if (err) {
-                return res.json({ status: -1, msg: "查询失败，请重试！" })
-            }
+            res.json({ status: 1, data: { totalNum: result.history.length, list: result.history } })
+        })
+        .catch(err => {
+            next(sendError(err))
         })
 }
 /*

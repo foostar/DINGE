@@ -123,6 +123,7 @@ const createSession = value => {
     });
 };
 exports.signin = (req, res, next) => {
+    console.log(111);
     _passport2.default.authenticate("local", (err, user, info) => {
         if (!user) {
             return Promise.reject(Object.assign({}, { status: 400 }, info));

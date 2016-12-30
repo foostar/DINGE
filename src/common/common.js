@@ -6,20 +6,32 @@ import Carsousel from "../model/carousel.js"
 import Movie from "../model/movie.js"
 import Comment from "../model/comment.js"
 import User from "../model/user.js"
+import { sendError } from "../utils/util.js"
 
+/*
+ * @增加轮播图
+ */
+exports.addCarousel = (req, res) => {
+    new Carsousel(req.body).save((err) => {
+        console.log("err", err)
+        res.json({ status: 1, msg: "修改成功！" })
+    })
+}
+/*
+ * @获取轮播图
+ */
 exports.getCarousels = (req, res, next) => {
     Carsousel.find({ weight: { $gte: 90 } }).exec()
         .then((result) => {
-            if (result) {
-                return res.json({ status: 1, data: result })
-            }
-        }, (err) => {
-            if (err) {
-                return next({ status: -1, msg: "查找失败！" })
-            }
+            return res.json({ status: 1, data: result })
+        })
+        .catch(err => {
+            next(sendError(err))
         })
 }
-// 搜索
+/*
+ * @搜索
+ */
 exports.search = (req, res, next) => {
     let _name = null
     let listPro = null

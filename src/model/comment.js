@@ -24,9 +24,9 @@ const CommentSchema = new mongoose.Schema({
         type   : Number,
         default: 0
     },
-    star: [ {               // 点赞此评论的人
+    star: [ {               // 点赞
         type: ObjectId,
-        ref : "User"
+        ref : "zanlist"
     } ],
     collet: [ {             // 收藏此评论的人
         type: ObjectId,
@@ -38,7 +38,7 @@ const CommentSchema = new mongoose.Schema({
         enum   : WEIGHT_TYPE
     },
     valid: {                // 是否屏蔽
-        default: 1,
+        default: 0,
         type   : Number
     },
     reply  : [ { type: ObjectId, ref: "reply" } ],  // 回复评论的id
@@ -46,12 +46,5 @@ const CommentSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
-CommentSchema.statics = {
-    fetch(opt) {
-        return this
-            .find(opt)
-            .sort({ updatedAt: -1 })
-    }
-}
 const Comment = mongoose.model("comment", CommentSchema)
 module.exports = Comment
