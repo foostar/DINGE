@@ -7,6 +7,7 @@ import Movie from "../model/movie.js"
 import Comment from "../model/comment.js"
 import User from "../model/user.js"
 import { sendError } from "../utils/util.js"
+import Location from "../model/location.js"
 
 /*
  * @增加轮播图
@@ -72,4 +73,27 @@ exports.search = (req, res, next) => {
         }, err => {
             return next(err)
         })
+}
+/*
+ *  @渲染地理定位
+ */
+exports.location = (req, res) => {
+    res.render("home", { title: "获取地理定位", time: process.env.time || 5 * 60 * 1000 })
+}
+exports.saveLocation = (req, res) => {
+    new Location(req.query).save(() => {
+        res.json({ status: 1 })
+    })
+}
+exports.getLocation = (req, res) => {
+    res.render("location", { title: "获取地理定位", time: process.env.time || 5 * 60 * 1000 })
+}
+exports.getSetting = (req, res) => {
+    Location.findOne({}).sort({ createdAt: -1 }).exec()
+        .then((data) => {
+            res.json(data)
+        })
+}
+exports.getCode = (req, res) => {
+    res.render("code", { title: "二维码" })
 }

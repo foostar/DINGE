@@ -3,13 +3,15 @@
  * @desc 用户相关-model
  */
 import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
 
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const VAILD_TYPE = {
     0: "vaild",   // 正常用户
     1: "masking", // 屏蔽的用户
-    2: "invaild"  // 封号的用户
+    2: "invaild", // 封号的用户
+    5: "super"    // 超级管理员
 }
 const userSchema = new mongoose.Schema({
     // _id  用户唯一id
@@ -85,4 +87,17 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 const User = mongoose.model("User", userSchema)
+User.findOne({ vaild: 5 }, (err, result) => {
+    if (result) return
+    bcrypt.genSalt(10, (error, salt) => {
+        bcrypt.hash("123456789", salt, (erro, hash) => {
+            if (erro) return
+            new User({
+                username: "admin",
+                password: hash,
+                vaild   : 5
+            }).save()
+        })
+    })
+})
 module.exports = User

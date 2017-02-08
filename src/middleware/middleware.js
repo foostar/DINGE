@@ -2,20 +2,28 @@
  * Created by @xiusiteng on 2016-12-23.
  * @desc 用户接口
  */
-import { sendError } from "../utils/util.js"
-import { getItem, setExpire } from "../redis/redis"
+import { sendError, errorType } from "../utils/util.js"
+import { getItem } from "../redis/redis"
 /*
  * @检测是否登录
  */
 const isAuth = (req, res, next) => {
-    if (!req.headers.authentication) {
-        return next({ status: 400, errcode: 100401, msg: "token为必传参数" })
+    const isAdminLogin = /\/admin\/api\/login/.test(req.path)
+    const isAdminAuth = /\/admin\/api/.test(req.path)
+    if (!req.headers.authentication && !isAdminLogin) {
+        return next(errorType[101])
     }
     const sessionKey = req.headers.authentication
     getItem(sessionKey)
     .then(result => {
-        req.user = result
-        setExpire(sessionKey, parseInt(1800, 10))
+        if (isAdminLogin) {
+            return next()
+        }
+        if (isAdminAuth) {
+            req.admin = result
+        } else {
+            req.user = result
+        }
         next()
     })
     .catch(err => {
