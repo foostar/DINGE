@@ -7,7 +7,7 @@ import Comment from "../model/comment"
 import Reply from "../model/reply"
 import Zanlist from "../model/zanlist"
 import { getItem, setExpire } from "../redis/redis"
-import { sendError, Regexp } from "../utils/util.js"
+import { sendError, Regexp, errorType } from "../utils/util.js"
 
 /*
  * @desc 创建一条电影评论
@@ -16,25 +16,25 @@ exports.save = (req, res, next) => {
     const id = JSON.parse(req.user)._id
     const _comment = req.body
     if (!_comment.title || !_comment.content || !Regexp.xsscos.test(_comment.title) || !Regexp.xsscos.test(_comment.content)) {
-        return next({ status: 400, msg: "缺少必要的参数或传入参数不合法" })
+        return next(errorType[103])
     }
     if (_comment.title.length > 20) {
-        return next({ status: 400, msg: "标题不能超过20个字符！" })
+        return next(errorType[401])
     }
     if (_comment.content.length > 1000) {
-        return next({ status: 400, msg: "评论内容过长！" })
+        return next(errorType[402])
     }
     User.findOne({ _id: id }).exec()
         .then((result) => {
             if (!result) {
-                return Promise.reject({ status: 400, msg: "操作失败" })
+                return Promise.reject(errorType[102])
             }
             _comment.commentFrom = id
             return _comment
         })
         .then((comment) => {
             new Comment(comment).save(() => {
-                return res.json({ status: 1, msg: "评论成功" })
+                return res.json(errorType[200])
             })
         })
         .catch(err => {
@@ -58,7 +58,7 @@ exports.getCommentsList = (req, res, next) => {
                 .exec() ])
             .then(([ count, result ]) => {
                 if (!result) {
-                    return Promise.reject({ status: 400, msg: "操作失败" })
+                    return Promise.reject(errorType[102])
                 }
                 res.json({
                     status: 1,
@@ -83,7 +83,7 @@ exports.getCommentsList = (req, res, next) => {
                 .exec() ])
             .then(([ count, result ]) => {
                 if (!result) {
-                    return Promise.reject({ status: 400, msg: "操作失败" })
+                    return Promise.reject(errorType[102])
                 }
                 res.json({
                     status: 1,
@@ -114,7 +114,7 @@ exports.getCommentsList = (req, res, next) => {
     ])
     .then(([ count, result ]) => {
         if (!result) {
-            return Promise.reject({ status: 400, msg: "操作失败" })
+            return Promise.reject(errorType[102])
         }
         res.json({
             status: 1,
@@ -178,7 +178,7 @@ const saveReply = (opts) => {
 exports.addComments = (req, res, next) => {
     const { commentTo, commentFrom, commentId, content } = req.body
     if (!commentTo || !commentFrom || !commentId || !content || Regexp.xsscos.test(content)) {
-        return next({ status: 400, msg: "缺少必要的参数，或者传入参数不合法!" })
+        return next(errorType[103])
     }
     saveReply(req.body)
     .then(reply => {
@@ -187,7 +187,7 @@ exports.addComments = (req, res, next) => {
     })
     .then(result => {
         if (result.n != 1) {
-            return Promise.reject({ status: 400, msg: "修改失败！" })
+            return Promise.reject(errorType[102])
         }
         res.json({ status: 1, msg: "评论成功!" })
     })
@@ -202,7 +202,7 @@ exports.addComments = (req, res, next) => {
 exports.commentDetail = (req, res, next) => {
     const { commentId, token } = req.query
     if (!commentId) {
-        return next({ status: -1, msg: "缺少评论id" })
+        return next(errorType[103])
     }
     let userId
     // 设置访问历史
@@ -217,7 +217,7 @@ exports.commentDetail = (req, res, next) => {
         })
         .then((data) => {
             let history = User.update({ _id: userId }, { $pop: { history: 1 } }).then((result) => {
-                if (result.n != 1) return Promise.reject({ status: 400, msg: "修改失败！" })
+                if (result.n != 1) return Promise.reject(errorType[102])
                 return User.update({ _id: userId }, { $addToSet: { history: commentId } })
             })
             if (data.history.length < 10) {
@@ -236,7 +236,7 @@ exports.commentDetail = (req, res, next) => {
     // 先修改reading数量
     Promise.all([ setHistory, Comment.update({ _id: commentId }, { $inc: { reading: 1 } }) ])
     .then((comment) => {
-        if (comment[1].n != 1) return Promise.reject({ status: 400, msg: "操作失败！" })
+        if (comment[1].n != 1) return Promise.reject(errorType[102])
         // 查出详细信息
         return Comment.findOne({ _id: commentId }).populate({ path: "reply", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec()
     })
@@ -245,7 +245,7 @@ exports.commentDetail = (req, res, next) => {
         let starNumber = result.star
         let colletNumber = result.collet.length
         if (!result) {
-            return Promise.reject({ status: -1, msg: "缺少评论id" })
+            return Promise.reject(errorType[103])
         }
         if (!userId) {
             result.colletful = true
@@ -296,24 +296,21 @@ exports.addLike = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const { zanTo, commentId } = req.body
     if (!commentId || !zanTo) {
-        return next({ status: 400, msg: "缺少评论id" })
+        return next(errorType[103])
     }
     new Zanlist({
         zanTo,
         commentId,
         zanFrom: userId
     }).save((err, result) => {
-        if (err) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
+        if (err) return Promise.reject(errorType[102])
         Comment.update({ _id: commentId }, { $addToSet: { star: result._id } }).exec()
         .then((data) => {
-            console.log("data", data)
-            if (data.n != 1) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
-            console.log(111)
-            return res.json({ status: 1, msg: "修改成功！" })
+            if (data.n != 1) return Promise.reject(errorType[102])
+            return res.json(errorType[200])
         })
     })
     .catch(err => {
-        console.log("err", err)
         next(sendError(err))
     })
 }
@@ -352,12 +349,12 @@ exports.collet = (req, res, next) => {
     Promise.all([ updateCommentP, updateUserP ])
         .then(addnewUser)
         .then(result => {
-            if (!result.isFixed) return next({ status: 400, msg: "修改失败" })
-            if (result.isOver) return res.json({ status: 1, msg: "修改成功" })
+            if (!result.isFixed) return next(errorType[102])
+            if (result.isOver) return res.json(errorType[200])
             const index = page * 10 - 1
             const colletTo = result.result.collet || []
             if (index > colletTo.length) {
-                return next({ status: 400, msg: "已经到底啦！" })
+                return next(errorType[102])
             }
             const data = colletTo[index]
             return res.json({ status: 1, data })
@@ -404,7 +401,7 @@ exports.zanList = (req, res, next) => {
     const index = (page - 1) * 10
     User.findOne({ _id: userId, vaild: 0 })
     .then((data) => {
-        if (!data) return Promise.reject({ status: 400, msg: "此用户不存在或账号存在问题！" })
+        if (!data) return Promise.reject(errorType[403])
         return Promise.all([
             Zanlist.count({ zanTo: userId }).exec(),
             Zanlist.find({ zanTo: userId }).populate([ {

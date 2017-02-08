@@ -5,13 +5,11 @@
 import User from "../model/user"
 import Report from "../model/report"
 import passport from "passport"
-import jwt from "jwt-simple"
 import fs from "fs"
 import path from "path"
 import { setItem, setExpire, getItem } from "../redis/redis"
-import crypto from "crypto"
 import bcrypt from "bcryptjs"
-import { sendError, Regexp } from "../utils/util.js"
+import { sendError, Regexp, errorType, createSession } from "../utils/util.js"
 
 /*
  * 注册接口方法
@@ -20,39 +18,39 @@ exports.signUp = (req, res, next) => {
     const _user = req.body
     // 检测空账户
     if (!_user.email) {
-        return next({ status: 400, msg: "邮箱不能为空" })
+        return next(errorType[501])
     }
     // 检测空密码
     if (!_user.password) {
-        return next({ status: 400, msg: "密码不能为空" })
+        return next(errorType[502])
     }
     // 检测空昵称
     if (!_user.username) {
-        return next({ status: 400, msg: "昵称不能为空" })
+        return next(errorType[503])
     }
     // 检测昵称不正确
     if (!Regexp.username.test(_user.username)) {
-        return next({ status: 400, msg: "昵称格式错误，不能包括特殊字符切长度在9位之内。" })
+        return next(errorType[504])
     }
     // 账号格式不正确
     if (!Regexp.email.test(_user.email)) {
-        return next({ status: 400, msg: "邮箱格式不正确" })
+        return next(errorType[505])
     }
     // 检测密码规范
     if (!Regexp.password.test(_user.password)) {
-        return next({ status: 400, msg: "密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" })
+        return next(errorType[506])
     }
     // 检测重复用户
     User.findOne({ username: _user.email }).exec()
         .then((user) => {
             if (user && user.username) {
-                return Promise.reject({ status: 400, msg: "邮箱已经被注册" })
+                return Promise.reject(errorType[507])
             }
             return User.findOne({ nickname: _user.username })
         })
         .then((result) => {
             if (result && result.nickname) {
-                return Promise.reject({ status: 400, msg: "用户名已经被注册" })
+                return Promise.reject(errorType[508])
             }
             let _User = {
                 username: _user.email,
@@ -71,9 +69,9 @@ exports.signUp = (req, res, next) => {
                     _User.password = hash
                     new User(_User).save((erro) => {
                         if (erro) {
-                            return Promise.reject({ status: 400, msg: "注册失败，请重试！" })
+                            return Promise.reject(errorType[102])
                         }
-                        return res.json({ status: 1, msg: "注册成功" })
+                        return res.json(errorType[200])
                     })
                 })
             })
@@ -85,27 +83,15 @@ exports.signUp = (req, res, next) => {
 /*
  * 登陆接口方法
  */
-const createSession = (value) => {
-    return new Promise((reslove, reject) => {
-        crypto.randomBytes(8, (err, buf) => {
-            if (err) reject(err)
-            const token = crypto.createHash("sha1").update(`${JSON.stringify(value)}${buf.toString("hex")}`).digest("hex")
-            .toString()
-            reslove({ token, value })
-        })
-    })
-}
 exports.signin = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-        console.log("user", user)
         if (!user) {
-            return next(Object.assign({}, { status: 400 }, info))
+            return next(Object.assign({}, { status: 400, errcode: 100102 }, info))
         }
         createSession(user)
         .then((result) => {
             setItem(result.token, JSON.stringify(result.value))
             .then(() => {
-                setExpire(result.token, parseInt(1800, 10))
                 res.json({ status: 1, data: { token: result.token, userId: user._id } })
             })
         })
@@ -163,10 +149,10 @@ exports.focusUser = (req, res, next) => {
     const id = userInfo._id
     const { userId, type, isList, page } = req.body
     if (!userId || (type == "unfocus" && isList && !page) || !type) {
-        return next({ status: 400, msg: "缺少必要的参数" })
+        return next(errorType[103])
     }
     if (id == userId) {
-        return next({ status: 400, msg: "不能关注自己" })
+        return next(errorType[404])
     }
     // 关注列表删除返回下一个用户
     const addnewUser = (result) => {
@@ -198,12 +184,12 @@ exports.focusUser = (req, res, next) => {
     Promise.all([ focus, froms ])
     .then(addnewUser)
     .then((result) => {
-        if (!result.isFixed) return next({ status: 400, msg: "修改失败" })
-        if (result.isOver) return res.json({ status: 1, msg: "修改成功" })
+        if (!result.isFixed) return next(errorType[102])
+        if (result.isOver) return res.json(errorType[200])
         const index = page * 10 - 1
         const lovedTo = result.result.lovedTo || []
         if (index > lovedTo.length) {
-            return next({ status: 400, msg: "已经到底啦！" })
+            return next(errorType[102])
         }
         const data = lovedTo[index]
         res.json({ status: 1, data })
@@ -220,13 +206,10 @@ exports.getUserInfo = (req, res, next) => {
     const userInfo = JSON.parse(req.user)
     User.findById(userInfo._id).exec()
         .then((result) => {
-            if (result) {
-                return res.json({ status: 1, data: result })
-            }
-            return next({ status: 400, msg: "查找用户失败" })
+            return res.json({ status: 1, data: result })
         })
         .catch((err) => {
-            return next({ status: 400, msg: "查找用户失败", errmsg: err })
+            next(sendError(err))
         })
 }
 /*
@@ -239,12 +222,12 @@ exports.editUserInfo = (req, res, next) => {
     User.update({ _id: userInfo._id }, { $set: body }).exec()
         .then((data) => {
             if (data.n && data.n == 1) {
-                return res.json({ status: 1, msg: "修改成功" })
+                return res.json(errorType[200])
             }
-            return next({ status: 400, msg: "修改失败" })
+            return next(errorType[102])
         })
         .catch((err) => {
-            return next({ status: 400, msg: "网络请求出错，请重试", errmsg: err })
+            return next(sendError(err))
         })
 }
 /*
@@ -256,7 +239,6 @@ exports.getAvatar = (req, res) => {
     if (!token) {
         return res.json({ status: -1, msg: "没有token" })
     }
-    const userId = jwt.decode(token, Tools.secret)
     // 接收前台POST过来的base64
     let imgData = req.body.formFile
     // 过滤data:URL
@@ -269,7 +251,7 @@ exports.getAvatar = (req, res) => {
         if (err) {
             return res.json({ status: -1, msg: "上传失败！" })
         }
-        User.findById(userId).exec()
+        User.findById().exec()
             .then((result) => {
                 result.avatar = newPath
                 return result.save()
@@ -288,7 +270,7 @@ exports.getHistory = (req, res, next) => {
     User.findOne({ _id: userId }).populate("history", "title createdAt").exec()
         .then((result) => {
             if (!result) {
-                return Promise.reject({ status: 400, msg: "此用户不存在！" })
+                return Promise.reject(errorType[403])
             }
             res.json({ status: 1, data: { totalNum: result.history.length, list: result.history } })
         })
@@ -304,7 +286,7 @@ exports.userInfo = (req, res, next) => {
     let body
     User.findOne({ _id: userId, vaild: 0 })
         .then((data) => {
-            if (!data) return Promise.reject({ status: 400, msg: "此用户不存在！" })
+            if (!data) return Promise.reject(errorType[403])
             body = {
                 nickname : data.nickname,
                 _id      : data._id,
@@ -336,7 +318,7 @@ exports.userInfo = (req, res, next) => {
             return res.json({ status: 1, data: body })
         })
         .catch(err => {
-            if (err.errcode && err.errcode) {
+            if (err.errcode && err.errcode == 101) {
                 return res.json({ status: 1, data: body })
             }
             next(sendError(err))
@@ -350,12 +332,12 @@ exports.blackList = (req, res, next) => {
     const blackId = req.query.userId
     Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: blackId, vaild: 0 }).exec() ])
     .then((result) => {
-        if (!result[0] || !result[1]) return Promise.reject({ status: 400, msg: "用户不存在或出现异常！" })
+        if (!result[0] || !result[1]) return Promise.reject(errorType[403])
         return User.update({ _id: userId }, { $addToSet: { blackList: blackId } }).exec()
     })
     .then((result) => {
-        if (result.n != 1) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
-        res.json({ status: 1, msg: "操作成功!" })
+        if (result.n != 1) return Promise.reject(errorType[102])
+        res.json(errorType[200])
     })
     .catch(err => {
         next(sendError(err))
@@ -369,15 +351,15 @@ exports.reportUser = (req, res, next) => {
     const reportId = req.query.userId
     Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: reportId, vaild: 0 }).exec() ])
     .then((result) => {
-        if (!result[0] || !result[1]) return Promise.reject({ status: 400, msg: "用户不存在或出现异常！" })
+        if (!result[0] || !result[1]) return Promise.reject(errorType[403])
         return new Report({
             reportTo  : reportId,
             reportFrom: userId
         })
     })
     .then((err) => {
-        if (err) return Promise.reject({ status: 400, msg: "操作失败，请重试！" })
-        res.json({ status: 1, msg: "操作成功!" })
+        if (err) return Promise.reject(errorType[102])
+        res.json(errorType[200])
     })
     .catch(err => {
         next(sendError(err))
