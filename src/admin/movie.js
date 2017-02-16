@@ -2,6 +2,34 @@ import Movie from "../model/movie"
 import request from "request"
 import { errorType, sendError, pathtoString } from "../utils/util"
 /*
+ * @添加电影
+ */
+exports.addMovie = (req, res, next) => {
+    const body = JSON.parse(req.body.data)
+    if (body._id) {
+        return Movie.update({ _id: body._id }, { $set: body }).exec()
+            .then((result) => {
+                if (result.n != 1) return next(errorType[102])
+                res.json(errorType[200])
+            })
+            .catch(err => {
+                next(sendError(err))
+            })
+    }
+    Movie.findOne({ title: body.title }).exec()
+    .then((data) => {
+        if (data && data._id) return Promise.reject(errorType[406])
+        const movie = new Movie(body)
+        return movie.save()
+    })
+    .then(() => {
+        res.json(errorType[200])
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
+}
+/*
  * @电影列表
  */
 exports.find = (req, res, next) => {
@@ -15,7 +43,7 @@ exports.find = (req, res, next) => {
         Movie.count(req.query),
         Movie.find(req.query)
         .sort({ createdAt: -1 })
-        .limit(20)
+        .limit(10)
         .skip(index)
         .exec()
     ])
@@ -76,5 +104,20 @@ exports.dbMovie = (req, res, next) => {
             subject    : json.summary
         }
         res.json({ status: 1, data })
+    })
+}
+/*
+ * @删除电影
+ */
+exports.delMovie = (req, res, next) => {
+    const moviesId = JSON.parse(req.query.movieId)
+    Promise.all(moviesId.map((v) => {
+        return Movie.remove({ _id: v })
+    }))
+    .then(() => {
+        res.json({ status: 1, moviesId })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }

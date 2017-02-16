@@ -11,7 +11,10 @@ const VAILD_TYPE = {
     0: "vaild",   // 正常用户
     1: "masking", // 屏蔽的用户
     2: "invaild", // 封号的用户
-    5: "super"    // 超级管理员
+}
+const ROLE_TYPE = {
+    0: "normal", // 正常用户
+    1: "super"   // 超级管理员
 }
 const userSchema = new mongoose.Schema({
     // _id  用户唯一id
@@ -42,7 +45,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {                        // 角色（默认为用户）
         type   : Number,
-        default: 0
+        default: 0,
+        enum   : ROLE_TYPE
     },
     nickname: {                    // 昵称
         unique : true,
@@ -78,16 +82,20 @@ const userSchema = new mongoose.Schema({
         ref : "User"
     } ],
     password: String,              // 密码
-    vaild   : {                    // 用户是否正常
+    valid   : {                    // 用户是否正常
         default: 0,
         type   : Number,
         enum   : VAILD_TYPE
+    },
+    comments: {                    // 影评数
+        default: 0,
+        type   : Number
     }
 }, {
     timestamps: true
 })
 const User = mongoose.model("User", userSchema)
-User.findOne({ vaild: 5 }, (err, result) => {
+User.findOne({ role: 1 }, (err, result) => {
     if (result) return
     bcrypt.genSalt(10, (error, salt) => {
         bcrypt.hash("123456789", salt, (erro, hash) => {
@@ -95,7 +103,7 @@ User.findOne({ vaild: 5 }, (err, result) => {
             new User({
                 username: "admin",
                 password: hash,
-                vaild   : 5
+                role    : 1
             }).save()
         })
     })

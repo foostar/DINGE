@@ -6,18 +6,9 @@ import Carsousel from "../model/carousel.js"
 import Movie from "../model/movie.js"
 import Comment from "../model/comment.js"
 import User from "../model/user.js"
+import Report from "../model/report.js"
 import { sendError } from "../utils/util.js"
 import Location from "../model/location.js"
-
-/*
- * @增加轮播图
- */
-exports.addCarousel = (req, res) => {
-    new Carsousel(req.body).save((err) => {
-        console.log("err", err)
-        res.json({ status: 1, msg: "修改成功！" })
-    })
-}
 /*
  * @获取轮播图
  */
@@ -73,6 +64,25 @@ exports.search = (req, res, next) => {
         }, err => {
             return next(err)
         })
+}
+exports.reports = (req, res, next) => {
+    const { page } = req.query
+    const index = (page - 1) * 10
+    delete req.query.page
+    Promise.all([
+        Report.count(req.query),
+        Report.find(req.query)
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .skip(index)
+        .exec()
+    ])
+    .then(([ totalNum, list ]) => {
+        res.json({ status: 1, data: { totalNum, list, page } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
 }
 /*
  *  @渲染地理定位
