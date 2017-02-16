@@ -4,25 +4,6 @@
  */
 import Movie from "../model/movie"
 import { errorType, sendError } from "../utils/util"
-// 添加电影方法
-exports.addMovie = (req, res, next) => {
-    const body = req.body
-    body.directors = JSON.parse(body.directors)
-    body.casts = JSON.parse(body.casts)
-    body.country = JSON.parse(body.country)
-    body.genres = JSON.parse(body.genres)
-    body.aka = JSON.parse(body.aka)
-    body.language = JSON.parse(body.language)
-    body.images = JSON.parse(body.images)
-    const movie = new Movie(body)
-    movie.save()
-        .then(() => {
-            res.json(errorType[200])
-        })
-        .catch(err => {
-            next(sendError(err))
-        })
-}
 // 查看电影方法
 exports.find = (req, res, next) => {
     // 查看单个电影

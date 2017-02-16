@@ -21,7 +21,7 @@ exports.login = (req, res, next) => {
     if (!username || !password) {
         return next(errorType[103])
     }
-    User.findOne({ username, vaild: 5 })
+    User.findOne({ username, role: 1 })
         .then((user) => {
             if (!user) return Promise.reject(errorType[405])
             return compare(password, user.password, user)
@@ -42,24 +42,85 @@ exports.login = (req, res, next) => {
 /*
  * @desc 加载用户列表
  */
-exports.showList = (req, res, next) => {
-    const page = req.query.page || 1
-    const index = (page - 1) * 20
-    Promise.all([ User.count({}),
-        User.find({}).sort({ updatedAt: -1 })
-        .limit(20)
+exports.userlist = (req, res, next) => {
+    const { page } = req.query
+    const index = (page - 1) * 10
+    delete req.query.page
+    if (req.query.valid) {
+        req.query.valid = parseInt(req.query.valid, 10)
+    }
+    req.query.role = 0
+    Promise.all([
+        User.count(req.query),
+        User.find(req.query)
+        .sort({ createdAt: -1 })
+        .limit(10)
         .skip(index)
         .exec()
     ])
-    .then(([ count, data ]) => {
-        res.json({
-            status: 1,
-            data  : {
-                list    : data,
-                totalNum: count
-            }
+    .then(([ totalNum, result ]) => {
+        const list = []
+        result.forEach((v) => {
+            list.push({
+                _id      : v._id,
+                sign     : v.sign,
+                sex      : v.sex,
+                city     : v.city,
+                birthday : v.birthday,
+                role     : v.role,
+                nickname : v.nickname,
+                avatar   : v.avatar,
+                lovedTo  : v.lovedTo.length,
+                lovedFrom: v.lovedFrom.length,
+                star     : v.star.length,
+                collet   : v.collet.length,
+                valid    : v.valid,
+                comments : v.comments,
+                createdAt: v.createdAt
+            })
         })
-    }, err => {
-        return next(sendError(err))
+        res.json({ status: 1, data: { totalNum, list, page } })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
+}
+/*
+ * @desc 屏蔽用户
+ */
+exports.shut = (req, res, next) => {
+    const { userId, type } = req.query
+    User.update({ _id: userId }, { valid: type == "shut" ? 2 : 0 }).exec()
+    .then((result) => {
+        if (!result.ok) return Promise.reject(errorType[102])
+        res.json({ status: 1, userId, type })
+    })
+    .catch(err => {
+        next(sendError(err))
+    })
+}
+/*
+ * @desc 更改密码
+ */
+exports.changePass = (req, res, next) => {
+    const { oldPassword, newPassword } = req.body
+    User.findOne({ role: 1 })
+    .then((user) => {
+        if (!user) return Promise.reject(errorType[405])
+        return compare(oldPassword, user.password, user)
+    })
+    .then(() => {
+        bcrypt.genSalt(10, (error, salt) => {
+            bcrypt.hash(newPassword, salt, (erro, hash) => {
+                if (erro) return
+                User.update({ role: 1 }, { password: hash }).exec()
+                .then(() => {
+                    res.json(errorType[200])
+                })
+            })
+        })
+    })
+    .catch(err => {
+        next(sendError(err))
     })
 }

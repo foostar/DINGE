@@ -6,7 +6,7 @@ import mongoose from "mongoose"
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const WEIGHT_TYPE = {
-    0: "defaultWeight",
+    1: "defaultWeight",
     3: "indexWeight"
 }
 const CommentSchema = new mongoose.Schema({

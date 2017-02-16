@@ -101,8 +101,6 @@ module.exports = (app) => {
     app.get("/movie/movieFindOne", Movie.find)
     // 电影列表
     app.get("/movie/showMovieList", Movie.find)
-    // 添加电影
-    app.post("/movie/addMovie", Movie.addMovie)
     /*
      *  @desc  comment相关
      */

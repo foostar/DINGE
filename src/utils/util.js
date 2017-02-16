@@ -6,7 +6,7 @@ import crypto from "crypto"
  * @desc 错误类型
  */
 const errorType = {
-    101: { status: 400, errcode: 100101, msg: "token为空或已过期!" },
+    101: { status: 400, errcode: 100101, msg: "用户认证为空或已过期!" },
     102: { status: 400, errcode: 100102, msg: "操作失败，请重试！" },
     103: { status: 400, errcode: 100103, msg: "缺少必要的参数或传入参数不合法!" },
     200: { status: 1, msg: "操作成功!" },
@@ -15,6 +15,7 @@ const errorType = {
     403: { status: 400, errcode: 100403, msg: "此用户不存在或账号存在问题！" },
     404: { status: 400, errcode: 100404, msg: "不能关注自己" },
     405: { status: 400, errcode: 100405, msg: "对不起，未找到匹配项！" },
+    406: { status: 400, errcode: 100406, msg: "数据已存在，请不要重复添加！" },
     501: { status: 400, errcode: 100501, msg: "邮箱不能为空" },
     502: { status: 400, errcode: 100502, msg: "密码不能为空" },
     503: { status: 400, errcode: 100503, msg: "昵称不能为空" },
