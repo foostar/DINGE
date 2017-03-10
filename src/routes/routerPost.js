@@ -3,63 +3,13 @@
  * @desc 用户接口
  */
 import User from "../app/user"
-import passport from "passport"
-import local from "passport-local"
-import userModel from "../model/user"
 import Movie from "../app/movie"
 import Comment from "../app/comment"
 import Common from "../common/common"
 import Message from "../app/message"
-import { Regexp } from "../utils/util.js"
-import bcrypt from "bcryptjs"
 import { isAuth } from "../middleware/middleware"
 
-const Strategy = local.Strategy
-
-passport.serializeUser((user, cb) => {
-    cb(null, user._id)
-})
-passport.deserializeUser((id, cb) => {
-    userModel.find({ _id: id }).exec()
-        .then((user) => {
-            cb(null, user)
-        })
-})
-passport.use(new Strategy({ usernameField: "email" },
-    (username, password, cb) => {
-        // 检测空账户
-        if (!username) {
-            return cb(null, false, { message: "邮箱不能为空" })
-        }
-        // 检测空密码
-        if (!password) {
-            return cb(null, false, { message: "密码不能为空" })
-        }
-        // 账号格式不正确
-        if (!Regexp.email.test(username)) {
-            return cb(null, false, { message: "邮箱格式不正确" })
-        }
-        // 检测密码规范
-        if (!Regexp.password.test(password)) {
-            return cb(null, false, { message: "密码格式不正确,应为字母或数字的组合或任意一种，长度在8-22位之间" })
-        }
-        userModel.findOne({ username }).exec()
-            .then((user) => {
-                if (!user) {
-                    return cb(null, false, { message: "用户不存在" })
-                }
-                bcrypt.compare(password, user.password, (err, isMatch) => {
-                    if (err) {
-                        return cb(err)
-                    }
-                    if (!isMatch) return cb(null, false, { message: "密码与账户不匹配" })
-                    return cb(null, user)
-                })
-            })
-    })
-)
-
-module.exports = (app) => {
+module.exports = (app, io) => {
     /*
      *  @desc  common
      */
@@ -133,6 +83,8 @@ module.exports = (app) => {
     app.get("/message/getMessageList", Message.getMessageList)
     // 查看私信详情
     app.get("/message/getMessageDetail", Message.getMessageDetail)
+    // socket链接
+    
     /* eslint-disable */
     app.use((err, req, res, next) => {
         // next(err)

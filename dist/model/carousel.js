@@ -8,6 +8,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const carouselSchema = new _mongoose2.default.Schema({
     title: String, // 轮播图标题
+    content: String, // 图片地址
     url: String, // 轮播图跳转地址
     weight: { // 权重
         type: Number,
@@ -20,14 +21,7 @@ const carouselSchema = new _mongoose2.default.Schema({
      * @desc 轮播图-model
      */
 
-carouselSchema.pre("save", next => {
-    if (undefined.isNew) {
-        undefined.createdAt = undefined.updatedAt = Date.now();
-    } else {
-        undefined.updatedAt = Date.now();
-    }
-    next();
-});
+
 const Carousel = _mongoose2.default.model("carousel", carouselSchema);
 
 module.exports = Carousel;

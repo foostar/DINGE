@@ -91,7 +91,14 @@ exports.location = (req, res) => {
     res.render("home", { title: "获取地理定位", time: process.env.time || 5 * 60 * 1000 })
 }
 exports.saveLocation = (req, res) => {
-    new Location(req.query).save(() => {
+    Location.findOne({})
+    .then((data) => {
+        if (!data) {
+            return new Location(req.query).save()
+        }
+        data.x = req.query.x
+        data.y = req.query.y
+        data.save()
         res.json({ status: 1 })
     })
 }

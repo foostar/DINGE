@@ -6,10 +6,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           */
 
 
-var _jwtSimple = require("jwt-simple");
-
-var _jwtSimple2 = _interopRequireDefault(_jwtSimple);
-
 var _user = require("../model/user");
 
 var _user2 = _interopRequireDefault(_user);
@@ -22,6 +18,10 @@ var _reply = require("../model/reply");
 
 var _reply2 = _interopRequireDefault(_reply);
 
+var _zanlist = require("../model/zanlist");
+
+var _zanlist2 = _interopRequireDefault(_zanlist);
+
 var _redis = require("../redis/redis");
 
 var _util = require("../utils/util.js");
@@ -32,26 +32,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @desc 创建一条电影评论
  */
 exports.save = (req, res, next) => {
+    console.log(req.user);
     const id = JSON.parse(req.user)._id;
     const _comment = req.body;
-    if (!_comment.title || !_comment.content || !_util.Regexp.xsscos.test(_comment.title) || !_util.Regexp.xsscos.test(_comment.content)) {
-        return next({ status: 400, msg: "缺少必要的参数或传入参数不合法" });
+    if (!_comment.title || !_comment.content) {
+        return next(_util.errorType[103]);
     }
     if (_comment.title.length > 20) {
-        return next({ status: 400, msg: "标题不能超过20个字符！" });
+        return next(_util.errorType[401]);
     }
     if (_comment.content.length > 1000) {
-        return next({ status: 400, msg: "评论内容过长！" });
+        return next(_util.errorType[402]);
     }
     _user2.default.findOne({ _id: id }).exec().then(result => {
         if (!result) {
-            return Promise.reject({ status: 400, msg: "操作失败" });
+            return Promise.reject(_util.errorType[102]);
         }
         _comment.commentFrom = id;
         return _comment;
     }).then(comment => {
         new _comment3.default(comment).save(() => {
-            return res.json({ status: 1, msg: "评论成功" });
+            return res.json(_util.errorType[200]);
         });
     }).catch(err => {
         next((0, _util.sendError)(err));
@@ -64,7 +65,6 @@ exports.getCommentsList = (req, res, next) => {
     var _req$query = req.query;
     const movieId = _req$query.movieId,
           page = _req$query.page,
-          rights = _req$query.rights,
           userId = _req$query.userId;
 
     const index = (page - 1) * 20;
@@ -76,7 +76,7 @@ exports.getCommentsList = (req, res, next) => {
                 result = _ref2[1];
 
             if (!result) {
-                return Promise.reject({ status: 400, msg: "操作失败" });
+                return Promise.reject(_util.errorType[102]);
             }
             res.json({
                 status: 1,
@@ -97,7 +97,7 @@ exports.getCommentsList = (req, res, next) => {
                 result = _ref4[1];
 
             if (!result) {
-                return Promise.reject({ status: 400, msg: "操作失败" });
+                return Promise.reject(_util.errorType[102]);
             }
             res.json({
                 status: 1,
@@ -110,12 +110,12 @@ exports.getCommentsList = (req, res, next) => {
             next((0, _util.sendError)(err));
         });
     }
-    Promise.all([_comment3.default.count({ weight: { $gte: rights } }), _comment3.default.find({ weight: { $gte: rights } }).populate([{
+    Promise.all([_comment3.default.count({ weight: 3 }), _comment3.default.find({ weight: 3 }).populate([{
         path: "commentFrom",
         select: "avatar nickname -_id"
     }, {
         path: "movie",
-        select: "images.small -_id"
+        select: "images.large -_id"
     }]).sort({ updatedAt: -1 }).limit(20).skip(index).exec()]).then((_ref5) => {
         var _ref6 = _slicedToArray(_ref5, 2);
 
@@ -123,7 +123,7 @@ exports.getCommentsList = (req, res, next) => {
             result = _ref6[1];
 
         if (!result) {
-            return Promise.reject({ status: 400, msg: "操作失败" });
+            return Promise.reject(_util.errorType[102]);
         }
         res.json({
             status: 1,
@@ -139,26 +139,34 @@ exports.getCommentsList = (req, res, next) => {
 /*
  * @desc 查看我的所有电影评论 ops：列表
  */
-exports.getMyComments = (req, res) => {
-    const token = req.query.token;
-    if (!token) {
-        return res.json({ status: -1, msg: "没有token" });
-    }
-    const userId = _jwtSimple2.default.decode(token, Tools.secret);
-    _user2.default.findById(userId).exec().then(result => {
-        if (!result) {
-            return res.json({ status: -1, msg: "token错误" });
-        }
-        return _comment3.default.fetch({ commentFrom: userId }).populate([{
-            path: "movie",
-            select: "title -_id"
-        }, {
-            path: "commentFrom"
-        }]).exec();
-    }).then(result => {
-        if (result) {
-            return res.json({ status: 1, data: result });
-        }
+exports.getMyComments = (req, res, next) => {
+    const page = req.query.page;
+
+    const userId = JSON.parse(req.user)._id;
+    const index = (page - 1) * 10;
+    Promise.all([_comment3.default.count({ commentFrom: userId, valid: 0 }), _comment3.default.find({ commentFrom: userId, valid: 0 }).populate([{
+        path: "movie",
+        select: "title -_id"
+    }, {
+        path: "commentFrom"
+    }]).sort({ updatedAt: -1 }).limit(10).skip(index).exec()]).then((_ref7) => {
+        var _ref8 = _slicedToArray(_ref7, 2);
+
+        let count = _ref8[0],
+            data = _ref8[1];
+
+        const list = data.map(v => {
+            const item = {
+                _id: v._id,
+                title: v.title,
+                star: v.star.length,
+                reply: v.reply.length
+            };
+            return item;
+        });
+        res.json({ status: 1, data: { totalNum: count, list } });
+    }).catch(err => {
+        next((0, _util.sendError)(err));
     });
 };
 /*
@@ -175,19 +183,19 @@ const saveReply = opts => {
 exports.addComments = (req, res, next) => {
     var _req$body = req.body;
     const commentTo = _req$body.commentTo,
-          commentFrom = _req$body.commentFrom,
           commentId = _req$body.commentId,
           content = _req$body.content;
 
+    const commentFrom = JSON.parse(req.user)._id;
     if (!commentTo || !commentFrom || !commentId || !content || _util.Regexp.xsscos.test(content)) {
-        return next({ status: 400, msg: "缺少必要的参数，或者传入参数不合法!" });
+        return next(_util.errorType[103]);
     }
     saveReply(req.body).then(reply => {
         const replyId = reply._id;
         return _comment3.default.update({ _id: commentId }, { $push: { reply: replyId } }).exec();
     }).then(result => {
         if (result.n != 1) {
-            return Promise.reject({ status: 400, msg: "修改失败！" });
+            return Promise.reject(_util.errorType[102]);
         }
         res.json({ status: 1, msg: "评论成功!" });
     }).catch(err => {
@@ -204,7 +212,7 @@ exports.commentDetail = (req, res, next) => {
           token = _req$query2.token;
 
     if (!commentId) {
-        return res.json({ status: -1, msg: "缺少评论id" });
+        return next(_util.errorType[103]);
     }
     let userId;
     // 设置访问历史
@@ -217,7 +225,7 @@ exports.commentDetail = (req, res, next) => {
             return _user2.default.findOne({ _id: userId }).exec();
         }).then(data => {
             let history = _user2.default.update({ _id: userId }, { $pop: { history: 1 } }).then(result => {
-                if (result.n != 1) return Promise.reject({ status: 400, msg: "修改失败！" });
+                if (result.n != 1) return Promise.reject(_util.errorType[102]);
                 return _user2.default.update({ _id: userId }, { $addToSet: { history: commentId } });
             });
             if (data.history.length < 10) {
@@ -233,7 +241,7 @@ exports.commentDetail = (req, res, next) => {
     });
     // 先修改reading数量
     Promise.all([setHistory, _comment3.default.update({ _id: commentId }, { $inc: { reading: 1 } })]).then(comment => {
-        if (comment[1].n != 1) return Promise.reject({ status: 400, msg: "操作失败！" });
+        if (comment[1].n != 1) return Promise.reject(_util.errorType[102]);
         // 查出详细信息
         return _comment3.default.findOne({ _id: commentId }).populate({ path: "reply", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec();
     }).then(result => {
@@ -241,7 +249,7 @@ exports.commentDetail = (req, res, next) => {
         let starNumber = result.star;
         let colletNumber = result.collet.length;
         if (!result) {
-            return Promise.reject({ status: -1, msg: "缺少评论id" });
+            return Promise.reject(_util.errorType[103]);
         }
         if (!userId) {
             result.colletful = true;
@@ -260,39 +268,26 @@ exports.commentDetail = (req, res, next) => {
 /*
  * @desc 所有评论我的人
  */
-exports.commentsToMe = (req, res) => {
-    if (!req.query.token) {
-        return res.json({ status: -1, msg: "没有token" });
-    }
-    const token = req.query.token;
-    const userId = _jwtSimple2.default.decode(token, Tools.secret);
-    _user2.default.findById(userId).exec().then(result => {
-        if (!result) {
-            return res.json({ status: -1, msg: "token错误" });
-        }
-        return _comment3.default.find({ commentFrom: userId }).populate([{
-            path: "reply.commentFrom",
-            select: "nickname avatar -_id"
-        }, {
-            path: "reply.commentTo",
-            select: "nickname avatar -_id"
-        }, {
-            path: "commentFrom",
-            select: "nickname avatar -_id"
-        }, {
-            path: "reply.commentId",
-            select: "title"
-        }]).exec();
-        /*            "reply.commentFrom reply.commentTo commentFrom","email role -_id"*/
-    }).then(result => {
-        if (result) {
-            let data = [];
-            result.length.forEach(v => {
-                data = data.concat(v.reply);
-            });
-            return res.json({ status: 1, data });
-        }
-        res.json({ status: -1, msg: "查找失败" });
+exports.commentsToMe = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id;
+    const page = req.query.page;
+
+    const index = (page - 1) * 10;
+    Promise.all([_reply2.default.count({ commentTo: userId, valid: 0 }).exec(), _reply2.default.find({ commentTo: userId, valid: 0 }).populate([{
+        path: "commentFrom",
+        select: "nickname avatar"
+    }, {
+        path: "commentId",
+        select: "title"
+    }]).limit(10).skip(index).exec()]).then((_ref9) => {
+        var _ref10 = _slicedToArray(_ref9, 2);
+
+        let count = _ref10[0],
+            data = _ref10[1];
+
+        res.json({ status: 1, data: { totalNum: count, list: data } });
+    }).catch(err => {
+        next((0, _util.sendError)(err));
     });
 };
 /*
@@ -300,9 +295,23 @@ exports.commentsToMe = (req, res) => {
  */
 exports.addLike = (req, res, next) => {
     const userId = JSON.parse(req.user)._id;
-    const commentId = req.body.commentId;
-    Promise.all([_comment3.default.update({ _id: commentId }, { $addToSet: { star: userId } }).exec(), _user2.default.update({ _id: userId }, { $addToSet: { star: commentId } }).exec()]).then(() => {
-        res.json({ status: 1, msg: "修改成功！" });
+    var _req$body2 = req.body;
+    const zanTo = _req$body2.zanTo,
+          commentId = _req$body2.commentId;
+
+    if (!commentId || !zanTo) {
+        return next(_util.errorType[103]);
+    }
+    new _zanlist2.default({
+        zanTo,
+        commentId,
+        zanFrom: userId
+    }).save((err, result) => {
+        if (err) return Promise.reject(_util.errorType[102]);
+        _comment3.default.update({ _id: commentId }, { $addToSet: { star: result._id } }).exec().then(data => {
+            if (data.n != 1) return Promise.reject(_util.errorType[102]);
+            return res.json(_util.errorType[200]);
+        });
     }).catch(err => {
         next((0, _util.sendError)(err));
     });
@@ -311,11 +320,11 @@ exports.addLike = (req, res, next) => {
  * @desc 收藏用户的评论
  */
 exports.collet = (req, res, next) => {
-    var _req$body2 = req.body;
-    const commentId = _req$body2.commentId,
-          type = _req$body2.type,
-          isList = _req$body2.isList,
-          page = _req$body2.page;
+    var _req$body3 = req.body;
+    const commentId = _req$body3.commentId,
+          type = _req$body3.type,
+          isList = _req$body3.isList,
+          page = _req$body3.page;
 
     const userId = JSON.parse(req.user)._id;
     let updateCommentP = _comment3.default.update({ _id: commentId }, { $addToSet: { collet: userId } }).exec();
@@ -324,32 +333,29 @@ exports.collet = (req, res, next) => {
         updateCommentP = _comment3.default.update({ _id: commentId }, { $pull: { collet: userId } }).exec();
         updateUserP = _user2.default.update({ _id: userId }, { $pull: { collet: commentId } }).exec();
     }
-    const addnewUser = result => {
+    const addnewUser = () => {
         const data = {
-            isFixed: false,
+            isFixed: true,
             isOver: true,
             result: {}
         };
-        if (result[0].n == 1 && result[1].n == 1) {
-            data.isFixed = true;
-            if (type == "uncollet" && isList) {
-                data.isOver = false;
-                _user2.default.findById(userId).populate({ path: "collet", select: "_id title content commentFrom", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec().then(user => {
-                    data.result = user;
-                    return Promise.resolve(data);
-                });
-            }
+        if (type == "uncollet" && isList) {
+            data.isOver = false;
+            _user2.default.findById(userId).populate({ path: "collet", select: "_id title content commentFrom", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec().then(user => {
+                data.result = user;
+                return Promise.resolve(data);
+            });
         }
         return Promise.resolve(data);
     };
     // 返回值
     Promise.all([updateCommentP, updateUserP]).then(addnewUser).then(result => {
-        if (!result.isFixed) return next({ status: 400, msg: "修改失败" });
-        if (result.isOver) return res.json({ status: 1, msg: "修改成功" });
+        if (!result.isFixed) return next(_util.errorType[102]);
+        if (result.isOver) return res.json(_util.errorType[200]);
         const index = page * 10 - 1;
         const colletTo = result.result.collet || [];
         if (index > colletTo.length) {
-            return next({ status: 400, msg: "已经到底啦！" });
+            return res.json({ status: 1, data: {} });
         }
         const data = colletTo[index];
         return res.json({ status: 1, data });
@@ -360,22 +366,54 @@ exports.collet = (req, res, next) => {
 /*
  * @desc 我收藏的评论
  */
-exports.getMyCollet = (req, res) => {
-    if (!req.query.token) {
-        return res.json({ status: -1, msg: "没有token" });
-    }
-    const token = req.query.token;
-    const userId = _jwtSimple2.default.decode(token, Tools.secret);
-    _user2.default.findById(userId).populate("collet", "title content commentFrom createdAt").exec().then(result => {
-        if (result) {
-            let opts = [{
-                path: "collet.commentFrom",
-                select: "nickname avatar",
-                model: "User"
-            }];
-            _user2.default.populate(result, opts, (err, populateDoc) => {
-                return res.json({ status: 1, data: populateDoc.collet });
-            });
+exports.getMyCollet = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id;
+    const page = req.query.page;
+
+    const index = (page - 1) * 10;
+    Promise.all([_user2.default.count({ _id: userId, valid: 0 }).exec(), _user2.default.findOne({ _id: userId, valid: 0 }).populate({
+        path: "collet",
+        select: "title content commentFrom createdAt",
+        populate: {
+            path: "commentFrom",
+            select: "nickname avatar _id"
         }
+    }).limit(10).skip(index).exec()]).then((_ref11) => {
+        var _ref12 = _slicedToArray(_ref11, 2);
+
+        let count = _ref12[0],
+            data = _ref12[1];
+
+        res.json({ status: 1, data: { totalNum: count, list: data.collet } });
+    }).catch(err => {
+        next((0, _util.sendError)(err));
+    });
+};
+/*
+ * @desc 给我点赞的人
+ */
+exports.zanList = (req, res, next) => {
+    const userId = JSON.parse(req.user)._id;
+    const page = req.query.page;
+
+    const index = (page - 1) * 10;
+    _user2.default.findOne({ _id: userId, valid: 0 }).then(data => {
+        if (!data) return Promise.reject(_util.errorType[403]);
+        return Promise.all([_zanlist2.default.count({ zanTo: userId }).exec(), _zanlist2.default.find({ zanTo: userId }).populate([{
+            path: "zanFrom",
+            select: "nickname"
+        }, {
+            path: "commentId",
+            select: "title"
+        }]).limit(10).skip(index).exec()]);
+    }).then((_ref13) => {
+        var _ref14 = _slicedToArray(_ref13, 2);
+
+        let count = _ref14[0],
+            data = _ref14[1];
+
+        res.json({ status: 1, data: { totalNum: count, list: data } });
+    }).catch(err => {
+        next((0, _util.sendError)(err));
     });
 };

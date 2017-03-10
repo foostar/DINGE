@@ -13,7 +13,11 @@ const ReplySchema = new _mongoose2.default.Schema({
     commentTo: { type: ObjectId, ref: "User" }, // 给谁回复的用户id
     commentFrom: { type: ObjectId, ref: "User" }, // 回复人的用户id
     commentId: { type: ObjectId, ref: "comment" }, // 评论的id
-    content: String // 回复内容
+    content: String, // 回复内容
+    vaild: {
+        default: 0,
+        type: Number
+    }
 }, {
     timestamps: true
 });

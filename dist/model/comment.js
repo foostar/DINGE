@@ -13,7 +13,7 @@ const Schema = _mongoose2.default.Schema; /**
 
 const ObjectId = Schema.Types.ObjectId;
 const WEIGHT_TYPE = {
-    0: "defaultWeight",
+    1: "defaultWeight",
     3: "indexWeight"
 };
 const CommentSchema = new _mongoose2.default.Schema({
@@ -31,9 +31,9 @@ const CommentSchema = new _mongoose2.default.Schema({
         type: Number,
         default: 0
     },
-    star: [{ // 点赞此评论的人
+    star: [{ // 点赞
         type: ObjectId,
-        ref: "User"
+        ref: "zanlist"
     }],
     collet: [{ // 收藏此评论的人
         type: ObjectId,
@@ -45,7 +45,7 @@ const CommentSchema = new _mongoose2.default.Schema({
         enum: WEIGHT_TYPE
     },
     valid: { // 是否屏蔽
-        default: 1,
+        default: 0,
         type: Number
     },
     reply: [{ type: ObjectId, ref: "reply" }], // 回复评论的id
@@ -53,10 +53,5 @@ const CommentSchema = new _mongoose2.default.Schema({
 }, {
     timestamps: true
 });
-CommentSchema.statics = {
-    fetch(opt) {
-        return this.find(opt).sort({ updatedAt: -1 });
-    }
-};
 const Comment = _mongoose2.default.model("comment", CommentSchema);
 module.exports = Comment;

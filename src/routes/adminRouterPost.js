@@ -59,11 +59,11 @@ module.exports = (app) => {
     // 展示广告图片
     app.get("/ad/changeWeight", isAuth, Advert.changeWeight)
     // 查看手机定位
-    // app.get("/geolocation", Common.location)
-    // app.get("/saveLocation", Common.saveLocation)
-    // app.get("/getLocation", Common.getLocation)
-    // app.get("/getSetting", Common.getSetting)
-    // app.get("/getCode", Common.getCode)
+    app.get("/geolocation", Common.location)
+    app.get("/saveLocation", Common.saveLocation)
+    app.get("/getLocation", Common.getLocation)
+    app.get("/getSetting", Common.getSetting)
+    app.get("/getCode", Common.getCode)
     /* eslint-disable */
     app.use((err, req, res, next) => {
         // next(err)

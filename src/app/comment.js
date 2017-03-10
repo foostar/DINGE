@@ -13,9 +13,10 @@ import { sendError, Regexp, errorType } from "../utils/util.js"
  * @desc 创建一条电影评论
  */
 exports.save = (req, res, next) => {
+    console.log(req.user)
     const id = JSON.parse(req.user)._id
     const _comment = req.body
-    if (!_comment.title || !_comment.content || !Regexp.xsscos.test(_comment.title) || !Regexp.xsscos.test(_comment.content)) {
+    if (!_comment.title || !_comment.content) {
         return next(errorType[103])
     }
     if (_comment.title.length > 20) {
@@ -45,7 +46,7 @@ exports.save = (req, res, next) => {
  * @desc 查看用户的评论 筛选：电影/首页
  */
 exports.getCommentsList = (req, res, next) => {
-    const { movieId, page, rights, userId } = req.query
+    const { movieId, page, userId } = req.query
     const index = (page - 1) * 20
     if (movieId) {
         return Promise.all([
@@ -98,8 +99,8 @@ exports.getCommentsList = (req, res, next) => {
             })
     }
     Promise.all([
-        Comment.count({ weight: { $gte: rights } }),
-        Comment.find({ weight: { $gte: rights } })
+        Comment.count({ weight: 3 }),
+        Comment.find({ weight: 3 })
         .populate([ {
             path  : "commentFrom",
             select: "avatar nickname -_id"
@@ -136,8 +137,8 @@ exports.getMyComments = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const index = (page - 1) * 10
     Promise.all([
-        Comment.count({ commentFrom: userId, vaild: 0 }),
-        Comment.find({ commentFrom: userId, vaild: 0 }).populate([ {
+        Comment.count({ commentFrom: userId, valid: 0 }),
+        Comment.find({ commentFrom: userId, valid: 0 }).populate([ {
             path  : "movie",
             select: "title -_id"
         }, {
@@ -176,7 +177,8 @@ const saveReply = (opts) => {
     })
 }
 exports.addComments = (req, res, next) => {
-    const { commentTo, commentFrom, commentId, content } = req.body
+    const { commentTo, commentId, content } = req.body
+    const commentFrom = JSON.parse(req.user)._id
     if (!commentTo || !commentFrom || !commentId || !content || Regexp.xsscos.test(content)) {
         return next(errorType[103])
     }
@@ -270,8 +272,8 @@ exports.commentsToMe = (req, res, next) => {
     const { page } = req.query
     const index = (page - 1) * 10
     Promise.all([
-        Reply.count({ commentTo: userId, vaild: 0 }).exec(),
-        Reply.find({ commentTo: userId, vaild: 0 }).populate([ {
+        Reply.count({ commentTo: userId, valid: 0 }).exec(),
+        Reply.find({ commentTo: userId, valid: 0 }).populate([ {
             path  : "commentFrom",
             select: "nickname avatar"
         }, {
@@ -326,22 +328,19 @@ exports.collet = (req, res, next) => {
         updateCommentP = Comment.update({ _id: commentId }, { $pull: { collet: userId } }).exec()
         updateUserP = User.update({ _id: userId }, { $pull: { collet: commentId } }).exec()
     }
-    const addnewUser = (result) => {
+    const addnewUser = () => {
         const data = {
-            isFixed: false,
+            isFixed: true,
             isOver : true,
             result : {}
         }
-        if (result[0].n == 1 && result[1].n == 1) {
-            data.isFixed = true
-            if (type == "uncollet" && isList) {
-                data.isOver = false
-                User.findById(userId).populate({ path: "collet", select: "_id title content commentFrom", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec()
-                .then(user => {
-                    data.result = user
-                    return Promise.resolve(data)
-                })
-            }
+        if (type == "uncollet" && isList) {
+            data.isOver = false
+            User.findById(userId).populate({ path: "collet", select: "_id title content commentFrom", populate: { path: "commentFrom", select: "nickname avatar _id" } }).exec()
+            .then(user => {
+                data.result = user
+                return Promise.resolve(data)
+            })
         }
         return Promise.resolve(data)
     }
@@ -354,7 +353,7 @@ exports.collet = (req, res, next) => {
             const index = page * 10 - 1
             const colletTo = result.result.collet || []
             if (index > colletTo.length) {
-                return next(errorType[102])
+                return res.json({ status: 1, data: {} })
             }
             const data = colletTo[index]
             return res.json({ status: 1, data })
@@ -371,8 +370,8 @@ exports.getMyCollet = (req, res, next) => {
     const { page } = req.query
     const index = (page - 1) * 10
     Promise.all([
-        User.count({ _id: userId, vaild: 0 }).exec(),
-        User.findOne({ _id: userId, vaild: 0 })
+        User.count({ _id: userId, valid: 0 }).exec(),
+        User.findOne({ _id: userId, valid: 0 })
         .populate({
             path    : "collet",
             select  : "title content commentFrom createdAt",
@@ -399,7 +398,7 @@ exports.zanList = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const { page } = req.query
     const index = (page - 1) * 10
-    User.findOne({ _id: userId, vaild: 0 })
+    User.findOne({ _id: userId, valid: 0 })
     .then((data) => {
         if (!data) return Promise.reject(errorType[403])
         return Promise.all([
