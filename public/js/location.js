@@ -1,6 +1,6 @@
-$(() => {
+$(function() {
     $.ajax({
-        url: 'http://192.168.1.143:8686/admin/api/getSetting',
+        url: 'http://dinge.v2.yoo.yunpro.cn/admin/api/getSetting',
         method: 'GET',
         success:function(data){
             var gpsPoint = new BMap.Point(data.x, data.y); 

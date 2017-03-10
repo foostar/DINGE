@@ -4,7 +4,6 @@
  */
 import User from "../model/user"
 import Report from "../model/report"
-import passport from "passport"
 import fs from "fs"
 import path from "path"
 import { setItem, setExpire, getItem } from "../redis/redis"
@@ -84,21 +83,32 @@ exports.signUp = (req, res, next) => {
  * 登陆接口方法
  */
 exports.signin = (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    const { email, password } = req.body
+    User.findOne({ username: email }).exec()
+    .then((user) => {
         if (!user) {
-            return next(Object.assign({}, { status: 400, errcode: 100102 }, info))
+            return Promise.reject(errorType[510])
         }
-        createSession(user)
-        .then((result) => {
-            setItem(result.token, JSON.stringify(result.value))
-            .then(() => {
-                res.json({ status: 1, data: { token: result.token, userId: user._id } })
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+                if (err) {
+                    return reject(errorType[102])
+                }
+                if (!isMatch) return reject(errorType[511])
+                resolve(user)
             })
         })
-        .catch((error) => {
-            next(sendError(error))
+    })
+    .then(user => createSession(user))
+    .then((result) => {
+        setItem(result.token, JSON.stringify(result.value))
+        .then(() => {
+            res.json({ status: 1, data: { token: result.token, userId: result.value._id } })
         })
-    })(req, res, next)
+    })
+    .catch((error) => {
+        next(sendError(error))
+    })
 }
 /*
  * @desc 加载我关注的人
@@ -108,7 +118,7 @@ exports.focusList = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const { page } = req.query
     const index = (page - 1) * 10
-    User.findOne({ _id: userId, vaild: 0 }).populate("lovedTo", "avatar nickname sign").exec()
+    User.findOne({ _id: userId, valid: 0 }).populate("lovedTo", "avatar nickname sign").exec()
     .then(result => {
         const data = {
             totalNum: result.lovedTo.length,
@@ -161,6 +171,7 @@ exports.focusUser = (req, res, next) => {
             isOver : true,
             result : {}
         }
+        console.log(result[0], result[1])
         if (result[0].n == 1 && result[1].n == 1) {
             data.isFixed = true
             if (type == "unfocus" && isList) {
@@ -189,7 +200,7 @@ exports.focusUser = (req, res, next) => {
         const index = page * 10 - 1
         const lovedTo = result.result.lovedTo || []
         if (index > lovedTo.length) {
-            return next(errorType[102])
+            return res.json({ status: 1, data: {} })
         }
         const data = lovedTo[index]
         res.json({ status: 1, data })
@@ -284,7 +295,7 @@ exports.getHistory = (req, res, next) => {
 exports.userInfo = (req, res, next) => {
     const { userId } = req.query
     let body
-    User.findOne({ _id: userId, vaild: 0 })
+    User.findOne({ _id: userId, valid: 0 })
         .then((data) => {
             if (!data) return Promise.reject(errorType[403])
             body = {
@@ -330,7 +341,7 @@ exports.userInfo = (req, res, next) => {
 exports.blackList = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const blackId = req.query.userId
-    Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: blackId, vaild: 0 }).exec() ])
+    Promise.all([ User.findOne({ _id: userId, valid: 0 }).exec(), User.findOne({ _id: blackId, valid: 0 }).exec() ])
     .then((result) => {
         if (!result[0] || !result[1]) return Promise.reject(errorType[403])
         return User.update({ _id: userId }, { $addToSet: { blackList: blackId } }).exec()
@@ -349,16 +360,15 @@ exports.blackList = (req, res, next) => {
 exports.reportUser = (req, res, next) => {
     const userId = JSON.parse(req.user)._id
     const reportId = req.query.userId
-    Promise.all([ User.findOne({ _id: userId, vaild: 0 }).exec(), User.findOne({ _id: reportId, vaild: 0 }).exec() ])
+    Promise.all([ User.findOne({ _id: userId, valid: 0 }).exec(), User.findOne({ _id: reportId, valid: 0 }).exec() ])
     .then((result) => {
         if (!result[0] || !result[1]) return Promise.reject(errorType[403])
         return new Report({
             reportTo  : reportId,
             reportFrom: userId
-        })
+        }).save()
     })
-    .then((err) => {
-        if (err) return Promise.reject(errorType[102])
+    .then(() => {
         res.json(errorType[200])
     })
     .catch(err => {

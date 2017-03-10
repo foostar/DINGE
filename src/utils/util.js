@@ -25,6 +25,8 @@ const errorType = {
     507: { status: 400, errcode: 100507, msg: "邮箱已经被注册" },
     508: { status: 400, errcode: 100508, msg: "用户名已经被注册" },
     509: { status: 400, errcode: 100509, msg: "用户名或密码错误！" },
+    510: { status: 400, errcode: 100510, msg: "用户不存在！" },
+    511: { status: 400, errcode: 100511, msg: "密码与账户不匹配！" },
     601: { message: "邮箱不能为空" },
     602: { message: "密码不能为空" },
     603: { message: "邮箱格式不正确" },

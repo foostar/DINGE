@@ -4,18 +4,25 @@ var _mongoose = require("mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _bcryptjs = require("bcryptjs");
+
+var _bcryptjs2 = _interopRequireDefault(_bcryptjs);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const Schema = _mongoose2.default.Schema; /**
-                                           * Created by @xiusiteng on 2016-11-23.
-                                           * @desc 用户相关-model
-                                           */
-
+/**
+ * Created by @xiusiteng on 2016-11-23.
+ * @desc 用户相关-model
+ */
+const Schema = _mongoose2.default.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const VAILD_TYPE = {
     0: "vaild", // 正常用户
     1: "masking", // 屏蔽的用户
-    2: "invaild" // 封号的用户
+    2: "invaild" };
+const ROLE_TYPE = {
+    0: "normal", // 正常用户
+    1: "super" // 超级管理员
 };
 const userSchema = new _mongoose2.default.Schema({
     // _id  用户唯一id
@@ -46,7 +53,8 @@ const userSchema = new _mongoose2.default.Schema({
     },
     role: { // 角色（默认为用户）
         type: Number,
-        default: 0
+        default: 0,
+        enum: ROLE_TYPE
     },
     nickname: { // 昵称
         unique: true,
@@ -82,13 +90,30 @@ const userSchema = new _mongoose2.default.Schema({
         ref: "User"
     }],
     password: String, // 密码
-    vaild: { // 用户是否正常
+    valid: { // 用户是否正常
         default: 0,
         type: Number,
         enum: VAILD_TYPE
+    },
+    comments: { // 影评数
+        default: 0,
+        type: Number
     }
 }, {
     timestamps: true
 });
 const User = _mongoose2.default.model("User", userSchema);
+User.findOne({ role: 1 }, (err, result) => {
+    if (result) return;
+    _bcryptjs2.default.genSalt(10, (error, salt) => {
+        _bcryptjs2.default.hash("123456789", salt, (erro, hash) => {
+            if (erro) return;
+            new User({
+                username: "admin",
+                password: hash,
+                role: 1
+            }).save();
+        });
+    });
+});
 module.exports = User;

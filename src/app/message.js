@@ -117,3 +117,10 @@ exports.getMessageDetail = (req, res) => {
             return res.json({ status: 1, data: result })
         })
 }
+// 建立连接
+exports.connectSocket = (socket) => {
+    console.log("a user connected")
+    socket.on("disconnect", () => {
+        console.log("user disconnected")
+    })
+}
